@@ -371,6 +371,58 @@
 
   .repeater { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
 
+  /* --------------------------------------------------- prescription picker */
+
+  .picker { display: flex; flex-direction: column; gap: 12px; }
+
+  /* Chips sit above the box, so the list the client is building reads as the
+     answer and the box below it reads as the next one. */
+  .chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips:empty { display: none; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--am-blue-50); border: 1.5px solid var(--am-blue-100);
+    border-radius: var(--r-control); padding: 8px 8px 8px 14px;
+    font-size: 15px; line-height: 1.35; color: var(--am-ink);
+    max-width: 100%; animation: chipin 220ms cubic-bezier(.22,1,.36,1);
+  }
+  @keyframes chipin {
+    from { opacity: 0; transform: translateY(-4px) scale(.97); }
+    to   { opacity: 1; transform: none; }
+  }
+  .chip .cname { overflow-wrap: anywhere; }
+  .chip .cfree { font-size: 12px; color: var(--am-muted); white-space: nowrap; }
+  .chipx {
+    flex: none; width: 26px; height: 26px; border-radius: 50%;
+    border: 0; background: transparent; color: var(--am-blue-700);
+    font: inherit; font-size: 17px; line-height: 1; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .chipx:hover { background: var(--am-blue-100); }
+  .chipx:focus-visible { outline: 2px solid var(--am-blue-600); outline-offset: 1px; }
+
+  .pickerbox { position: relative; }
+
+  .suggest {
+    position: absolute; z-index: 30; left: 0; right: 0; top: calc(100% + 6px);
+    list-style: none; margin: 0; padding: 5px;
+    background: var(--am-white); border: 1px solid var(--am-line);
+    border-radius: var(--r-card); box-shadow: 0 10px 30px rgba(20,48,74,.13);
+    max-height: 296px; overflow-y: auto;
+  }
+  .suggest[hidden] { display: none; }
+  .sug {
+    padding: 10px 12px; border-radius: var(--r-control); cursor: pointer;
+    font-size: 15px; line-height: 1.4; color: var(--am-ink);
+  }
+  .sug .via { display: block; font-size: 12px; color: var(--am-muted); margin-top: 1px; }
+  .sug mark { background: var(--am-amber-100); color: inherit; border-radius: 3px; padding: 0 1px; }
+  .sug.on { background: var(--am-blue-50); }
+  .sug.free { color: var(--am-ink-soft); }
+  .sug.free b { color: var(--am-ink); font-weight: 600; }
+
+  .pickerhint { margin: 0; font-size: 13px; line-height: 1.5; color: var(--am-muted); }
+
   /* One block per household member. Premium is age rated per person, so each
      one gets its own answers rather than being inferred from the first. */
   .people { display: flex; flex-direction: column; gap: 28px; }
@@ -917,10 +969,19 @@
     <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag cond">only if network priority is flexible or prefer</span><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="medications">
     <label class="qlabel" id="medications-label" for="medications">Anything anyone takes regularly?</label>
-    <p class="qhelp">Name and dose, both printed on the bottle. Regularly means most months, not a one off course of antibiotics. Leave it blank if nobody takes anything.</p>
-    <div class="repeater"><input class="field" type="text" name="medications_1" aria-label="Anything anyone takes regularly?, first entry" /><input class="field" type="text" name="medications_2" aria-label="Anything anyone takes regularly?, second entry" /><button class="btn quiet addmore" type="button">Add another</button></div>
+    <p class="qhelp">Start typing a name and pick it from the list. Regularly means most months, not a one off course of antibiotics. Leave it blank if nobody takes anything.</p>
+    <div class="picker" data-picker="medications">
+        <ul class="chips" id="medications_chips" aria-live="polite"></ul>
+        <div class="pickerbox">
+          <input class="field" type="text" id="medications_input" autocomplete="off" spellcheck="false"
+            role="combobox" aria-expanded="false" aria-controls="medications_list" aria-autocomplete="list"
+            aria-label="Anything anyone takes regularly?" placeholder="Start typing, for example atorvastatin or Lipitor" />
+          <ul class="suggest" id="medications_list" role="listbox" hidden></ul>
+        </div>
+        <p class="pickerhint">Pick from the list where you can, so your agent gets the exact name and dose. If yours is not there, type it out and press enter.</p>
+      </div>
     
-    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>The yes or no gate that used to sit above this asked the same thing the list answers. Naming a drug says yes, and leaving it blank says no. The plan data gives us a formulary identifier but no drug list, so this produces a flag for the agent rather than an automatic check.</p></details>
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>The yes or no gate that used to sit above this asked the same thing the list answers. Naming a drug says yes, and leaving it blank says no. Typing into a blank box produced spellings and half remembered doses that no formulary lookup could match, so this suggests from the 4,317 drug names we actually hold and records the exact name when the client picks one. Free text still submits, because our formulary is one carrier's and a client's drug missing from it is our gap rather than their mistake.</p></details>
     <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="specialty_drug" data-showif-q="medications" data-showif-v="__answered__" hidden>
     <label class="qlabel" id="specialty_drug-label" for="specialty_drug">Is any of it an injection, an infusion, or something the pharmacy has to order in specially?</label>
@@ -1441,6 +1502,276 @@
   document.querySelectorAll(".later").forEach((btn) => {
     btn.addEventListener("click", () => alert("Draft form. Saving is not wired up yet."));
   });
+
+  // ------------------------------------------------- prescription picker
+  //
+  // Clients cannot spell their medication and cannot recall the dose, so a
+  // blank box produces "atorvastin 20", which no formulary lookup will ever
+  // match. Suggesting from the names we actually hold turns that into an exact
+  // string. Free text still submits: our formulary is one carrier's, so a drug
+  // missing from it is our gap rather than the client's mistake.
+  const DRUGS = { names: [], aliases: [], loaded: false, loading: null };
+
+  function loadDrugs() {
+    if (DRUGS.loaded || DRUGS.loading) return DRUGS.loading;
+    DRUGS.loading = fetch("drugs.json")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d) {
+          DRUGS.names = d.names || [];
+          DRUGS.aliases = d.aliases || [];
+        }
+        DRUGS.loaded = true;
+      })
+      .catch(() => { DRUGS.loaded = true; });
+    return DRUGS.loading;
+  }
+
+  const escHtml = (s) =>
+    String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  /**
+   * Ranks drug names against what has been typed.
+   *
+   * Word prefixes rather than substrings. "sim" should reach simvastatin, not
+   * every name with those three letters buried inside it, and a client typing
+   * "20 mg" should narrow rather than match half the corpus. A name only
+   * qualifies if every word typed prefixes some word in it, which makes the
+   * order the client types their words in irrelevant.
+   */
+  function searchDrugs(query, limit) {
+    const q = query.toLowerCase().trim();
+    if (q.length < 2) return [];
+
+    // Units are dropped rather than matched. A bottle reads "75 mcg" and the
+    // formulary reads "0.075 MG Oral Tablet", so requiring the unit would rule
+    // out the very drug the client is holding.
+    const words = q
+      .split(/\s+/)
+      .filter(Boolean)
+      .filter((t) => !/^(mg|mcg|ug|ml|g|unit|units|iu|tab|tabs|tablet|cap|caps)$/.test(t));
+    if (!words.length) return [];
+
+    // A strength typed in micrograms against a name written in milligrams.
+    // Levothyroxine is the case that matters: every bottle says 75 mcg and
+    // every formulary entry says 0.075 MG.
+    function variants(t) {
+      if (!/^\d+(\.\d+)?$/.test(t)) return [t];
+      const n = Number(t);
+      const asMg = String(n / 1000);
+      return asMg === t ? [t] : [t, asMg];
+    }
+
+    function rank(terms, via) {
+      const out = [];
+      for (const name of DRUGS.names) {
+        const lower = name.toLowerCase();
+        let score = 0;
+        let ok = true;
+        for (const t of terms) {
+          const numeric = /^\d/.test(t);
+          let best = -1;
+          for (const v of variants(t)) {
+            let from = 0;
+            for (;;) {
+              const at = lower.indexOf(v, from);
+              if (at < 0) break;
+              from = at + 1;
+              // Start of the name, or start of a word inside it. A digit run
+              // has to start where the number starts, so "75" misses "0.075".
+              const atWord = at === 0 || /[^a-z0-9.]/.test(lower[at - 1]);
+              // A strength also has to end where the number ends, or "75"
+              // matches the 750 in levofloxacin and outranks levothyroxine.
+              const ends = !numeric || !/[\d.]/.test(lower[at + v.length] || "");
+              if (atWord && ends) { if (best < 0 || at < best) best = at; break; }
+            }
+          }
+          if (best < 0) { ok = false; break; }
+          score += best === 0 ? 3 : 1;
+        }
+        if (!ok) continue;
+        // Shorter names first, so the plain ingredient beats a combination.
+        out.push({ name: name, via: via, score: score * 1000 - lower.length });
+        if (out.length > 900) break;
+      }
+      out.sort((a, b) => b.score - a.score);
+      return out.slice(0, limit);
+    }
+
+    // What they typed, taken literally, first. The corpus already carries many
+    // brands in brackets, and going to the alias list first mislabels them:
+    // someone typing "levo" means levothyroxine, not the brand Levoxyl.
+    const direct = rank(words, null);
+    if (direct.length) return direct;
+
+    // Nothing matched, so try reading the first word as a brand from the bottle
+    // and swapping in the ingredient the formulary lists. Labelled in the
+    // result, so the client can see the swap and reject it.
+    if (words[0].length >= 3) {
+      for (const pair of DRUGS.aliases) {
+        if (!pair[0].toLowerCase().startsWith(words[0])) continue;
+        const hits = rank([pair[1].toLowerCase()].concat(words.slice(1)), pair[0]);
+        if (hits.length) return hits;
+      }
+    }
+
+    // Still nothing. Drop everything after the drug name, so someone who typed
+    // a form or a dose we do not spell the same way still sees their options
+    // rather than an empty box.
+    if (words.length > 1) return rank([words[0]], null);
+    return [];
+  }
+
+  function highlight(name, query) {
+    const words = query.toLowerCase().trim().split(/\s+/).filter((w) => w.length > 1);
+    let html = escHtml(name);
+    for (const w of words) {
+      const safe = w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      html = html.replace(new RegExp("\\b(" + safe + ")", "ig"), "<mark>$1<\/mark>");
+    }
+    return html;
+  }
+
+  function setUpPicker(picker) {
+    const id = picker.getAttribute("data-picker");
+    const input = document.getElementById(id + "_input");
+    const list = document.getElementById(id + "_list");
+    const chips = document.getElementById(id + "_chips");
+    const chosen = [];
+    let active = -1;
+    let options = [];
+
+    function paintChips() {
+      chips.innerHTML = chosen
+        .map((entry, i) =>
+          '<li class="chip"><span class="cname">' + escHtml(entry.name) + "<\/span>" +
+          (entry.free ? '<span class="cfree">as typed<\/span>' : "") +
+          '<button class="chipx" type="button" data-remove="' + i + '" aria-label="Remove ' +
+          escHtml(entry.name) + '">&times;<\/button>' +
+          // Hidden, but a real text input named like a repeater entry, so
+          // collect() and the conditional reveal both keep working unchanged.
+          '<input type="text" name="' + id + "_" + (i + 1) + '" value="' + escHtml(entry.name) +
+          '" hidden readonly tabindex="-1" aria-hidden="true" />' +
+          "<\/li>",
+        )
+        .join("");
+      refresh();
+    }
+
+    function close() {
+      list.hidden = true;
+      input.setAttribute("aria-expanded", "false");
+      active = -1;
+      options = [];
+    }
+
+    function add(name, free) {
+      const clean = String(name).trim();
+      if (!clean) return;
+      if (chosen.some((c) => c.name.toLowerCase() === clean.toLowerCase())) {
+        input.value = "";
+        close();
+        return;
+      }
+      chosen.push({ name: clean, free: !!free });
+      paintChips();
+      input.value = "";
+      close();
+      input.focus();
+    }
+
+    function paintList(query) {
+      const hits = DRUGS.loaded ? searchDrugs(query, 8) : [];
+      options = hits.map((h) => h.name);
+      const typed = query.trim();
+
+      let html = hits
+        .map(
+          (h, i) =>
+            '<li class="sug' + (i === active ? " on" : "") + '" role="option" data-i="' + i +
+            '" aria-selected="' + (i === active ? "true" : "false") + '">' +
+            highlight(h.name, h.via ? typed.split(/\s+/).slice(1).join(" ") : typed) +
+            (h.via ? '<span class="via">the generic for ' + escHtml(h.via) + "<\/span>" : "") +
+            "<\/li>",
+        )
+        .join("");
+
+      // Always offer what they typed. A drug missing from our corpus is common
+      // and the client must never be stuck arguing with a dropdown.
+      if (typed.length > 1) {
+        const i = hits.length;
+        html +=
+          '<li class="sug free' + (i === active ? " on" : "") + '" role="option" data-i="' + i +
+          '" data-free="1" aria-selected="' + (i === active ? "true" : "false") + '">Add <b>' +
+          escHtml(typed) + "<\/b> as I typed it<\/li>";
+        options.push(typed);
+      }
+
+      list.innerHTML = html;
+      list.hidden = !html;
+      input.setAttribute("aria-expanded", html ? "true" : "false");
+    }
+
+    input.addEventListener("focus", () => {
+      loadDrugs().then(() => { if (input.value.trim()) paintList(input.value); });
+    });
+
+    input.addEventListener("input", () => {
+      active = -1;
+      if (!input.value.trim()) { close(); return; }
+      loadDrugs().then(() => paintList(input.value));
+    });
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        if (list.hidden || !options.length) return;
+        e.preventDefault();
+        active = e.key === "ArrowDown"
+          ? (active + 1) % options.length
+          : (active - 1 + options.length) % options.length;
+        paintList(input.value);
+        const on = list.querySelector(".sug.on");
+        if (on && on.scrollIntoView) on.scrollIntoView({ block: "nearest" });
+        return;
+      }
+      if (e.key === "Enter") {
+        e.preventDefault();
+        if (active >= 0 && options[active] !== undefined) {
+          const el = list.querySelector('.sug[data-i="' + active + '"]');
+          add(options[active], el && el.hasAttribute("data-free"));
+        } else if (input.value.trim()) {
+          add(input.value, true);
+        }
+        return;
+      }
+      if (e.key === "Escape") { close(); return; }
+      // Backspace on an empty box takes the last one off, which is what every
+      // chip input does and what fingers expect.
+      if (e.key === "Backspace" && !input.value && chosen.length) {
+        chosen.pop();
+        paintChips();
+      }
+    });
+
+    list.addEventListener("mousedown", (e) => {
+      const row = e.target.closest(".sug");
+      if (!row) return;
+      // Before blur, so the click is not lost to the box closing first.
+      e.preventDefault();
+      add(options[Number(row.getAttribute("data-i"))], row.hasAttribute("data-free"));
+    });
+
+    chips.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-remove]");
+      if (!btn) return;
+      chosen.splice(Number(btn.getAttribute("data-remove")), 1);
+      paintChips();
+    });
+
+    input.addEventListener("blur", () => { window.setTimeout(close, 120); });
+  }
+
+  document.querySelectorAll(".picker").forEach(setUpPicker);
 
   document.querySelectorAll(".addmore").forEach((btn) => {
     btn.addEventListener("click", () => {

@@ -173,6 +173,25 @@ function nonDiscriminative(index: FormularyIndex): Set<string> {
 }
 
 export function lookupDrug(query: string, index: FormularyIndex): DrugLookup {
+  // An exact name wins outright, before any scoring runs.
+  //
+  // The client form now suggests from this same corpus and records what was
+  // picked verbatim, so most queries arrive as a name we already hold. Putting
+  // one of those through the ranking is how "amlodipine 5 MG / atorvastatin 20
+  // MG Oral Tablet" came back matched to the 80 MG version: a right answer
+  // beaten by a heuristic built for people typing from memory.
+  const wanted = query.toLowerCase().trim();
+  const exact = index.drugs.find((d) => d.name.toLowerCase().trim() === wanted);
+  if (exact) {
+    return {
+      query,
+      confidence: "exact",
+      matchedName: exact.name,
+      candidateCount: 1,
+      plans: exact.plans,
+    };
+  }
+
   const parsed = parseQuery(query);
   const common = nonDiscriminative(index);
   parsed.words = parsed.words.filter((w) => !common.has(w));

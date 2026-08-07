@@ -41,6 +41,13 @@ export type QuestionKind =
   | "person"
   | "repeater"
   /**
+   * A list of prescriptions, built by typing and picking from the drug names we
+   * hold rather than by filling in blank boxes. Free text is always accepted,
+   * because the formulary we hold is one carrier's and a client's medication
+   * not being in it is our gap, not their mistake.
+   */
+  | "drugs"
+  /**
    * A figure the form works out from earlier answers and shows back for
    * confirmation, rather than asking anyone to add it up. Read only, and it
    * updates live as the boxes above it change.
@@ -583,13 +590,13 @@ export const QUESTIONNAIRE: Section[] = [
       },
       {
         id: "medications",
-        kind: "repeater",
+        kind: "drugs",
         label: "Anything anyone takes regularly?",
-        help: "Name and dose, both printed on the bottle. Regularly means most months, not a one off course of antibiotics. Leave it blank if nobody takes anything.",
+        help: "Start typing a name and pick it from the list. Regularly means most months, not a one off course of antibiotics. Leave it blank if nobody takes anything.",
         required: false,
         routing: "intake",
         rationale:
-          "The yes or no gate that used to sit above this asked the same thing the list answers. Naming a drug says yes, and leaving it blank says no. The plan data gives us a formulary identifier but no drug list, so this produces a flag for the agent rather than an automatic check.",
+          "The yes or no gate that used to sit above this asked the same thing the list answers. Naming a drug says yes, and leaving it blank says no. Typing into a blank box produced spellings and half remembered doses that no formulary lookup could match, so this suggests from the 4,317 drug names we actually hold and records the exact name when the client picks one. Free text still submits, because our formulary is one carrier's and a client's drug missing from it is our gap rather than their mistake.",
       },
       {
         id: "specialty_drug",
