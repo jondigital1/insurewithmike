@@ -57,7 +57,7 @@ function videoBlock(): string {
       </div>
       <div class="scrubber"><span></span></div>
     </div>
-    <p class="cap">A short thank you to camera does more here than any amount of copy. Set <code>video</code> in <code>src/web/agency.ts</code> to an embed URL or a file served from this site.</p>
+    <p class="cap">A short thank you to camera does more here than any amount of copy.</p>
   </section>`;
 }
 
@@ -132,7 +132,7 @@ function calendarBlock(): string {
           .join("")}
       </div>
     </div>
-    <p class="cap">Calendly, Google appointment schedules, Acuity and HubSpot Meetings all provide an embeddable URL that drops straight in here. It has to be the embed URL rather than the public booking page, or the provider refuses to render inside a frame. Set <code>calendarEmbedUrl</code> in <code>src/web/agency.ts</code>.</p>
+    <p class="cap">Calendly, Google appointment schedules, Acuity and HubSpot Meetings all drop straight in here once there is a real one to use.</p>
   </section>`;
 }
 
@@ -386,7 +386,7 @@ ${TOKENS}
 <footer>
   ${AGENCY.phone || AGENCY.email
     ? `Need to reach ${esc(AGENCY.agentName)} sooner? ${AGENCY.phone ? `Call <a href="tel:${esc(AGENCY.phone.replace(/[^\d+]/g, ""))}">${esc(AGENCY.phone)}</a>` : ""}${AGENCY.phone && AGENCY.email ? " or " : ""}${AGENCY.email ? `email <a href="mailto:${esc(AGENCY.email)}">${esc(AGENCY.email)}</a>` : ""}.`
-    : `${esc(AGENCY.agencyName)} will be in touch. Contact details go in <code>src/web/agency.ts</code>.`}
+    : `${esc(AGENCY.agencyName)} will be in touch.`}
 </footer>
 `;
 
@@ -396,6 +396,9 @@ console.log(`thanks.html     ${(html.length / 1024).toFixed(1)} KB`);
 console.log(`  video          ${AGENCY.video ? AGENCY.video.kind : "not configured, sample rendered"}`);
 console.log(`  calendar       ${AGENCY.calendarEmbedUrl ? "embedded" : "not configured, sample rendered"}`);
 console.log(`  contact        ${AGENCY.phone || AGENCY.email ? "shown" : "not configured"}`);
+// Where to fill these in is said here rather than on the page. A client should
+// never be shown the workings of the thing they are reading.
+console.log(`\n  All of the above are set in src/web/agency.ts.`);
 if (AGENCY.draft) {
   console.log(
     `\n  Draft mode is on, so unfilled slots render as labelled samples.\n  Set draft to false in src/web/agency.ts before any real client sees this.`,

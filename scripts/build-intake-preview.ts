@@ -1061,10 +1061,9 @@ const html = `<title>Ask Mike, client intake</title>
   </div>
 </main>
 
-<footer class="colophon">
-  Generated from <code>src/intake/questionnaire.ts</code>, so this form and the definition we build from cannot drift apart.
-  Review view reveals every conditional question, why each one is asked, and where each answer is routed.
-</footer>
+<!-- No colophon. It named a source file and described the review toggle, both
+     of which are notes to ourselves, and a client should never be shown the
+     workings of the thing they are filling in. -->
 
 <script>
   const body = document.body;
