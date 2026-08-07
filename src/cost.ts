@@ -113,36 +113,56 @@ export function applyCostSharing(
   // comes out of the base before the deductible is applied, and the member pays
   // the copay instead.
   //
-  // Health savings account plans are the exception. Federal rules bar them from
-  // charging a copay before the deductible is met for anything but preventive
-  // care, so on those plans the visits stay in the deductible base and this
-  // does nothing.
+  // copayBeforeDeductible carries the plan's own summary of benefits saying
+  // "deductible does not apply", so it is evidence rather than an assumption
+  // and it decides this on its own.
+  //
+  // It used to be gated on the plan not being health savings account eligible,
+  // on the reasoning that federal rules bar an HDHP from paying anything before
+  // the deductible except preventive care. That stopped being true on 1 January
+  // 2026: section 71306 of the 2025 reconciliation act, and IRS Notice 2026-05,
+  // make every bronze and catastrophic plan HSA compatible regardless of
+  // whether it meets the general HDHP definition. UnitedHealthcare's 2026
+  // bronze plans are filed HSA eligible and their SBCs state a $50 primary care
+  // copay with the deductible not applying. Both are correct, and the old guard
+  // suppressed a copay the member really does pay.
+  //
+  // The guard is kept for other metal levels, where HSA eligibility still
+  // implies a true HDHP and a copay reading would mean the parser erred.
+  const hsaBarsCopay =
+    plan.hsaEligible &&
+    plan.metalLevel !== "Bronze" &&
+    plan.metalLevel !== "Expanded Bronze" &&
+    plan.metalLevel !== "Catastrophic";
+
   let copayApplied = 0;
   let base = allowedCharges;
   let copaysKnown = true;
-  if (visits && !plan.hsaEligible && plan.copayBeforeDeductible) {
+  if (visits && !hsaBarsCopay && plan.copayBeforeDeductible) {
     const pcp = visits.primaryCareVisits ?? 0;
     const spec = visits.specialistVisits ?? 0;
     if (pcp > 0) {
-      if (plan.copayPrimaryCare === null) copaysKnown = false;
+      if (plan.copayPrimaryCare === null) copaysKnown = plan.copaysRead;
       else {
         copayApplied += pcp * plan.copayPrimaryCare;
         base -= pcp * ALLOWED_AMOUNTS.primaryCareVisit;
       }
     }
     if (spec > 0) {
-      if (plan.copaySpecialist === null) copaysKnown = false;
+      if (plan.copaySpecialist === null) copaysKnown = copaysKnown && plan.copaysRead;
       else {
         copayApplied += spec * plan.copaySpecialist;
         base -= spec * ALLOWED_AMOUNTS.specialistVisit;
       }
     }
     base = Math.max(0, base);
-  } else if (visits && !plan.hsaEligible) {
+  } else if (visits && !hsaBarsCopay) {
     // The plan does not meter visits by copay before the deductible, or we do
-    // not know that it does. Either way the figure below is the deductible
-    // answer, not a copay answer.
-    copaysKnown = !((visits.primaryCareVisits ?? 0) > 0 || (visits.specialistVisits ?? 0) > 0);
+    // not know that it does. The figure below is then the deductible answer.
+    // That is the right answer when we read the schedule and it said so, and an
+    // overstatement when we simply hold nothing for this plan.
+    const hasVisits = (visits.primaryCareVisits ?? 0) > 0 || (visits.specialistVisits ?? 0) > 0;
+    copaysKnown = !hasVisits || plan.copaysRead;
   }
 
   const deductibleApplied = Math.min(base, deductible);

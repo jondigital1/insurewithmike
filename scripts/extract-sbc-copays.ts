@@ -79,7 +79,7 @@ function firstCost(segment: string): {
   const window = segment.slice(0, 260);
   const copayMatch = window.match(/\$\s?([\d,]+)(?:\.\d\d)?\s*Copay/i);
   const coinsMatch = window.match(/(\d{1,3})\s?%\s*Coinsurance/i);
-  const noCharge = /^\s*No Charge/i.test(window);
+  const noChargeMatch = window.match(/No Charge/i);
 
   // "Deductible does not apply" appearing near the figure means the copay bites
   // from the first visit rather than after the deductible is satisfied. The
@@ -87,10 +87,16 @@ function firstCost(segment: string): {
   // window has to be wide enough to reach it.
   const beforeDeductible = /Deductible does not apply/i.test(window);
 
-  if (noCharge && !copayMatch) return { copay: 0, coinsurance: null, beforeDeductible: true };
-
   const copayAt = copayMatch?.index ?? Infinity;
   const coinsAt = coinsMatch?.index ?? Infinity;
+  const freeAt = noChargeMatch?.index ?? Infinity;
+
+  // Whichever is stated first is the in network answer. "No Charge" is a real
+  // reading, not an absence of one: the zero cost sharing variants say it for
+  // every service, and treating it as nothing found loses a whole variant tier.
+  if (freeAt < copayAt && freeAt < coinsAt) {
+    return { copay: 0, coinsurance: null, beforeDeductible: true };
+  }
 
   if (copayAt < coinsAt && copayMatch) {
     return {

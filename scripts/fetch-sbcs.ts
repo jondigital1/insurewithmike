@@ -14,10 +14,11 @@
  *                   benefits grid, which needs a different parser.
  *   AmeriHealth     Not yet located. Their plan names state office visit
  *                   copays, which is where those currently come from.
- *   UnitedHealthcare Not yet located. Their SBCs sit behind a plan picker on
- *                   uhone.com rather than at addressable URLs. This is the gap
- *                   that matters most: the calibration shows UnitedHealthcare
- *                   is where the cost model is furthest wrong.
+ *   UnitedHealthcare Addressable by exact plan id, like Ambetter, once you know
+ *                   the pattern. The plan picker on uhone.com is a front end to
+ *                   it, not a gate. Note the filings carry a "URL FOR SUMMARY OF
+ *                   BENEFITS COVERAGE" column and New Jersey left it blank for
+ *                   every issuer, so it is no help to anyone.
  *
  * Usage: npx tsx scripts/fetch-sbcs.ts [outdir]
  */
@@ -28,6 +29,7 @@ import { loadPlanDataset } from "../src/puf.ts";
 
 const outDir = process.argv[2] ?? "data/sbc/source";
 mkdirSync(join(outDir, "ambetter"), { recursive: true });
+mkdirSync(join(outDir, "uhc"), { recursive: true });
 
 const UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36";
@@ -97,4 +99,15 @@ for (const [name, url] of Object.entries(OSCAR)) {
 }
 console.log(`Oscar       ${osk} of ${Object.keys(OSCAR).length} benefit grids`);
 
-console.log("\nStill missing: AmeriHealth SBCs, and UnitedHealthcare entirely.");
+// UnitedHealthcare, by exact plan id including the variant suffix. Oxford is
+// the underwriting entity in New Jersey but the documents are served under the
+// UnitedHealthcare individual and family path.
+const uhc = [...new Set(dataset.plans.filter((p) => p.issuerId === "37777").map((p) => p.planId))];
+
+let uok = 0;
+for (const id of uhc) {
+  if (await grab(`https://www.uhc.com/ifp/sbc.${id}.en.2026`, join(outDir, "uhc", `${id}.pdf`))) uok += 1;
+}
+console.log(`UHC         ${uok} of ${uhc.length} plan variants`);
+
+console.log("\nStill missing: AmeriHealth SBCs.");

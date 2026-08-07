@@ -65,10 +65,25 @@ export interface Plan {
   copaySpecialist: number | null;
   /**
    * True when the copay applies from the first visit. When false the member
-   * pays the full allowed amount until the deductible is met, and the copay
-   * only bites afterwards, which is the rule for health savings account plans.
+   * pays the full allowed amount until the deductible is met and the copay only
+   * bites afterwards. Taken from the plan's summary of benefits where we hold
+   * one, and inferred from health savings account eligibility where we do not.
    */
   copayBeforeDeductible: boolean;
+  /**
+   * True when this plan's own benefit schedule was read, whatever it said.
+   *
+   * Distinguishes "we checked and there is no office visit copay" from "we hold
+   * nothing for this plan", which look identical if you only store the amount.
+   * The second is a gap that overstates the plan's cost; the first is an answer.
+   */
+  copaysRead: boolean;
+  /**
+   * True when the schedule was read and meters office visits by a coinsurance
+   * percentage rather than a flat copay, which the plan's own coinsurance rate
+   * already handles.
+   */
+  copaysCoinsuredInstead: boolean;
 
   /** True when the plan files a distinct second network tier. */
   hasSecondNetworkTier: boolean;

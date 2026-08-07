@@ -1,50 +1,50 @@
 {
   "17970NJ0010003-01": {
-    "primaryCare": 50,
+    "primaryCare": 0,
     "specialist": null,
-    "beforeDeductible": false,
+    "beforeDeductible": true,
     "source": "sbc-by-plan-id"
   },
   "17970NJ0010003-02": {
-    "primaryCare": null,
+    "primaryCare": 0,
     "specialist": 0,
-    "beforeDeductible": false,
+    "beforeDeductible": true,
     "source": "sbc-by-plan-id"
   },
   "17970NJ0010003-03": {
-    "primaryCare": 50,
+    "primaryCare": 0,
     "specialist": 0,
     "beforeDeductible": true,
     "source": "sbc-by-plan-id"
   },
   "17970NJ0010003-04": {
-    "primaryCare": 50,
+    "primaryCare": 0,
     "specialist": null,
-    "beforeDeductible": false,
+    "beforeDeductible": true,
     "source": "sbc-by-plan-id"
   },
   "17970NJ0010003-05": {
-    "primaryCare": 30,
+    "primaryCare": 0,
     "specialist": null,
-    "beforeDeductible": false,
+    "beforeDeductible": true,
     "source": "sbc-by-plan-id"
   },
   "17970NJ0010003-06": {
-    "primaryCare": 15,
+    "primaryCare": 0,
     "specialist": null,
-    "beforeDeductible": false,
+    "beforeDeductible": true,
     "source": "sbc-by-plan-id"
   },
   "17970NJ0010006-01": {
-    "primaryCare": 75,
-    "specialist": 75,
+    "primaryCare": 0,
+    "specialist": 0,
     "beforeDeductible": true,
     "source": "sbc-by-plan-id"
   },
   "17970NJ0010006-02": {
-    "primaryCare": null,
+    "primaryCare": 0,
     "specialist": 0,
-    "beforeDeductible": false,
+    "beforeDeductible": true,
     "source": "sbc-by-plan-id"
   },
   "17970NJ0010006-03": {
@@ -54,39 +54,39 @@
     "source": "sbc-by-plan-id"
   },
   "17970NJ0010006-04": {
-    "primaryCare": 75,
-    "specialist": 75,
+    "primaryCare": 0,
+    "specialist": 0,
     "beforeDeductible": true,
     "source": "sbc-by-plan-id"
   },
   "17970NJ0010006-05": {
-    "primaryCare": 25,
-    "specialist": 25,
+    "primaryCare": 0,
+    "specialist": 0,
     "beforeDeductible": true,
     "source": "sbc-by-plan-id"
   },
   "17970NJ0010006-06": {
-    "primaryCare": 15,
-    "specialist": 15,
+    "primaryCare": 0,
+    "specialist": 0,
     "beforeDeductible": true,
     "source": "sbc-by-plan-id"
   },
   "17970NJ0010007-01": {
-    "primaryCare": 50,
-    "specialist": 50,
+    "primaryCare": 0,
+    "specialist": 0,
     "beforeDeductible": true,
     "source": "sbc-by-plan-id"
   },
   "17970NJ0010007-02": {
-    "primaryCare": null,
+    "primaryCare": 0,
     "specialist": 0,
-    "beforeDeductible": false,
+    "beforeDeductible": true,
     "source": "sbc-by-plan-id"
   },
   "17970NJ0010007-03": {
-    "primaryCare": null,
+    "primaryCare": 0,
     "specialist": 0,
-    "beforeDeductible": false,
+    "beforeDeductible": true,
     "source": "sbc-by-plan-id"
   },
   "17970NJ0010009-01": {
@@ -96,14 +96,14 @@
     "source": "sbc-by-plan-id"
   },
   "17970NJ0010009-02": {
-    "primaryCare": null,
+    "primaryCare": 0,
     "specialist": 0,
-    "beforeDeductible": false,
+    "beforeDeductible": true,
     "source": "sbc-by-plan-id"
   },
   "17970NJ0010009-03": {
     "primaryCare": null,
-    "specialist": 75,
+    "specialist": 0,
     "beforeDeductible": false,
     "source": "sbc-by-plan-id"
   },
@@ -126,15 +126,15 @@
     "source": "sbc-by-plan-id"
   },
   "17970NJ0010010-01": {
-    "primaryCare": 75,
-    "specialist": 75,
+    "primaryCare": 0,
+    "specialist": 0,
     "beforeDeductible": true,
     "source": "sbc-by-plan-id"
   },
   "17970NJ0010010-02": {
-    "primaryCare": null,
+    "primaryCare": 0,
     "specialist": 0,
-    "beforeDeductible": false,
+    "beforeDeductible": true,
     "source": "sbc-by-plan-id"
   },
   "17970NJ0010010-03": {
@@ -144,39 +144,39 @@
     "source": "sbc-by-plan-id"
   },
   "17970NJ0010010-04": {
-    "primaryCare": 60,
-    "specialist": 60,
+    "primaryCare": 0,
+    "specialist": 0,
     "beforeDeductible": true,
     "source": "sbc-by-plan-id"
   },
   "17970NJ0010010-05": {
-    "primaryCare": 25,
-    "specialist": 25,
+    "primaryCare": 0,
+    "specialist": 0,
     "beforeDeductible": true,
     "source": "sbc-by-plan-id"
   },
   "17970NJ0010010-06": {
-    "primaryCare": 15,
-    "specialist": 15,
+    "primaryCare": 0,
+    "specialist": 0,
     "beforeDeductible": true,
     "source": "sbc-by-plan-id"
   },
   "17970NJ0010011-01": {
-    "primaryCare": 5,
+    "primaryCare": 0,
     "specialist": 60,
-    "beforeDeductible": false,
+    "beforeDeductible": true,
     "source": "sbc-by-plan-id"
   },
   "17970NJ0010011-02": {
-    "primaryCare": null,
+    "primaryCare": 0,
     "specialist": 0,
-    "beforeDeductible": false,
+    "beforeDeductible": true,
     "source": "sbc-by-plan-id"
   },
   "17970NJ0010011-03": {
-    "primaryCare": 5,
-    "specialist": 60,
-    "beforeDeductible": false,
+    "primaryCare": 0,
+    "specialist": 0,
+    "beforeDeductible": true,
     "source": "sbc-by-plan-id"
   },
   "23818NJ0010001-01": {
@@ -317,6 +317,154 @@
     "beforeDeductible": true,
     "source": "benefits-grid"
   },
+  "37777NJ0100002-01": {
+    "primaryCare": 50,
+    "specialist": null,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id"
+  },
+  "37777NJ0100002-02": {
+    "primaryCare": 0,
+    "specialist": 0,
+    "beforeDeductible": true,
+    "source": "sbc-by-plan-id"
+  },
+  "37777NJ0100002-03": {
+    "primaryCare": null,
+    "specialist": 0,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id"
+  },
+  "37777NJ0100005-01": {
+    "primaryCare": null,
+    "specialist": null,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id",
+    "coinsuredInstead": true
+  },
+  "37777NJ0100005-02": {
+    "primaryCare": 0,
+    "specialist": 0,
+    "beforeDeductible": true,
+    "source": "sbc-by-plan-id"
+  },
+  "37777NJ0100005-03": {
+    "primaryCare": null,
+    "specialist": 0,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id"
+  },
+  "37777NJ0100005-04": {
+    "primaryCare": null,
+    "specialist": null,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id",
+    "coinsuredInstead": true
+  },
+  "37777NJ0100005-05": {
+    "primaryCare": null,
+    "specialist": null,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id",
+    "coinsuredInstead": true
+  },
+  "37777NJ0100005-06": {
+    "primaryCare": null,
+    "specialist": null,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id",
+    "coinsuredInstead": true
+  },
+  "37777NJ0100006-01": {
+    "primaryCare": 10,
+    "specialist": 50,
+    "beforeDeductible": true,
+    "source": "sbc-by-plan-id"
+  },
+  "37777NJ0100006-02": {
+    "primaryCare": 0,
+    "specialist": 0,
+    "beforeDeductible": true,
+    "source": "sbc-by-plan-id"
+  },
+  "37777NJ0100006-03": {
+    "primaryCare": null,
+    "specialist": 0,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id"
+  },
+  "37777NJ0100007-01": {
+    "primaryCare": 5,
+    "specialist": 50,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id"
+  },
+  "37777NJ0100007-02": {
+    "primaryCare": 0,
+    "specialist": 0,
+    "beforeDeductible": true,
+    "source": "sbc-by-plan-id"
+  },
+  "37777NJ0100007-03": {
+    "primaryCare": null,
+    "specialist": 0,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id"
+  },
+  "37777NJ0100008-01": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": true,
+    "source": "sbc-by-plan-id"
+  },
+  "37777NJ0100008-02": {
+    "primaryCare": 0,
+    "specialist": 0,
+    "beforeDeductible": true,
+    "source": "sbc-by-plan-id"
+  },
+  "37777NJ0100008-03": {
+    "primaryCare": null,
+    "specialist": 0,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id"
+  },
+  "37777NJ0100009-01": {
+    "primaryCare": 20,
+    "specialist": 75,
+    "beforeDeductible": true,
+    "source": "sbc-by-plan-id"
+  },
+  "37777NJ0100009-02": {
+    "primaryCare": 0,
+    "specialist": 0,
+    "beforeDeductible": true,
+    "source": "sbc-by-plan-id"
+  },
+  "37777NJ0100009-03": {
+    "primaryCare": null,
+    "specialist": 0,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id"
+  },
+  "37777NJ0100009-04": {
+    "primaryCare": 20,
+    "specialist": 60,
+    "beforeDeductible": true,
+    "source": "sbc-by-plan-id"
+  },
+  "37777NJ0100009-05": {
+    "primaryCare": 20,
+    "specialist": 25,
+    "beforeDeductible": true,
+    "source": "sbc-by-plan-id"
+  },
+  "37777NJ0100009-06": {
+    "primaryCare": 10,
+    "specialist": 15,
+    "beforeDeductible": true,
+    "source": "sbc-by-plan-id"
+  },
   "91661NJ2270001-01": {
     "primaryCare": 30,
     "specialist": 70,
@@ -369,6 +517,12 @@
     "primaryCare": 30,
     "specialist": null,
     "beforeDeductible": false,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2280001-01": {
+    "primaryCare": 0,
+    "specialist": 0,
+    "beforeDeductible": true,
     "source": "sbc-by-name"
   },
   "91661NJ2340001-01": {

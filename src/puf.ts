@@ -246,6 +246,10 @@ function loadPlans(dir: string): Plan[] {
         copayPrimaryCare: copays.primary,
         copaySpecialist: copays.specialist,
         copayBeforeDeductible: copays.primary !== null && !yesNo(r["IS HSA ELIGIBLE"]),
+        // Set by applyCopayIndex when a benefit schedule was actually read.
+        // A copay recovered from the plan's marketing name is not a schedule.
+        copaysRead: false,
+        copaysCoinsuredInstead: false,
 
         hasSecondNetworkTier: yesNo(r["MULTIPLE NETWORK TIERS"]),
         deductibleIndividualTier2: preferTotal(
@@ -340,14 +344,31 @@ function applyCopayIndex(plans: Plan[], indexPath: string): void {
   if (!existsSync(indexPath)) return;
   const index: Record<
     string,
-    { primaryCare: number | null; specialist: number | null; beforeDeductible: boolean }
+    {
+      primaryCare: number | null;
+      specialist: number | null;
+      beforeDeductible: boolean;
+      coinsuredInstead?: boolean;
+    }
   > = JSON.parse(readFileSync(indexPath, "utf8"));
   for (const plan of plans) {
     const entry = index[plan.planId];
     if (!entry) continue;
     plan.copayPrimaryCare = entry.primaryCare;
     plan.copaySpecialist = entry.specialist;
-    plan.copayBeforeDeductible = entry.beforeDeductible && !plan.hsaEligible;
+    // We read this plan's schedule, whether or not it produced an amount.
+    plan.copaysRead = true;
+    plan.copaysCoinsuredInstead = entry.coinsuredInstead === true;
+    // The index value is the plan's own summary of benefits saying whether the
+    // deductible applies, so it is taken as stated. It used to be overridden
+    // whenever the plan was health savings account eligible, which silently
+    // discarded a true reading: UnitedHealthcare's 2026 bronze plans are filed
+    // HSA eligible and their SBCs state a $50 copay with the deductible not
+    // applying, both of which are correct since section 71306 made every bronze
+    // plan HSA compatible regardless of deductible structure. The one remaining
+    // guard lives in the cost model, so there is a single rule rather than two
+    // that can disagree.
+    plan.copayBeforeDeductible = entry.beforeDeductible;
   }
 }
 

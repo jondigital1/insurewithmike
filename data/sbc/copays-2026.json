@@ -3,23 +3,21 @@
     "source": "17970NJ0010003-01.pdf",
     "planId": "17970NJ0010003-01",
     "planName": "from WellCare of New Jersey Coverage for: Individual/Family | Plan Typ",
-    "primaryCare": 50,
+    "primaryCare": 0,
     "specialist": null,
-    "primaryBeforeDeductible": false,
+    "primaryBeforeDeductible": true,
     "specialistBeforeDeductible": false,
     "primaryCoinsurance": null,
     "specialistCoinsurance": 0.4,
-    "notes": [
-      "primary care read from the line above its label"
-    ]
+    "notes": []
   },
   {
     "source": "17970NJ0010003-02.pdf",
     "planId": "17970NJ0010003-02",
     "planName": "from WellCare of New Jersey Coverage for: Individual/Family | Plan Typ",
-    "primaryCare": null,
+    "primaryCare": 0,
     "specialist": 0,
-    "primaryBeforeDeductible": false,
+    "primaryBeforeDeductible": true,
     "specialistBeforeDeductible": true,
     "primaryCoinsurance": null,
     "specialistCoinsurance": null,
@@ -29,79 +27,69 @@
     "source": "17970NJ0010003-03.pdf",
     "planId": "17970NJ0010003-03",
     "planName": "from WellCare of New Jersey Coverage for: Individual/Family | Plan Typ",
-    "primaryCare": 50,
+    "primaryCare": 0,
     "specialist": 0,
     "primaryBeforeDeductible": true,
     "specialistBeforeDeductible": true,
     "primaryCoinsurance": null,
     "specialistCoinsurance": null,
-    "notes": [
-      "specialist copay below primary care copay, columns may have been misread"
-    ]
+    "notes": []
   },
   {
     "source": "17970NJ0010003-04.pdf",
     "planId": "17970NJ0010003-04",
     "planName": "from WellCare of New Jersey Coverage for: Individual/Family | Plan Typ",
-    "primaryCare": 50,
+    "primaryCare": 0,
     "specialist": null,
-    "primaryBeforeDeductible": false,
+    "primaryBeforeDeductible": true,
     "specialistBeforeDeductible": false,
     "primaryCoinsurance": null,
     "specialistCoinsurance": 0.35,
-    "notes": [
-      "primary care read from the line above its label"
-    ]
+    "notes": []
   },
   {
     "source": "17970NJ0010003-05.pdf",
     "planId": "17970NJ0010003-05",
     "planName": "from WellCare of New Jersey Coverage for: Individual/Family | Plan Typ",
-    "primaryCare": 30,
+    "primaryCare": 0,
     "specialist": null,
-    "primaryBeforeDeductible": false,
+    "primaryBeforeDeductible": true,
     "specialistBeforeDeductible": false,
     "primaryCoinsurance": null,
     "specialistCoinsurance": 0.15,
-    "notes": [
-      "primary care read from the line above its label"
-    ]
+    "notes": []
   },
   {
     "source": "17970NJ0010003-06.pdf",
     "planId": "17970NJ0010003-06",
     "planName": "from WellCare of New Jersey Coverage for: Individual/Family | Plan Typ",
-    "primaryCare": 15,
+    "primaryCare": 0,
     "specialist": null,
-    "primaryBeforeDeductible": false,
+    "primaryBeforeDeductible": true,
     "specialistBeforeDeductible": false,
     "primaryCoinsurance": null,
     "specialistCoinsurance": 0.1,
-    "notes": [
-      "primary care read from the line above its label"
-    ]
+    "notes": []
   },
   {
     "source": "17970NJ0010006-01.pdf",
     "planId": "17970NJ0010006-01",
     "planName": "from WellCare of New Jersey Coverage for: Individual/Family | Plan Typ",
-    "primaryCare": 75,
-    "specialist": 75,
+    "primaryCare": 0,
+    "specialist": 0,
     "primaryBeforeDeductible": true,
     "specialistBeforeDeductible": true,
     "primaryCoinsurance": null,
     "specialistCoinsurance": null,
-    "notes": [
-      "specialist read from the line above its label"
-    ]
+    "notes": []
   },
   {
     "source": "17970NJ0010006-02.pdf",
     "planId": "17970NJ0010006-02",
     "planName": "from WellCare of New Jersey Coverage for: Individual/Family | Plan Typ",
-    "primaryCare": null,
+    "primaryCare": 0,
     "specialist": 0,
-    "primaryBeforeDeductible": false,
+    "primaryBeforeDeductible": true,
     "specialistBeforeDeductible": true,
     "primaryCoinsurance": null,
     "specialistCoinsurance": null,
@@ -125,65 +113,57 @@
     "source": "17970NJ0010006-04.pdf",
     "planId": "17970NJ0010006-04",
     "planName": "from WellCare of New Jersey Coverage for: Individual/Family | Plan Typ",
-    "primaryCare": 75,
-    "specialist": 75,
+    "primaryCare": 0,
+    "specialist": 0,
     "primaryBeforeDeductible": true,
     "specialistBeforeDeductible": true,
     "primaryCoinsurance": null,
     "specialistCoinsurance": null,
-    "notes": [
-      "specialist read from the line above its label"
-    ]
+    "notes": []
   },
   {
     "source": "17970NJ0010006-05.pdf",
     "planId": "17970NJ0010006-05",
     "planName": "from WellCare of New Jersey Coverage for: Individual/Family | Plan Typ",
-    "primaryCare": 25,
-    "specialist": 25,
+    "primaryCare": 0,
+    "specialist": 0,
     "primaryBeforeDeductible": true,
     "specialistBeforeDeductible": true,
     "primaryCoinsurance": null,
     "specialistCoinsurance": null,
-    "notes": [
-      "specialist read from the line above its label"
-    ]
+    "notes": []
   },
   {
     "source": "17970NJ0010006-06.pdf",
     "planId": "17970NJ0010006-06",
     "planName": "from WellCare of New Jersey Coverage for: Individual/Family | Plan Typ",
-    "primaryCare": 15,
-    "specialist": 15,
+    "primaryCare": 0,
+    "specialist": 0,
     "primaryBeforeDeductible": true,
     "specialistBeforeDeductible": true,
     "primaryCoinsurance": null,
     "specialistCoinsurance": null,
-    "notes": [
-      "specialist read from the line above its label"
-    ]
+    "notes": []
   },
   {
     "source": "17970NJ0010007-01.pdf",
     "planId": "17970NJ0010007-01",
     "planName": "from WellCare of New Jersey Coverage for: Individual/Family | Plan Typ",
-    "primaryCare": 50,
-    "specialist": 50,
+    "primaryCare": 0,
+    "specialist": 0,
     "primaryBeforeDeductible": true,
     "specialistBeforeDeductible": true,
     "primaryCoinsurance": null,
     "specialistCoinsurance": null,
-    "notes": [
-      "specialist read from the line above its label"
-    ]
+    "notes": []
   },
   {
     "source": "17970NJ0010007-02.pdf",
     "planId": "17970NJ0010007-02",
     "planName": "from WellCare of New Jersey Coverage for: Individual/Family | Plan Typ",
-    "primaryCare": null,
+    "primaryCare": 0,
     "specialist": 0,
-    "primaryBeforeDeductible": false,
+    "primaryBeforeDeductible": true,
     "specialistBeforeDeductible": true,
     "primaryCoinsurance": null,
     "specialistCoinsurance": null,
@@ -193,9 +173,9 @@
     "source": "17970NJ0010007-03.pdf",
     "planId": "17970NJ0010007-03",
     "planName": "from WellCare of New Jersey Coverage for: Individual/Family | Plan Typ",
-    "primaryCare": null,
+    "primaryCare": 0,
     "specialist": 0,
-    "primaryBeforeDeductible": false,
+    "primaryBeforeDeductible": true,
     "specialistBeforeDeductible": true,
     "primaryCoinsurance": null,
     "specialistCoinsurance": null,
@@ -217,9 +197,9 @@
     "source": "17970NJ0010009-02.pdf",
     "planId": "17970NJ0010009-02",
     "planName": "from WellCare of New Jersey Coverage for: Individual/Family | Plan Typ",
-    "primaryCare": null,
+    "primaryCare": 0,
     "specialist": 0,
-    "primaryBeforeDeductible": false,
+    "primaryBeforeDeductible": true,
     "specialistBeforeDeductible": true,
     "primaryCoinsurance": null,
     "specialistCoinsurance": null,
@@ -230,9 +210,9 @@
     "planId": "17970NJ0010009-03",
     "planName": "from WellCare of New Jersey Coverage for: Individual/Family | Plan Typ",
     "primaryCare": null,
-    "specialist": 75,
+    "specialist": 0,
     "primaryBeforeDeductible": false,
-    "specialistBeforeDeductible": false,
+    "specialistBeforeDeductible": true,
     "primaryCoinsurance": null,
     "specialistCoinsurance": null,
     "notes": [
@@ -279,23 +259,21 @@
     "source": "17970NJ0010010-01.pdf",
     "planId": "17970NJ0010010-01",
     "planName": "from WellCare of New Jersey Coverage for: Individual/Family | Plan Typ",
-    "primaryCare": 75,
-    "specialist": 75,
+    "primaryCare": 0,
+    "specialist": 0,
     "primaryBeforeDeductible": true,
     "specialistBeforeDeductible": true,
     "primaryCoinsurance": null,
     "specialistCoinsurance": null,
-    "notes": [
-      "specialist read from the line above its label"
-    ]
+    "notes": []
   },
   {
     "source": "17970NJ0010010-02.pdf",
     "planId": "17970NJ0010010-02",
     "planName": "from WellCare of New Jersey Coverage for: Individual/Family | Plan Typ",
-    "primaryCare": null,
+    "primaryCare": 0,
     "specialist": 0,
-    "primaryBeforeDeductible": false,
+    "primaryBeforeDeductible": true,
     "specialistBeforeDeductible": true,
     "primaryCoinsurance": null,
     "specialistCoinsurance": null,
@@ -319,65 +297,57 @@
     "source": "17970NJ0010010-04.pdf",
     "planId": "17970NJ0010010-04",
     "planName": "from WellCare of New Jersey Coverage for: Individual/Family | Plan Typ",
-    "primaryCare": 60,
-    "specialist": 60,
+    "primaryCare": 0,
+    "specialist": 0,
     "primaryBeforeDeductible": true,
     "specialistBeforeDeductible": true,
     "primaryCoinsurance": null,
     "specialistCoinsurance": null,
-    "notes": [
-      "specialist read from the line above its label"
-    ]
+    "notes": []
   },
   {
     "source": "17970NJ0010010-05.pdf",
     "planId": "17970NJ0010010-05",
     "planName": "from WellCare of New Jersey Coverage for: Individual/Family | Plan Typ",
-    "primaryCare": 25,
-    "specialist": 25,
+    "primaryCare": 0,
+    "specialist": 0,
     "primaryBeforeDeductible": true,
     "specialistBeforeDeductible": true,
     "primaryCoinsurance": null,
     "specialistCoinsurance": null,
-    "notes": [
-      "specialist read from the line above its label"
-    ]
+    "notes": []
   },
   {
     "source": "17970NJ0010010-06.pdf",
     "planId": "17970NJ0010010-06",
     "planName": "from WellCare of New Jersey Coverage for: Individual/Family | Plan Typ",
-    "primaryCare": 15,
-    "specialist": 15,
+    "primaryCare": 0,
+    "specialist": 0,
     "primaryBeforeDeductible": true,
     "specialistBeforeDeductible": true,
     "primaryCoinsurance": null,
     "specialistCoinsurance": null,
-    "notes": [
-      "specialist read from the line above its label"
-    ]
+    "notes": []
   },
   {
     "source": "17970NJ0010011-01.pdf",
     "planId": "17970NJ0010011-01",
     "planName": "from WellCare of New Jersey Coverage for: Individual/Family | Plan Typ",
-    "primaryCare": 5,
+    "primaryCare": 0,
     "specialist": 60,
-    "primaryBeforeDeductible": false,
+    "primaryBeforeDeductible": true,
     "specialistBeforeDeductible": false,
     "primaryCoinsurance": null,
     "specialistCoinsurance": null,
-    "notes": [
-      "primary care read from the line above its label"
-    ]
+    "notes": []
   },
   {
     "source": "17970NJ0010011-02.pdf",
     "planId": "17970NJ0010011-02",
     "planName": "from WellCare of New Jersey Coverage for: Individual/Family | Plan Typ",
-    "primaryCare": null,
+    "primaryCare": 0,
     "specialist": 0,
-    "primaryBeforeDeductible": false,
+    "primaryBeforeDeductible": true,
     "specialistBeforeDeductible": true,
     "primaryCoinsurance": null,
     "specialistCoinsurance": null,
@@ -387,10 +357,10 @@
     "source": "17970NJ0010011-03.pdf",
     "planId": "17970NJ0010011-03",
     "planName": "from WellCare of New Jersey Coverage for: Individual/Family | Plan Typ",
-    "primaryCare": 5,
-    "specialist": 60,
-    "primaryBeforeDeductible": false,
-    "specialistBeforeDeductible": false,
+    "primaryCare": 0,
+    "specialist": 0,
+    "primaryBeforeDeductible": true,
+    "specialistBeforeDeductible": true,
     "primaryCoinsurance": null,
     "specialistCoinsurance": null,
     "notes": []
@@ -411,10 +381,10 @@
     "source": "horizon-adv-epo-essentials.pdf",
     "planId": null,
     "planName": "Horizon Advantage EPO Essentials",
-    "primaryCare": null,
-    "specialist": null,
-    "primaryBeforeDeductible": false,
-    "specialistBeforeDeductible": false,
+    "primaryCare": 0,
+    "specialist": 0,
+    "primaryBeforeDeductible": true,
+    "specialistBeforeDeductible": true,
     "primaryCoinsurance": null,
     "specialistCoinsurance": null,
     "notes": []
@@ -532,5 +502,305 @@
       "primary care row not found",
       "specialist row not found"
     ]
+  },
+  {
+    "source": "37777NJ0100002-01.pdf",
+    "planId": "37777NJ0100002-01",
+    "planName": "Insurance Company",
+    "primaryCare": 50,
+    "specialist": null,
+    "primaryBeforeDeductible": false,
+    "specialistBeforeDeductible": false,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": 0.3,
+    "notes": []
+  },
+  {
+    "source": "37777NJ0100002-02.pdf",
+    "planId": "37777NJ0100002-02",
+    "planName": "Insurance Company",
+    "primaryCare": 0,
+    "specialist": 0,
+    "primaryBeforeDeductible": true,
+    "specialistBeforeDeductible": true,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": []
+  },
+  {
+    "source": "37777NJ0100002-03.pdf",
+    "planId": "37777NJ0100002-03",
+    "planName": "Insurance Company",
+    "primaryCare": null,
+    "specialist": 0,
+    "primaryBeforeDeductible": false,
+    "specialistBeforeDeductible": true,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": [
+      "primary care row not found"
+    ]
+  },
+  {
+    "source": "37777NJ0100005-01.pdf",
+    "planId": "37777NJ0100005-01",
+    "planName": "Insurance Company",
+    "primaryCare": null,
+    "specialist": null,
+    "primaryBeforeDeductible": false,
+    "specialistBeforeDeductible": false,
+    "primaryCoinsurance": 0.4,
+    "specialistCoinsurance": 0.4,
+    "notes": []
+  },
+  {
+    "source": "37777NJ0100005-02.pdf",
+    "planId": "37777NJ0100005-02",
+    "planName": "Insurance Company",
+    "primaryCare": 0,
+    "specialist": 0,
+    "primaryBeforeDeductible": true,
+    "specialistBeforeDeductible": true,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": []
+  },
+  {
+    "source": "37777NJ0100005-03.pdf",
+    "planId": "37777NJ0100005-03",
+    "planName": "Insurance Company",
+    "primaryCare": null,
+    "specialist": 0,
+    "primaryBeforeDeductible": false,
+    "specialistBeforeDeductible": true,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": [
+      "primary care row not found"
+    ]
+  },
+  {
+    "source": "37777NJ0100005-04.pdf",
+    "planId": "37777NJ0100005-04",
+    "planName": "Insurance Company",
+    "primaryCare": null,
+    "specialist": null,
+    "primaryBeforeDeductible": false,
+    "specialistBeforeDeductible": false,
+    "primaryCoinsurance": 0.4,
+    "specialistCoinsurance": 0.4,
+    "notes": []
+  },
+  {
+    "source": "37777NJ0100005-05.pdf",
+    "planId": "37777NJ0100005-05",
+    "planName": "Insurance Company",
+    "primaryCare": null,
+    "specialist": null,
+    "primaryBeforeDeductible": false,
+    "specialistBeforeDeductible": false,
+    "primaryCoinsurance": 0.2,
+    "specialistCoinsurance": 0.2,
+    "notes": []
+  },
+  {
+    "source": "37777NJ0100005-06.pdf",
+    "planId": "37777NJ0100005-06",
+    "planName": "Insurance Company",
+    "primaryCare": null,
+    "specialist": null,
+    "primaryBeforeDeductible": false,
+    "specialistBeforeDeductible": false,
+    "primaryCoinsurance": 0.1,
+    "specialistCoinsurance": 0.1,
+    "notes": []
+  },
+  {
+    "source": "37777NJ0100006-01.pdf",
+    "planId": "37777NJ0100006-01",
+    "planName": "Insurance Company",
+    "primaryCare": 10,
+    "specialist": 50,
+    "primaryBeforeDeductible": true,
+    "specialistBeforeDeductible": true,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": []
+  },
+  {
+    "source": "37777NJ0100006-02.pdf",
+    "planId": "37777NJ0100006-02",
+    "planName": "Insurance Company",
+    "primaryCare": 0,
+    "specialist": 0,
+    "primaryBeforeDeductible": true,
+    "specialistBeforeDeductible": true,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": []
+  },
+  {
+    "source": "37777NJ0100006-03.pdf",
+    "planId": "37777NJ0100006-03",
+    "planName": "Insurance Company",
+    "primaryCare": null,
+    "specialist": 0,
+    "primaryBeforeDeductible": false,
+    "specialistBeforeDeductible": true,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": [
+      "primary care row not found"
+    ]
+  },
+  {
+    "source": "37777NJ0100007-01.pdf",
+    "planId": "37777NJ0100007-01",
+    "planName": "Insurance Company",
+    "primaryCare": 5,
+    "specialist": 50,
+    "primaryBeforeDeductible": false,
+    "specialistBeforeDeductible": true,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": []
+  },
+  {
+    "source": "37777NJ0100007-02.pdf",
+    "planId": "37777NJ0100007-02",
+    "planName": "Insurance Company",
+    "primaryCare": 0,
+    "specialist": 0,
+    "primaryBeforeDeductible": true,
+    "specialistBeforeDeductible": true,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": []
+  },
+  {
+    "source": "37777NJ0100007-03.pdf",
+    "planId": "37777NJ0100007-03",
+    "planName": "Insurance Company",
+    "primaryCare": null,
+    "specialist": 0,
+    "primaryBeforeDeductible": false,
+    "specialistBeforeDeductible": true,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": [
+      "primary care row not found"
+    ]
+  },
+  {
+    "source": "37777NJ0100008-01.pdf",
+    "planId": "37777NJ0100008-01",
+    "planName": "Insurance Company",
+    "primaryCare": 50,
+    "specialist": 75,
+    "primaryBeforeDeductible": true,
+    "specialistBeforeDeductible": false,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": []
+  },
+  {
+    "source": "37777NJ0100008-02.pdf",
+    "planId": "37777NJ0100008-02",
+    "planName": "Insurance Company",
+    "primaryCare": 0,
+    "specialist": 0,
+    "primaryBeforeDeductible": true,
+    "specialistBeforeDeductible": true,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": []
+  },
+  {
+    "source": "37777NJ0100008-03.pdf",
+    "planId": "37777NJ0100008-03",
+    "planName": "Insurance Company",
+    "primaryCare": null,
+    "specialist": 0,
+    "primaryBeforeDeductible": false,
+    "specialistBeforeDeductible": true,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": [
+      "primary care row not found"
+    ]
+  },
+  {
+    "source": "37777NJ0100009-01.pdf",
+    "planId": "37777NJ0100009-01",
+    "planName": "Insurance Company",
+    "primaryCare": 20,
+    "specialist": 75,
+    "primaryBeforeDeductible": true,
+    "specialistBeforeDeductible": true,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": []
+  },
+  {
+    "source": "37777NJ0100009-02.pdf",
+    "planId": "37777NJ0100009-02",
+    "planName": "Insurance Company",
+    "primaryCare": 0,
+    "specialist": 0,
+    "primaryBeforeDeductible": true,
+    "specialistBeforeDeductible": true,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": []
+  },
+  {
+    "source": "37777NJ0100009-03.pdf",
+    "planId": "37777NJ0100009-03",
+    "planName": "Insurance Company",
+    "primaryCare": null,
+    "specialist": 0,
+    "primaryBeforeDeductible": false,
+    "specialistBeforeDeductible": true,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": [
+      "primary care row not found"
+    ]
+  },
+  {
+    "source": "37777NJ0100009-04.pdf",
+    "planId": "37777NJ0100009-04",
+    "planName": "Insurance Company",
+    "primaryCare": 20,
+    "specialist": 60,
+    "primaryBeforeDeductible": true,
+    "specialistBeforeDeductible": true,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": []
+  },
+  {
+    "source": "37777NJ0100009-05.pdf",
+    "planId": "37777NJ0100009-05",
+    "planName": "Insurance Company",
+    "primaryCare": 20,
+    "specialist": 25,
+    "primaryBeforeDeductible": true,
+    "specialistBeforeDeductible": true,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": []
+  },
+  {
+    "source": "37777NJ0100009-06.pdf",
+    "planId": "37777NJ0100009-06",
+    "planName": "Insurance Company",
+    "primaryCare": 10,
+    "specialist": 15,
+    "primaryBeforeDeductible": true,
+    "specialistBeforeDeductible": true,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": []
   }
 ]

@@ -3,6 +3,7 @@
  * makes available in a different shape.
  *
  *   Ambetter     per plan SBCs, addressed by plan id, so the join is exact
+ *   UnitedHealthcare  the same, once you know their URL pattern
  *   Horizon      per plan SBCs, joined on plan name
  *   Oscar        one benefits grid, joined on plan name and cost sharing variant
  *   AmeriHealth  office visit copays stated in the plan name itself
@@ -24,6 +25,8 @@ interface SbcRecord {
   specialist: number | null;
   primaryBeforeDeductible: boolean;
   specialistBeforeDeductible: boolean;
+  primaryCoinsurance: number | null;
+  specialistCoinsurance: number | null;
 }
 
 interface OscarRecord {
@@ -38,6 +41,16 @@ export interface CopayEntry {
   /** True when the copay applies without the deductible being met first. */
   beforeDeductible: boolean;
   source: string;
+  /**
+   * Set when the summary of benefits was read and states a coinsurance
+   * percentage for office visits rather than a flat copay.
+   *
+   * This is the difference between "this plan has no copay" and "we do not know
+   * what this plan's copay is", which look identical if you only store the
+   * amount. UnitedHealthcare's Silver Value coinsures office visits at 40 per
+   * cent, so a null copay there is the answer, not a gap.
+   */
+  coinsuredInstead?: boolean;
 }
 
 const read = <T,>(p: string): T[] => (existsSync(p) ? JSON.parse(readFileSync(p, "utf8")) : []);
@@ -71,12 +84,21 @@ const horizonSbc = sbc.filter((s) => !s.planId && s.planName);
 
 for (const plan of dataset.plans) {
   const exact = byPlanId.get(plan.planId);
-  if (exact && (exact.primaryCare !== null || exact.specialist !== null)) {
+  if (
+    exact &&
+    (exact.primaryCare !== null ||
+      exact.specialist !== null ||
+      exact.primaryCoinsurance !== null)
+  ) {
     index[plan.planId] = {
       primaryCare: exact.primaryCare,
       specialist: exact.specialist,
       beforeDeductible: exact.primaryBeforeDeductible,
       source: "sbc-by-plan-id",
+      // A read that found a percentage rather than an amount is still a read.
+      ...(exact.primaryCare === null && exact.primaryCoinsurance !== null
+        ? { coinsuredInstead: true }
+        : {}),
     };
     continue;
   }
@@ -122,8 +144,13 @@ for (const plan of dataset.plans) {
     index[plan.planId] = {
       primaryCare: named.primary,
       specialist: named.specialist,
-      // Health savings account plans cannot charge a copay before the
-      // deductible, so those are recorded as applying afterwards.
+      // The plan name states an amount but never says whether the deductible
+      // applies first, so this is inferred rather than read. Health savings
+      // account plans are assumed to charge it afterwards. That is no longer a
+      // rule for bronze, which became HSA compatible in 2026 regardless of
+      // deductible structure, but it is the conservative reading: it understates
+      // the plan rather than crediting it with a copay it may not offer. The
+      // fix is AmeriHealth's SBCs, not a better guess.
       beforeDeductible: !plan.hsaEligible,
       source: "plan-name",
     };
