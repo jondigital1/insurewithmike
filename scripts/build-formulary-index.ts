@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Builds a compact New Jersey formulary index from carrier machine readable
  * files.
  *
@@ -49,8 +49,6 @@ export interface DrugOnPlan {
 export interface FormularyEntry {
   rxnorm: string;
   name: string;
-  /** Lower cased name, for matching what a client types. */
-  search: string;
   plans: Record<string, DrugOnPlan>;
 }
 
@@ -84,12 +82,9 @@ for (const drug of raw) {
     if (p.step_therapy) withStep += 1;
   }
   if (Object.keys(plans).length === 0) continue;
-  entries.push({
-    rxnorm: drug.rxnorm_id,
-    name: drug.drug_name,
-    search: drug.drug_name.toLowerCase(),
-    plans,
-  });
+  // No lowercased duplicate of the name: the matcher works on whole words and
+  // lowercases as it goes, and the copy was a third of the payload.
+  entries.push({ rxnorm: drug.rxnorm_id, name: drug.drug_name, plans });
 }
 
 const out = process.argv[3] ?? "data/formulary/nj-2026.json";
@@ -113,3 +108,4 @@ console.log(
 console.log(
   `  Those two are what turn "it is covered" into a phone call, so they are worth\n  surfacing to the agent rather than only the tier.`,
 );
+

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Drug coverage lookup.
  *
  * The intake asks clients to name what they take, from the bottle. That gives
@@ -22,7 +22,6 @@ export interface DrugOnPlan {
 export interface FormularyEntry {
   rxnorm: string;
   name: string;
-  search: string;
   plans: Record<string, DrugOnPlan>;
 }
 
@@ -180,7 +179,7 @@ export function lookupDrug(query: string, index: FormularyIndex): DrugLookup {
 
   // Micrograms are written as milligrams in the formulary, so 75 mcg has to be
   // tried as 0.075 mg or the strength never matches.
-  if (/\bmcg\b|\bµg\b/i.test(query)) {
+  if (/\bmcg\b/i.test(query)) {
     parsed.strengths = [...parsed.strengths, ...parsed.strengths.map((s) => s / 1000)];
   }
   const none: DrugLookup = {
@@ -286,3 +285,4 @@ export function checkDrugs(queries: string[], index: FormularyIndex | null): For
 
   return { lookups, coveredPlanIds, notes };
 }
+

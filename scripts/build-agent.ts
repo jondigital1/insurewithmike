@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Builds the agent facing recommendation page, plus the plan data bundle and
  * the engine bundle it runs on.
  *
@@ -13,7 +13,7 @@
  * Usage: npx tsx scripts/build-agent.ts <outdir>
  */
 
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync, readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { build } from "esbuild";
 import { loadPlanDataset } from "../src/puf.ts";
@@ -53,6 +53,18 @@ await build({
   logLevel: "warning",
 });
 console.log("engine.js       bundled from the same modules Node runs");
+
+// Formulary, when we have one. 3.4 MB of JSON that gzips to about 118 KB, so
+// the transfer cost is modest even though the file looks alarming on disk.
+const formularySrc = "data/formulary/nj-2026.json";
+if (existsSync(formularySrc)) {
+  const fm = readFileSync(formularySrc, "utf8");
+  writeFileSync(join(outDir, "formulary.json"), fm, "utf8");
+  const drugCount = (JSON.parse(fm) as { drugs: unknown[] }).drugs.length;
+  console.log(`formulary.json  ${(fm.length / 1024).toFixed(0)} KB   ${drugCount} drugs`);
+} else {
+  console.log("formulary.json  skipped, no index built");
+}
 
 // -------------------------------------------------------------- the page
 
@@ -160,6 +172,13 @@ ${TOKENS}
     letter-spacing: .06em; text-transform: uppercase; padding: 3px 8px;
     border-radius: 6px; background: var(--am-amber-100); color: var(--am-amber-text);
   }
+
+  .drugflag {
+    display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: .05em;
+    text-transform: uppercase; padding: 3px 7px; border-radius: 6px;
+    background: var(--am-amber-100); color: var(--am-amber-text); white-space: nowrap;
+  }
+  .drugflag.soft { background: var(--am-line-soft); color: var(--am-muted); }
 
   .pick { border-left: 4px solid var(--am-blue-600); }
   .pick.good { border-left-color: var(--am-green); }
@@ -314,6 +333,42 @@ ${TOKENS}
       html += '</ul></section>';
     }
 
+    // ---- prescriptions
+    const dr = result.drugs;
+    if (dr && dr.lookups.length) {
+      const TIER_WORDS = {
+        GENERIC: "Generic",
+        PREFERREDGENERIC: "Preferred generic",
+        PREFERREDBRAND: "Preferred brand",
+        "NON-PREFERREDBRAND": "Non preferred brand",
+        SPECIALTY: "Specialty",
+        ZEROCOSTSHAREPREVENTATIVEDRUGS: "No cost preventive",
+      };
+      html += '<section class="card"><p class="eyebrow">Their prescriptions</p><div class="scroll"><table>';
+      html += '<thead><tr><th>They wrote</th><th>Matched</th><th>Tier</th><th>Flags</th></tr></thead><tbody>';
+      for (const l of dr.lookups) {
+        const first = Object.values(l.plans)[0];
+        const flagBits = [];
+        if (first && first.priorAuth) flagBits.push('<span class="drugflag">prior authorisation</span>');
+        if (first && first.stepTherapy) flagBits.push('<span class="drugflag">step therapy</span>');
+        if (first && first.quantityLimit) flagBits.push('<span class="drugflag">quantity limit</span>');
+        if (l.confidence === "likely" && l.candidateCount > 1) {
+          flagBits.push('<span class="drugflag soft">' + l.candidateCount + ' possible matches</span>');
+        }
+        html += '<tr><td>' + esc(l.query) + '</td>' +
+          '<td>' + (l.matchedName ? esc(l.matchedName) : '<em>not in the data we hold</em>') + '</td>' +
+          '<td>' + (first ? esc(TIER_WORDS[first.tier] || first.tier) : '&mdash;') + '</td>' +
+          '<td>' + (flagBits.join(' ') || '&mdash;') + '</td></tr>';
+      }
+      html += '</tbody></table></div>';
+      html += '<p style="margin:16px 0 0;font-size:13px;color:var(--am-muted)">Formulary data covers ' +
+        dr.coveredPlanIds.length + ' plans, all Ambetter. For the other four carriers we hold nothing, so a blank here means no data rather than no coverage.</p>';
+      for (const n of dr.notes) {
+        html += '<p style="margin:10px 0 0;font-size:14px;line-height:1.55;color:var(--am-ink-soft)">' + esc(n) + '</p>';
+      }
+      html += '</section>';
+    }
+
     // ---- the shortlist
     const TIER_LABEL = { good: "Good, lowest cost", better: "Better, balanced", best: "Best, most protection" };
     for (const p of picks) {
@@ -371,9 +426,15 @@ ${TOKENS}
       return;
     }
     const parsed = JSON.parse(raw);
-    fetch("plans.json")
-      .then((r) => r.json())
-      .then((plans) => render(window.AskMike.recommend(parsed.answers, plans), parsed.submittedAt))
+    Promise.all([
+      fetch("plans.json").then((r) => r.json()),
+      // The formulary is optional. If it is missing the recommendation still
+      // works and simply says nothing about drugs, rather than failing.
+      fetch("formulary.json").then((r) => (r.ok ? r.json() : null)).catch(() => null),
+    ])
+      .then(([plans, formulary]) =>
+        render(window.AskMike.recommend(parsed.answers, plans, formulary), parsed.submittedAt),
+      )
       .catch((err) => {
         out.innerHTML = '<div class="empty"><h1>Could not produce a recommendation</h1><p>' + esc(err && err.message ? err.message : err) + '</p></div>';
       });
@@ -389,3 +450,5 @@ ${TOKENS}
 
 writeFileSync(join(outDir, "agent.html"), html, "utf8");
 console.log(`agent.html      ${(html.length / 1024).toFixed(1)} KB`);
+
+

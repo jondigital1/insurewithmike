@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Browser entry point for the agent facing recommendation.
  *
  * The same engine modules run here as run in Node. The only difference is
@@ -13,6 +13,7 @@ import { buildShortlist, evaluateAllPlans, eligibleSilverVariant } from "../rank
 import { computeSubsidy, njHealthPlanSavings } from "../subsidy.ts";
 import { CATEGORY_LABELS, federalPovertyLevel, fplPercentage } from "../assumptions.ts";
 import { coverageTimeline } from "../planyear.ts";
+import { checkDrugs, type FormularyIndex } from "../formulary.ts";
 import type { PlanDataset, RateRow } from "../types.ts";
 
 interface SerialisedDataset {
@@ -32,9 +33,23 @@ function hydrate(raw: SerialisedDataset): PlanDataset {
   };
 }
 
-export function recommend(answers: Answers, raw: SerialisedDataset) {
+export function recommend(
+  answers: Answers,
+  raw: SerialisedDataset,
+  formulary: FormularyIndex | null = null,
+) {
   const dataset = hydrate(raw);
   const { household, flags, unsure } = toHousehold(answers);
+
+  // The client names their prescriptions from the bottle. Check them against
+  // whatever formulary data we hold, keeping "no data" separate from
+  // "not covered".
+  const medications = Array.isArray(answers.medications)
+    ? (answers.medications as string[])
+    : typeof answers.medications === "string"
+      ? [answers.medications]
+      : [];
+  const drugs = checkDrugs(medications.filter(Boolean), formulary);
 
   const subsidy = computeSubsidy(dataset, household);
   const evaluations = evaluateAllPlans(dataset, household, new Map(), subsidy);
@@ -63,6 +78,7 @@ export function recommend(answers: Answers, raw: SerialisedDataset) {
   return {
     household,
     timeline,
+    drugs,
     flags: [...flags, ...subsidy.notes, njhps.note],
     unsure,
     subsidy,
@@ -92,3 +108,4 @@ declare global {
 }
 
 window.AskMike = { recommend };
+
