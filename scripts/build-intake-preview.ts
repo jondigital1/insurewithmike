@@ -860,8 +860,11 @@ const html = `<title>Ask Mike, client intake</title>
       JSON.stringify({ answers, submittedAt: new Date().toISOString() }),
     );
     // Until there is an agent login, the recommendation opens in its own window
-    // so the two sides can be seen side by side.
+    // so both sides can be seen at once during testing. The client stays on
+    // their own side and lands on the thank you page, which is the only thing
+    // that will happen once the agent side sits behind a login.
     window.open("agent.html", "askmike-agent");
+    window.location.href = "thanks.html";
   });
 
   buildPeople();
