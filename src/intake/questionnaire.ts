@@ -39,7 +39,13 @@ export type QuestionKind =
   | "text"
   | "longtext"
   | "person"
-  | "repeater";
+  | "repeater"
+  /**
+   * A figure the form works out from earlier answers and shows back for
+   * confirmation, rather than asking anyone to add it up. Read only, and it
+   * updates live as the boxes above it change.
+   */
+  | "estimate";
 
 export interface Option {
   value: string;
@@ -97,20 +103,21 @@ const VISIT_BANDS: Option[] = [
   { value: "21+", label: "More than 20", midpoint: 26 },
 ];
 
+/** Pay periods per year, used to annualise whatever figure someone quotes. */
+const FREQUENCIES: Option[] = [
+  { value: "hourly", label: "Per hour", midpoint: 2080 },
+  { value: "weekly", label: "Per week", midpoint: 52 },
+  { value: "biweekly", label: "Every 2 weeks", midpoint: 26 },
+  { value: "semimonthly", label: "Twice a month", midpoint: 24 },
+  { value: "monthly", label: "Per month", midpoint: 12 },
+  { value: "yearly", label: "Per year", midpoint: 1 },
+];
+
 const RARE_BANDS: Option[] = [
   { value: "0", label: "None", midpoint: 0 },
   { value: "1", label: "Once", midpoint: 1 },
   { value: "2-3", label: "2 or 3", midpoint: 2.5 },
   { value: "4+", label: "4 or more", midpoint: 5 },
-];
-
-const FREQUENCIES: Option[] = [
-  { value: "hourly", label: "Per hour" },
-  { value: "weekly", label: "Per week" },
-  { value: "biweekly", label: "Every 2 weeks" },
-  { value: "semimonthly", label: "Twice a month" },
-  { value: "monthly", label: "Per month" },
-  { value: "yearly", label: "Per year" },
 ];
 
 export const QUESTIONNAIRE: Section[] = [
@@ -328,7 +335,7 @@ export const QUESTIONNAIRE: Section[] = [
     id: "income",
     title: "Income",
     blurb:
-      "This decides how much help you get paying for coverage, and it is the single biggest factor in what you will actually pay. We do not ask where you work.",
+      "This decides how much help you get paying for coverage, and it is the single biggest factor in what you will actually pay. Answer the boxes however is easiest and we will add it up for you at the end. We do not ask where you work.",
     half: "eligibility",
     questions: [
       {
@@ -367,7 +374,8 @@ export const QUESTIONNAIRE: Section[] = [
       {
         id: "wages",
         kind: "currency",
-        label: "Wages before tax",
+        label: "Pay before tax",
+        help: "Whatever figure is easiest to quote. The next box says how often it arrives.",
         required: true,
         perPerson: true,
         showIf: { question: "employment_status", equals: ["employed", "both"] },
@@ -395,50 +403,35 @@ export const QUESTIONNAIRE: Section[] = [
         routing: "intake",
       },
       {
-        id: "other_income",
-        kind: "multichoice",
-        label: "Does anyone receive any of these?",
-        help: "Do not include child support, veterans payments or Supplemental Security Income. Those do not count.",
-        options: [
-          { value: "social_security", label: "Social Security" },
-          { value: "pension", label: "Pension" },
-          { value: "retirement", label: "Withdrawals from retirement accounts" },
-          { value: "unemployment", label: "Unemployment" },
-          { value: "rental", label: "Rental or royalty income" },
-          { value: "alimony_received", label: "Alimony, from a divorce finalised before 2019" },
-          { value: "farming", label: "Farming or fishing income" },
-          { value: "other", label: "Something else" },
-          { value: "none", label: "None of these" },
-        ],
-        required: true,
-        routing: "intake",
-        rationale: "All of it counts toward modified adjusted gross income, which is what the subsidy is calculated on.",
-      },
-      {
-        id: "deductions",
-        kind: "multichoice",
-        label: "Do you pay any of these?",
-        help: "These lower the income we count, which usually increases the help you get. Worth checking.",
-        options: [
-          { value: "student_loan_interest", label: "Student loan interest" },
-          { value: "alimony_paid", label: "Alimony, from a divorce finalised before 2019" },
-          { value: "hsa", label: "Contributions to a health savings account" },
-          { value: "ira", label: "Contributions to a traditional IRA" },
-          { value: "none", label: "None of these" },
-        ],
-        required: true,
-        routing: "intake",
-        rationale: "Routinely forgotten, and they move the subsidy in the client's favour.",
-      },
-      {
-        id: "expected_income",
+        id: "other_income_amount",
         kind: "currency",
-        label: "Your best estimate of total household income for next year",
-        help: "Before tax, everyone combined. An estimate is fine, but try to be realistic rather than optimistic.",
+        label: "Anything else coming in, per year",
+        help: "Social Security, pensions, retirement withdrawals, unemployment, rental or royalty income, alimony from a divorce finalised before 2019, farming or fishing. Leave out child support, veterans payments and Supplemental Security Income, which do not count. Enter 0 if there is none.",
         required: true,
         routing: "intake",
         rationale:
-          "The subsidy is computed on projected income, not last year's. Getting this wrong is reconciled at tax time.",
+          "One box rather than the state application's checklist. The subsidy maths only needs the total, and the categories exist for verification, which happens in GetCoveredNJ rather than here.",
+      },
+      {
+        id: "deductions_amount",
+        kind: "currency",
+        label: "Anything that lowers your taxable income, per year",
+        help: "Student loan interest, alimony you pay from a divorce finalised before 2019, health savings account contributions, traditional IRA contributions. These reduce the income we count, which usually increases the help you get. Enter 0 if none apply.",
+        required: true,
+        allowUnsure: true,
+        routing: "intake",
+        rationale:
+          "Routinely forgotten, and they move the subsidy in the client's favour. Subtracted from the estimate rather than left for the agent to remember.",
+      },
+      {
+        id: "expected_income",
+        kind: "estimate",
+        label: "Estimated annual household income",
+        help: "Does this look accurate?",
+        required: true,
+        routing: "intake",
+        rationale:
+          "Worked out from the boxes above rather than asked for, because nobody can add up their own household income on the spot and the number they guess is the one the whole subsidy calculation runs on. Shown back for confirmation so a wrong figure is caught here rather than at tax time. If the client says it is wrong they type the right number and that overrides the estimate.",
       },
       {
         id: "income_stability",

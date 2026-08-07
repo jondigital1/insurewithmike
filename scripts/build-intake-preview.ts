@@ -14,6 +14,18 @@ import { dirname } from "node:path";
 import { QUESTIONNAIRE, allQuestions } from "../src/intake/questionnaire.ts";
 import type { Question, Section } from "../src/intake/questionnaire.ts";
 
+/**
+ * Pay periods per year, read off the questionnaire rather than restated here,
+ * so the annualising the page does cannot drift from the options it offers.
+ */
+const FREQUENCY_PERIODS = (allQuestions().find((q) => q.id === "wages_frequency")?.options ?? []).map(
+  (o) => ({ value: o.value, periods: o.midpoint ?? 1 }),
+);
+if (!FREQUENCY_PERIODS.length || FREQUENCY_PERIODS.some((f) => !f.periods)) {
+  console.error("\nwages_frequency options are missing periods per year. Income cannot be annualised.");
+  process.exit(1);
+}
+
 // ---------------------------------------------------------------- validation
 
 const problems: string[] = [];
@@ -96,6 +108,26 @@ function renderInput(q: Question, suffix = ""): string {
       return `<div class="withunit"><input class="field short" type="number" id="${name}" name="${name}" min="0" />${q.unit ? `<span class="unit">${esc(q.unit)}</span>` : ""}</div>`;
     case "currency":
       return `<div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="${name}" name="${name}" min="0" step="1" /></div>`;
+    // Worked out from the boxes above and shown back for confirmation. The
+    // client never adds anything up, and a wrong figure gets caught here
+    // rather than at tax time.
+    case "estimate":
+      return `<div class="estimate" data-estimate="${name}">
+        <div class="estfig"><span class="estcur">$</span><span class="estnum" id="${name}_figure">0</span><span class="estper">per year</span></div>
+        <p class="estbreak" id="${name}_break">Fill in the boxes above and this works itself out.</p>
+        <div class="estconfirm">
+          <p class="estask" id="${name}-ask">${esc(q.help ?? "Does this look accurate?")}</p>
+          <div class="choices" role="radiogroup" aria-labelledby="${name}-ask">
+            <label class="choice"><input type="radio" name="${name}_ok" value="yes" /><span class="dot"></span><span class="ctext">Yes, that is about right</span></label>
+            <label class="choice"><input type="radio" name="${name}_ok" value="no" /><span class="dot"></span><span class="ctext">No, it is not</span></label>
+          </div>
+          <div class="estfix" data-showif-q="${name}_ok" data-showif-v="no" hidden>
+            <label class="qlabel small" for="${name}_correction">What should it be, for the year?</label>
+            <p class="qhelp">Your figure is the one we will use. Your agent will go through it with you.</p>
+            <div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="${name}_correction" name="${name}_correction" min="0" step="1" /></div>
+          </div>
+        </div>
+      </div>`;
     case "text":
       return `<input class="field" type="text" id="${name}" name="${name}" />`;
     case "longtext":
@@ -156,7 +188,7 @@ function renderQuestion(q: Question, idx = ""): string {
   const nm = esc(q.id + suffix);
   return `<div class="q" data-q="${nm}"${cond}>
     <label class="qlabel" id="${nm}-label" for="${nm}">${esc(q.label)}</label>
-    ${q.help ? `<p class="qhelp">${esc(q.help)}</p>` : ""}
+    ${q.help && q.kind !== "estimate" ? `<p class="qhelp">${esc(q.help)}</p>` : ""}
     ${renderInput(q, suffix)}
     ${q.allowUnsure ? `<label class="unsure"><input type="checkbox" name="${nm}_unsure" /><span>I am not sure</span></label>` : ""}
     ${why}
@@ -278,6 +310,16 @@ const html = `<title>Ask Mike, client intake</title>
     font-variant-numeric: tabular-nums;
   }
 
+  /* A wash of the brand blue behind the top of the page, gone by the time the
+     first card starts. Gives the paper somewhere to come from. */
+  body::before {
+    content: ""; position: fixed; inset: 0 0 auto 0; height: 520px; z-index: -1;
+    background:
+      radial-gradient(120% 100% at 12% 0%, rgba(15,124,192,.10) 0%, rgba(15,124,192,0) 62%),
+      radial-gradient(90% 80% at 96% 4%, rgba(242,166,90,.13) 0%, rgba(242,166,90,0) 60%);
+    pointer-events: none;
+  }
+
   p, h1, h2 { text-wrap: pretty; }
 
   /* ---------------------------------------------------------------- header */
@@ -297,15 +339,23 @@ const html = `<title>Ask Mike, client intake</title>
   }
 
   .progress { display: flex; align-items: center; gap: 12px; }
+  /* Ten segments rather than one bar. A continuous sliver says "you are some
+     way through something"; ten notches say how many are left, which is the
+     thing people actually want to know. */
   .progress .track {
-    width: 130px; height: 6px; border-radius: 3px;
+    position: relative; width: 148px; height: 7px; border-radius: 4px;
     background: var(--am-blue-100); overflow: hidden;
   }
   .progress .fill {
-    height: 100%; width: 0%; background: var(--am-blue-600);
-    transition: width 150ms ease-out;
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--am-blue-600), #2E97D4);
+    transition: width 320ms cubic-bezier(.22,1,.36,1);
   }
-  .progress .count { font-size: 14px; line-height: 1.4; color: var(--am-muted); }
+  .progress .pips { position: absolute; inset: 0; display: flex; }
+  .progress .pip { flex: 1 1 0; border-right: 2px solid var(--am-white); }
+  .progress .pip:last-child { border-right: 0; }
+  .progress .count { font-size: 14px; line-height: 1.4; color: var(--am-muted); white-space: nowrap; }
+  .progress .count b { color: var(--am-ink); font-weight: 600; }
 
   .viewtoggle { display: flex; gap: 8px; }
   .viewtoggle .btn { padding: 8px 14px; font-size: 14px; min-height: 36px; }
@@ -328,10 +378,40 @@ const html = `<title>Ask Mike, client intake</title>
   .hero { margin-bottom: 40px; }
   .hero h1 {
     font-family: var(--display); font-weight: 400;
-    font-size: clamp(34px, 7vw, 46px); line-height: 1.06;
-    letter-spacing: -0.02em; margin: 0 0 16px; color: var(--am-ink);
+    font-size: clamp(38px, 8vw, 58px); line-height: 1.02;
+    letter-spacing: -0.02em; margin: 0 0 18px; color: var(--am-ink);
   }
+  /* The one flourish on the page. An amber stroke under the two words that
+     say what this is about, sitting behind the text rather than under it so
+     descenders cut through it the way a real pen would. */
+  /* Painted as a background on the words themselves, so it sits behind the
+     glyphs and descenders cut through it the way a real pen would. */
+  .hero h1 em {
+    font-style: italic;
+    background-image: linear-gradient(100deg, rgba(242,166,90,.9), rgba(242,166,90,.4));
+    background-repeat: no-repeat;
+    background-position: 0 86%;
+    background-size: 0% 0.19em;
+    animation: underline 620ms cubic-bezier(.22,1,.36,1) 340ms forwards;
+  }
+  @keyframes underline { to { background-size: 100% 0.19em; } }
+
   .hero p { margin: 0 0 12px; color: var(--am-ink-soft); }
+  .hero .hlede { font-size: 19px; line-height: 1.55; color: var(--am-ink); }
+
+  /* Three numbers instead of a paragraph of reassurance. The last one is the
+     answer to the question people are actually holding. */
+  .facts {
+    list-style: none; margin: 26px 0 0; padding: 22px 0 0;
+    border-top: 1px solid var(--am-line);
+    display: flex; flex-wrap: wrap; gap: 14px 40px;
+  }
+  .facts li { display: flex; align-items: baseline; gap: 10px; }
+  .facts .fnum {
+    font-family: var(--display); font-size: 38px; line-height: .9;
+    color: var(--am-blue-700); letter-spacing: -0.02em;
+  }
+  .facts .flabel { font-size: 13px; line-height: 1.35; color: var(--am-muted); }
 
   .helpful {
     background: var(--am-amber-100); color: var(--am-amber-text);
@@ -398,6 +478,31 @@ const html = `<title>Ask Mike, client intake</title>
   .withunit { display: flex; align-items: center; gap: 10px; }
   .unit { color: var(--am-muted); font-size: 16px; }
 
+  /* -------------------------------------------------- computed estimate */
+
+  /* Reads as an answer the form worked out, not another box to fill in, so
+     it sits on its own ground rather than looking like a disabled field. */
+  .estimate {
+    background: var(--am-blue-50); border: 1px solid var(--am-blue-100);
+    border-radius: var(--r-card); padding: 22px 24px;
+    display: flex; flex-direction: column; gap: 18px;
+  }
+  .estfig { display: flex; align-items: baseline; gap: 4px; flex-wrap: wrap; }
+  .estcur { font-family: var(--display); font-size: 30px; color: var(--am-blue-700); line-height: 1; }
+  .estnum {
+    font-family: var(--display); font-size: 46px; line-height: 1;
+    letter-spacing: -0.015em; color: var(--am-ink); font-variant-numeric: tabular-nums;
+  }
+  .estper { font-size: 15px; color: var(--am-muted); margin-left: 6px; }
+  .estbreak { margin: -10px 0 0; font-size: 14px; line-height: 1.55; color: var(--am-ink-soft); }
+
+  .estconfirm { display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--am-blue-100); padding-top: 18px; }
+  .estask { margin: 0; font-size: 17px; font-weight: 500; color: var(--am-ink); }
+  .estconfirm .choice { background: var(--am-white); }
+  .estfix { display: flex; flex-direction: column; gap: 8px; }
+  .estfix[hidden] { display: none; }
+  .qlabel.small { font-size: 16px; }
+
   /* --------------------------------------------------------------- choices */
 
   .choices { display: flex; flex-direction: column; gap: 10px; }
@@ -412,13 +517,14 @@ const html = `<title>Ask Mike, client intake</title>
     transition: border-color 150ms ease-out, background-color 150ms ease-out;
   }
   .choice:hover { border-color: #C6DDEE; background: var(--am-paper); }
+  .choice:active { transform: scale(.994); }
   .choice input { position: absolute; opacity: 0; width: 0; height: 0; }
 
   .choice .dot {
     flex: none; width: 20px; height: 20px; margin-top: 2px;
     border: 1.5px solid var(--am-muted); border-radius: 50%;
     background: var(--am-white);
-    transition: border-color 150ms ease-out, box-shadow 150ms ease-out;
+    transition: border-color 150ms ease-out, box-shadow 220ms cubic-bezier(.22,1,.36,1);
   }
   .choice.multi .dot { border-radius: 6px; }
 
@@ -429,11 +535,16 @@ const html = `<title>Ask Mike, client intake</title>
      checked state changes, and older Safari and Chrome lack it entirely. This
      is the most used control in the product, so it does not get to depend on
      a selector that might not repaint. */
-  .choice.is-selected { border-color: var(--am-blue-600); background: var(--am-blue-50); }
+  .choice.is-selected {
+    border-color: var(--am-blue-600); background: var(--am-blue-50);
+    box-shadow: 0 1px 3px rgba(15,124,192,.12);
+  }
   .choice.is-selected .dot {
     border-color: var(--am-blue-600);
     box-shadow: inset 0 0 0 6px var(--am-blue-600);
   }
+  /* The tick is the moment the client gets an answer back. Worth 240ms. */
+  .choice.is-selected .ctext { color: var(--am-blue-800); }
   .choice.is-focus {
     border-color: var(--am-blue-600);
     box-shadow: 0 0 0 4px var(--am-blue-100);
@@ -503,17 +614,37 @@ const html = `<title>Ask Mike, client intake</title>
   /* One step at a time. Fifty questions on one page is a wall; ten short
      screens is a conversation. Review view overrides this and shows the lot. */
   .step { display: none; }
-  .step.current { display: block; animation: stepin 200ms ease-out; }
+  .step.current { display: block; animation: stepin 260ms cubic-bezier(.22,1,.36,1); }
   body.reviewing .step { display: block; }
   body.reviewing .stepfoot .nav { display: none; }
 
   @keyframes stepin {
-    from { opacity: 0; transform: translateY(8px); }
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* The heading and the questions arrive a beat apart, so a new step reads as
+     something arriving rather than a page swap. Client view only: the review
+     view shows every step at once and staggering it would be nonsense. */
+  body:not(.reviewing) .step.current .stephead,
+  body:not(.reviewing) .step.current .qs > *,
+  body:not(.reviewing) .step.current .stepfoot {
+    animation: risein 380ms cubic-bezier(.22,1,.36,1) backwards;
+  }
+  body:not(.reviewing) .step.current .stephead { animation-delay: 40ms; }
+  body:not(.reviewing) .step.current .qs > *:nth-child(1) { animation-delay: 100ms; }
+  body:not(.reviewing) .step.current .qs > *:nth-child(2) { animation-delay: 145ms; }
+  body:not(.reviewing) .step.current .qs > *:nth-child(3) { animation-delay: 185ms; }
+  body:not(.reviewing) .step.current .qs > *:nth-child(n+4) { animation-delay: 220ms; }
+  body:not(.reviewing) .step.current .stepfoot { animation-delay: 260ms; }
+
+  @keyframes risein {
+    from { opacity: 0; transform: translateY(12px); }
     to   { opacity: 1; transform: translateY(0); }
   }
 
   .end { display: none; }
-  .end.current { display: block; animation: stepin 200ms ease-out; }
+  .end.current { display: block; animation: stepin 260ms cubic-bezier(.22,1,.36,1); }
   body.reviewing .end { display: block; }
 
   /* ------------------------------------------------------- why we ask */
@@ -560,12 +691,37 @@ const html = `<title>Ask Mike, client intake</title>
     border-radius: var(--r-panel); padding: 32px; text-align: center;
     margin-top: 8px;
   }
-  .end h2 {
-    font-family: var(--display); font-weight: 400; font-size: 30px;
-    line-height: 1.1; margin: 0 0 10px; color: var(--am-ink);
+  .end .endmark { display: flex; justify-content: center; margin-bottom: 6px; }
+  .end .endmark svg { animation: pop 460ms cubic-bezier(.34,1.56,.64,1) 120ms backwards; }
+  @keyframes pop {
+    from { opacity: 0; transform: scale(.7) translateY(6px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
   }
-  .end p { margin: 0 0 24px; color: var(--am-ink-soft); font-size: 16px; }
+  .end h2 {
+    font-family: var(--display); font-weight: 400; font-size: clamp(30px, 6vw, 40px);
+    line-height: 1.06; margin: 0 0 10px; color: var(--am-ink);
+  }
+  .end p { margin: 0 auto 24px; color: var(--am-ink-soft); font-size: 16px; max-width: 44ch; }
+
+  /* What they built, counted back at them. The point of the last screen is
+     that finishing feels like it was worth doing. */
+  .tally {
+    list-style: none; margin: 0 0 28px; padding: 22px 0;
+    border-top: 1px solid var(--am-line); border-bottom: 1px solid var(--am-line);
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 18px 34px;
+  }
+  .tally li { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 84px; }
+  .tally .tnum {
+    font-family: var(--display); font-size: 34px; line-height: 1;
+    color: var(--am-blue-700); letter-spacing: -0.02em;
+  }
+  .tally .tlabel { font-size: 13px; line-height: 1.3; color: var(--am-muted); }
+  .tally:empty { display: none; }
+
   .end .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .end .endnote {
+    margin: 24px auto 0; font-size: 14px; color: var(--am-muted); max-width: 52ch;
+  }
 
   footer.colophon {
     max-width: var(--measure); margin: 0 auto;
@@ -575,6 +731,9 @@ const html = `<title>Ask Mike, client intake</title>
 
   @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+    /* The underline is drawn by the animation, so killing it would leave the
+       flourish permanently at zero width. Draw it outright instead. */
+    .hero h1 em { background-size: 100% 0.19em; }
   }
 </style>
 
@@ -585,7 +744,10 @@ const html = `<title>Ask Mike, client intake</title>
 <div class="topbar">
   <span class="lockup">${MARK(32)}<span class="word">Ask Mike</span></span>
   <div class="progress">
-    <div class="track"><div class="fill" id="progress-fill"></div></div>
+    <div class="track" id="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="${QUESTIONNAIRE.length}" aria-valuenow="0" aria-label="Progress through the form">
+      <div class="fill" id="progress-fill"></div>
+      <div class="pips">${QUESTIONNAIRE.map((s, i) => `<span class="pip" data-pip="${i}" title="${esc(s.title)}"></span>`).join("")}</div>
+    </div>
     <span class="count" id="progress-count">Step 1 of ${QUESTIONNAIRE.length}</span>
   </div>
   <div class="viewtoggle" role="group" aria-label="View">
@@ -596,21 +758,29 @@ const html = `<title>Ask Mike, client intake</title>
 
 <main>
   <div class="hero">
-    <h1>Before we meet, tell us about your year</h1>
-    <p>This takes about ten minutes. Your agent uses it to work out which plans are worth your time, so the meeting can be about the decision rather than the paperwork.</p>
+    <h1>Before we meet,<br />tell us about <em>your year</em></h1>
+    <p class="hlede">Your agent uses this to work out which plans are actually worth your time, so the meeting can be about the decision rather than the paperwork.</p>
     <p>Rough answers are fine. Where you are not sure, say so rather than guessing, and your agent will pick it up.</p>
+    <ul class="facts">
+      <li><span class="fnum">${QUESTIONNAIRE.length}</span><span class="flabel">short steps,<br />one screen each</span></li>
+      <li><span class="fnum">10</span><span class="flabel">minutes,<br />give or take</span></li>
+      <li><span class="fnum">0</span><span class="flabel">of it sent until<br />you press send</span></li>
+    </ul>
     <div class="helpful">${MARK_SMALL(19, "#C67E32")}<span><b>Worth having to hand:</b> your insurance card if you have one, and the bottles for anything you take regularly. Neither is essential, but they make a few of the questions much quicker to answer.</span></div>
   </div>
 
   ${sections}
 
   <div class="end">
+    <div class="endmark">${MARK(46)}</div>
     <h2>That is everything</h2>
-    <p>Your agent will review this before you meet and will have your options ready.</p>
+    <p>Here is what you have just handed your agent. It is more than most people manage to say in an hour across a desk.</p>
+    <ul class="tally" id="tally"></ul>
     <div class="actions">
       <button class="btn primary" type="button" id="submit">Send to my agent</button>
       <button class="btn quiet" type="button">Save and finish later</button>
     </div>
+    <p class="endnote">Nothing goes to an insurer, and no application is started. Your agent reads it, works through the plans, and brings you what he found.</p>
   </div>
 </main>
 
@@ -651,7 +821,107 @@ const html = `<title>Ask Mike, client intake</title>
         el.hidden = !checked.some((c) => wanted.includes(c.value));
       });
     }
+    updateIncome();
     updateProgress();
+  }
+
+  // Pay periods per year, so a client can quote whichever figure they actually
+  // know rather than converting in their head.
+  const PERIODS = ${JSON.stringify(
+    Object.fromEntries(FREQUENCY_PERIODS.map((o) => [o.value, o.periods])),
+  )};
+
+  const money = (n) => Math.round(n).toLocaleString("en-US");
+
+  const STILL = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /**
+   * Runs the figure up to its new value instead of swapping it.
+   *
+   * This is the one number on the form the client did not type, so it has to
+   * read as something the page worked out. A value that silently changes is
+   * easy to miss; one that moves is not. Small changes land immediately, so
+   * correcting a typo does not set off an animation.
+   */
+  const counters = new WeakMap();
+  function countTo(el, target) {
+    const from = counters.get(el) || 0;
+    counters.set(el, target);
+    // The settled figure, so anything reading this back gets the real number
+    // rather than whatever frame the animation happens to be on.
+    el.dataset.value = String(target);
+    if (STILL || Math.abs(target - from) < 500) {
+      el.textContent = money(target);
+      return;
+    }
+    const started = performance.now();
+    const run = (now) => {
+      // Bail if another keystroke has already retargeted this element.
+      if (counters.get(el) !== target) return;
+      const t = Math.min(1, (now - started) / 420);
+      const eased = 1 - Math.pow(1 - t, 3);
+      el.textContent = money(from + (target - from) * eased);
+      if (t < 1) requestAnimationFrame(run);
+    };
+    requestAnimationFrame(run);
+  }
+
+  function numOf(name) {
+    const el = document.querySelector('[name="' + name + '"]');
+    if (!el) return 0;
+    const v = Number(el.value);
+    return Number.isFinite(v) && v > 0 ? v : 0;
+  }
+
+  /**
+   * Adds the income boxes up and shows the total back for confirmation.
+   *
+   * Wages are annualised by pay period, self employment is filed monthly and
+   * multiplied by twelve, and deductions come off the top because they lower
+   * the income the subsidy is figured on. Anyone who says the total is wrong
+   * types their own figure and that wins.
+   */
+  function updateIncome() {
+    document.querySelectorAll("[data-estimate]").forEach((panel) => {
+      const id = panel.getAttribute("data-estimate");
+
+      // Each member is counted once. Person blocks are rebuilt into every
+      // section that asks per person, so the same member appears several times
+      // in the document and iterating the blocks would double their pay.
+      const members = new Set();
+      document.querySelectorAll(".person").forEach((p) => members.add(p.dataset.person));
+
+      let wages = 0;
+      let selfEmployed = 0;
+      members.forEach((i) => {
+        const amount = numOf("wages__" + i);
+        const freq = document.querySelector('[name="wages_frequency__' + i + '"]:checked');
+        if (amount && freq && PERIODS[freq.value]) wages += amount * PERIODS[freq.value];
+        selfEmployed += numOf("self_employment_net__" + i) * 12;
+      });
+
+      const other = numOf("other_income_amount");
+      const deductions = numOf("deductions_amount");
+      const total = Math.max(0, wages + selfEmployed + other - deductions);
+
+      const figure = document.getElementById(id + "_figure");
+      const breakdown = document.getElementById(id + "_break");
+      if (figure) countTo(figure, total);
+      if (!breakdown) return;
+
+      const parts = [];
+      if (wages) parts.push("$" + money(wages) + " in pay");
+      if (selfEmployed) parts.push("$" + money(selfEmployed) + " from self employment");
+      if (other) parts.push("$" + money(other) + " from elsewhere");
+      if (!parts.length) {
+        breakdown.textContent = "Fill in the boxes above and this works itself out.";
+        return;
+      }
+      const joined =
+        parts.length === 1 ? parts[0] : parts.slice(0, -1).join(", ") + " and " + parts[parts.length - 1];
+      breakdown.textContent =
+        joined + (deductions ? ", less $" + money(deductions) + " that lowers your taxable income." : ".");
+    });
   }
 
   // Step navigation. The hero only belongs on the first screen; after that the
@@ -660,11 +930,50 @@ const html = `<title>Ask Mike, client intake</title>
   const hero = document.querySelector(".hero");
   let stepIndex = 0; // 0..steps.length-1, then steps.length for the end panel
 
+  /**
+   * The last screen counts back what the client actually gave us.
+   *
+   * Ten steps of typing should end in something, and a bare "that is
+   * everything" is not something. Only entries that came back with a count
+   * are shown, so a household that takes no medication is not told it named
+   * zero drugs.
+   */
+  function buildTally() {
+    const host = document.getElementById("tally");
+    if (!host) return;
+
+    const filled = (name) =>
+      [...document.querySelectorAll('[name^="' + name + '_"]')].filter(
+        (i) => i.value && i.value.trim() !== "",
+      ).length;
+    const ticked = (name) =>
+      document.querySelectorAll('input[name="' + name + '"]:checked').length;
+
+    const people = Number((document.querySelector('[name="household_size"]') || {}).value) || 0;
+    const answered = [...document.querySelectorAll(".q")].filter(isAnswered).length;
+
+    const rows = [
+      [people, people === 1 ? "person covered" : "people covered"],
+      [ticked("health_system"), "health systems named"],
+      [filled("specialists"), "doctors named"],
+      [filled("medications"), "prescriptions listed"],
+      [answered, "questions answered"],
+    ].filter(([n]) => n > 0);
+
+    host.innerHTML = rows
+      .map(
+        ([n, label]) =>
+          '<li><span class="tnum">' + n + '<\\/span><span class="tlabel">' + label + "<\\/span><\\/li>",
+      )
+      .join("");
+  }
+
   function showStep(n) {
     stepIndex = Math.max(0, Math.min(steps.length, n));
     steps.forEach((s, i) => s.classList.toggle("current", i === stepIndex));
     endPanel.classList.toggle("current", stepIndex === steps.length);
     hero.style.display = stepIndex === 0 ? "" : "none";
+    if (stepIndex === steps.length) buildTally();
     updateProgress();
     window.scrollTo({ top: 0, behavior: "auto" });
     const heading = document.querySelector(".step.current h2, .end.current h2");
@@ -684,8 +993,20 @@ const html = `<title>Ask Mike, client intake</title>
     }
     const shown = Math.min(stepIndex + 1, steps.length);
     fill.style.width = (((stepIndex) / steps.length) * 100).toFixed(1) + "%";
-    count.textContent =
-      stepIndex >= steps.length ? "Ready to send" : "Step " + shown + " of " + steps.length;
+    const track = document.getElementById("progress-track");
+    if (track) track.setAttribute("aria-valuenow", String(stepIndex));
+
+    if (stepIndex >= steps.length) {
+      count.innerHTML = "<b>Ready to send<\\/b>";
+      return;
+    }
+    // Minutes left rather than steps left. Steps left is a count; minutes left
+    // is the thing someone is deciding whether they have time for.
+    // Roughly a minute a step, which is what the hero promises. A different
+    // arithmetic here would quietly contradict the front page.
+    const mins = Math.max(1, steps.length - stepIndex);
+    count.innerHTML =
+      "<b>Step " + shown + " of " + steps.length + "<\\/b> &middot; about " + mins + " min left";
   }
 
   function isAnswered(q) {
@@ -778,7 +1099,11 @@ const html = `<title>Ask Mike, client intake</title>
     refresh();
   });
   document.addEventListener("input", (e) => {
-    if (e.target.matches("input, textarea")) updateProgress();
+    if (!e.target.matches("input, textarea")) return;
+    // Live, on every keystroke. A total that only appears once the field loses
+    // focus reads as broken.
+    updateIncome();
+    updateProgress();
   });
   window.addEventListener("scroll", updateProgress, { passive: true });
 
@@ -827,6 +1152,25 @@ const html = `<title>Ask Mike, client intake</title>
         .map((i) => i.value.trim())
         .filter(Boolean);
       const unsure = q.querySelector('input[name$="_unsure"]:checked');
+
+      // A computed estimate answers with a number, not with the yes or no of
+      // the confirmation. A correction the client typed beats the estimate,
+      // and the estimate is kept alongside it so the agent can see the gap.
+      const panel = q.querySelector("[data-estimate]");
+      if (panel) {
+        const key = panel.getAttribute("data-estimate");
+        const figure = document.getElementById(key + "_figure");
+        const estimated = Number(figure ? figure.dataset.value || 0 : 0) || 0;
+        const typed = document.querySelector('[name="' + key + '_correction"]');
+        const corrected = typed && typed.value.trim() !== "" ? Number(typed.value) : null;
+        const confirmed = q.querySelector('input[name="' + key + '_ok"]:checked');
+
+        answers[id] = String(corrected !== null && Number.isFinite(corrected) ? corrected : estimated);
+        answers[id + "_estimated"] = String(estimated);
+        answers[id + "_confirmed"] = confirmed ? confirmed.value : "";
+        if (corrected !== null && Number.isFinite(corrected)) answers[id + "_corrected"] = "yes";
+        return;
+      }
 
       let value;
       if (radios.length) value = radios[0].value;

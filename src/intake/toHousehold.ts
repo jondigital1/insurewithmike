@@ -193,6 +193,22 @@ export function toHousehold(answers: Answers, today = new Date()): Conversion {
   if (answers.filing_jointly === "no") {
     flags.push("Married filing separately generally forfeits the credit. Worth confirming.");
   }
+  // The client is shown the total the form worked out and asked to confirm it.
+  // A correction is not a problem, but a large one means the boxes and the
+  // client disagree about what the household earns, and the subsidy runs on
+  // whichever is right.
+  if (answers.expected_income_corrected === "yes") {
+    const typed = num(answers.expected_income);
+    const computed = num(answers.expected_income_estimated);
+    if (computed > 0 && typed > 0) {
+      const gap = Math.abs(typed - computed);
+      if (gap / computed >= 0.15) {
+        flags.push(
+          `Client corrected the income estimate from $${Math.round(computed).toLocaleString("en-US")} to $${Math.round(typed).toLocaleString("en-US")}. Their figure is the one used here. Worth asking what the boxes missed.`,
+        );
+      }
+    }
+  }
   if (answers.income_stability === "varies" || answers.income_stability === "unpredictable") {
     flags.push(
       "Income is not steady. The 400 percent cliff is back for 2026, so a household near the line risks repaying the entire credit at tax time.",
