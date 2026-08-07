@@ -13,3 +13,6 @@ data/sbc/source/
 
 data/formulary/*.raw.json
 
+data/providers/.tmp-*
+data/providers/.state-*
+
