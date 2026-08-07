@@ -87,8 +87,8 @@ const FAVICON =
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><rect width="48" height="48" rx="10" fill="#FCFBF8"/><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#0F7CC0"/><circle cx="24" cy="20.5" r="6" fill="#F2A65A"/></svg>`,
   );
 
-function renderInput(q: Question): string {
-  const name = esc(q.id);
+function renderInput(q: Question, suffix = ""): string {
+  const name = esc(q.id + suffix);
   switch (q.kind) {
     case "code":
       return `<input class="field code" type="text" id="${name}" name="${name}" placeholder="K7M4QX" maxlength="6" autocomplete="off" spellcheck="false" />`;
@@ -126,9 +126,14 @@ function renderInput(q: Question): string {
   }
 }
 
-function renderQuestion(q: Question): string {
+function renderQuestion(q: Question, idx = ""): string {
+  // Per person questions carry an index suffix so each member's answers stay
+  // distinct. Conditions inside a person block point at that same member's
+  // controlling question, not at the first person's.
+  const suffix = idx ? `__${idx}` : "";
+  const condQ = q.showIf ? `${q.showIf.question}${suffix}` : "";
   const cond = q.showIf
-    ? ` data-showif-q="${esc(q.showIf.question)}" data-showif-v="${esc(q.showIf.equals.join("|"))}" hidden`
+    ? ` data-showif-q="${esc(condQ)}" data-showif-v="${esc(q.showIf.equals.join("|"))}" hidden`
     : "";
 
   const tags = [
@@ -148,14 +153,43 @@ function renderQuestion(q: Question): string {
     ? `<details class="why"><summary>${MARK_SMALL(19, "#C67E32")}<span>Why we ask</span></summary><p>${esc(q.rationale)}</p></details>`
     : "";
 
-  return `<div class="q" data-q="${esc(q.id)}"${cond}>
-    <label class="qlabel" id="${esc(q.id)}-label" for="${esc(q.id)}">${esc(q.label)}</label>
+  const nm = esc(q.id + suffix);
+  return `<div class="q" data-q="${nm}"${cond}>
+    <label class="qlabel" id="${nm}-label" for="${nm}">${esc(q.label)}</label>
     ${q.help ? `<p class="qhelp">${esc(q.help)}</p>` : ""}
-    ${renderInput(q)}
-    ${q.allowUnsure ? `<label class="unsure"><input type="checkbox" name="${esc(q.id)}_unsure" /><span>I am not sure</span></label>` : ""}
+    ${renderInput(q, suffix)}
+    ${q.allowUnsure ? `<label class="unsure"><input type="checkbox" name="${nm}_unsure" /><span>I am not sure</span></label>` : ""}
     ${why}
     <div class="meta"><div class="tags">${tags}</div></div>
   </div>`;
+}
+
+/**
+ * Wraps a run of per person questions in a template the page clones once per
+ * household member.
+ *
+ * Premium is age rated per member, so asking the age once and inferring the
+ * rest is not a simplification, it is a wrong price. The template carries an
+ * index token in every name, id and label reference, which the page replaces
+ * when it clones.
+ */
+function renderPersonGroup(questions: Question[], groupId: string): string {
+  const inner = questions.map((q) => renderQuestion(q, "__IDX__")).join("");
+  return `<div class="persongroup" data-group="${esc(groupId)}">
+    <template class="persontpl">${inner}</template>
+    <div class="people"></div>
+  </div>`;
+}
+
+/** Splits a section into alternating runs of shared and per person questions. */
+function partition(questions: Question[]): Array<{ perPerson: boolean; items: Question[] }> {
+  const runs: Array<{ perPerson: boolean; items: Question[] }> = [];
+  for (const q of questions) {
+    const last = runs[runs.length - 1];
+    if (last && last.perPerson === Boolean(q.perPerson)) last.items.push(q);
+    else runs.push({ perPerson: Boolean(q.perPerson), items: [q] });
+  }
+  return runs;
 }
 
 function renderSection(s: Section, n: number): string {
@@ -166,7 +200,13 @@ function renderSection(s: Section, n: number): string {
         <h2>${esc(s.title)}</h2>
         ${s.blurb ? `<p class="blurb">${esc(s.blurb)}</p>` : ""}
       </header>
-      <div class="qs">${s.questions.map(renderQuestion).join("")}</div>
+      <div class="qs">${partition(s.questions)
+        .map((run, ri) =>
+          run.perPerson
+            ? renderPersonGroup(run.items, `${s.id}-${ri}`)
+            : run.items.map((q) => renderQuestion(q)).join(""),
+        )
+        .join("")}</div>
       <footer class="stepfoot">
         <button class="btn quiet later" type="button">Save and finish later</button>
         <div class="nav">
@@ -409,6 +449,24 @@ const html = `<title>Ask Mike, client intake</title>
 
   .repeater { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
 
+  /* One block per household member. Premium is age rated per person, so each
+     one gets its own answers rather than being inferred from the first. */
+  .people { display: flex; flex-direction: column; gap: 28px; }
+  .person {
+    display: flex; flex-direction: column; gap: 32px;
+    padding: 20px; border: 1px solid var(--am-line);
+    border-radius: var(--r-card); background: var(--am-paper);
+  }
+  .person > .personhead {
+    font-size: 12px; font-weight: 600; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--am-muted); margin: 0;
+  }
+  .persongroup .waiting {
+    color: var(--am-ink-soft); font-size: 15px; margin: 0;
+    padding: 16px 18px; border: 1px dashed var(--am-line);
+    border-radius: var(--r-control);
+  }
+
   /* --------------------------------------------------------------- buttons */
 
   .btn {
@@ -634,6 +692,65 @@ const html = `<title>Ask Mike, client intake</title>
     );
   }
 
+  // One block of questions per household member.
+  //
+  // Premium is age rated per person, so asking once and inferring the rest
+  // produces a wrong price rather than an approximate one. Blocks are built
+  // from the household size, and existing answers survive a size change so
+  // correcting a typo does not wipe what has already been entered.
+  const HOUSEHOLD_CAP = 10;
+
+  function personLabel(i) {
+    return i === 0 ? "You" : "Person " + (i + 1);
+  }
+
+  function buildPeople() {
+    const sizeField = document.querySelector('[name="household_size"]');
+    const size = Math.max(0, Math.min(HOUSEHOLD_CAP, Number(sizeField && sizeField.value) || 0));
+
+    document.querySelectorAll(".persongroup").forEach((group) => {
+      const tpl = group.querySelector(".persontpl");
+      const host = group.querySelector(".people");
+      if (!tpl || !host) return;
+
+      if (size === 0) {
+        host.innerHTML =
+          '<p class="waiting">Tell us how many people are on your tax return and we will ask about each of them.</p>';
+        return;
+      }
+      if (host.querySelectorAll(".person").length === size) return;
+
+      // Preserve anything already answered before rebuilding.
+      const saved = {};
+      host.querySelectorAll("input, textarea").forEach((el) => {
+        if (el.type === "radio" || el.type === "checkbox") {
+          if (el.checked) saved[el.name + "::" + el.value] = true;
+        } else if (el.value.trim() !== "") {
+          saved[el.name] = el.value;
+        }
+      });
+
+      host.innerHTML = "";
+      for (let i = 0; i < size; i += 1) {
+        const block = document.createElement("div");
+        block.className = "person";
+        block.dataset.person = String(i);
+        block.innerHTML =
+          '<p class="personhead">' + personLabel(i) + "</p>" +
+          tpl.innerHTML.replace(/__IDX__/g, String(i));
+        host.appendChild(block);
+      }
+
+      host.querySelectorAll("input, textarea").forEach((el) => {
+        if (el.type === "radio" || el.type === "checkbox") {
+          if (saved[el.name + "::" + el.value]) el.checked = true;
+        } else if (saved[el.name] !== undefined) {
+          el.value = saved[el.name];
+        }
+      });
+    });
+  }
+
   // Selection state, applied explicitly so it never depends on :has() support.
   function paintChoices() {
     document.querySelectorAll(".choice").forEach((row) => {
@@ -652,7 +769,10 @@ const html = `<title>Ask Mike, client intake</title>
   });
 
   document.addEventListener("change", (e) => {
-    if (e.target.matches("input, textarea")) { paintChoices(); refresh(); }
+    if (!e.target.matches("input, textarea")) return;
+    if (e.target.name === "household_size") buildPeople();
+    paintChoices();
+    refresh();
   });
   document.addEventListener("input", (e) => {
     if (e.target.matches("input, textarea")) updateProgress();
@@ -681,11 +801,21 @@ const html = `<title>Ask Mike, client intake</title>
 
   // Collects every answered field into a flat payload keyed by question id.
   // Checkboxes become arrays; everything else is a scalar.
+  // Per person answers come back as arrays in member order, so
+  // person_age becomes ["44", "42", "9"] rather than a single value.
   function collect() {
     const answers = {};
+    const perPerson = {};
+
     document.querySelectorAll(".q").forEach((q) => {
       if (q.hidden) return;
-      const id = q.dataset.q;
+      const raw = q.dataset.q;
+      // Doubled backslash on purpose: this script is emitted from a template
+      // literal, where an unrecognised escape like \\d is silently stripped and
+      // the regex quietly stops matching.
+      const personMatch = raw.match(/^(.*)__(\\d+)$/);
+      const id = personMatch ? personMatch[1] : raw;
+      const personIndex = personMatch ? Number(personMatch[2]) : -1;
       const radios = q.querySelectorAll('input[type="radio"]:checked');
       const boxes = [...q.querySelectorAll('input[type="checkbox"]:checked')].filter(
         (b) => !b.name.endsWith("_unsure"),
@@ -695,11 +825,28 @@ const html = `<title>Ask Mike, client intake</title>
         .filter(Boolean);
       const unsure = q.querySelector('input[name$="_unsure"]:checked');
 
-      if (radios.length) answers[id] = radios[0].value;
-      else if (boxes.length) answers[id] = boxes.map((b) => b.value);
-      else if (texts.length) answers[id] = texts.length === 1 ? texts[0] : texts;
+      let value;
+      if (radios.length) value = radios[0].value;
+      else if (boxes.length) value = boxes.map((b) => b.value);
+      else if (texts.length) value = texts.length === 1 ? texts[0] : texts;
+
+      if (personIndex >= 0) {
+        if (value !== undefined) {
+          perPerson[id] = perPerson[id] || [];
+          perPerson[id][personIndex] = value;
+        }
+        if (unsure) answers[id + "_unsure"] = true;
+        return;
+      }
+
+      if (value !== undefined) answers[id] = value;
       if (unsure) answers[id + "_unsure"] = true;
     });
+
+    for (const [id, list] of Object.entries(perPerson)) {
+      // Fill gaps so index position still means member position.
+      answers[id] = Array.from(list, (v) => (v === undefined ? "" : v));
+    }
     return answers;
   }
 
@@ -714,6 +861,7 @@ const html = `<title>Ask Mike, client intake</title>
     window.open("agent.html", "askmike-agent");
   });
 
+  buildPeople();
   paintChoices();
   refresh();
   showStep(0);
@@ -728,4 +876,5 @@ if (!out) {
 mkdirSync(dirname(out), { recursive: true });
 writeFileSync(out, html, "utf8");
 console.log(`\nPrototype written to ${out}  (${(html.length / 1024).toFixed(1)} KB)`);
+
 

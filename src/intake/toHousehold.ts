@@ -116,21 +116,46 @@ export function toHousehold(answers: Answers): Conversion {
     .map((k) => k.replace(/_unsure$/, "").replace(/_/g, " "));
 
   const householdSize = Math.max(1, num(answers.household_size) || 1);
-  const primaryAge = num(answers.person_age) || 40;
 
-  // The draft form asks the per person block once. Until it repeats properly,
-  // additional household members are inferred: a spouse close in age, then
-  // children. This is an assumption and it is flagged rather than buried.
-  const members: Household["members"] = [
-    { age: primaryAge, tobaccoUser: false, utilization: utilisationFrom(answers) },
-  ];
-  if (householdSize > 1) {
-    members.push({ age: primaryAge, tobaccoUser: false, utilization: {} });
-    for (let i = 2; i < householdSize; i += 1) {
-      members.push({ age: 10, tobaccoUser: false, utilization: {} });
+  // The form asks the per person block once per household member, so ages
+  // arrive as an array in member order. Premium is age rated per person, so a
+  // missing age is a wrong price rather than a rounding error, and any that
+  // are missing are flagged rather than quietly filled in.
+  const ages = list(answers.person_age).map(num);
+  const needsCoverage = list(answers.person_needs_coverage);
+
+  const members: Household["members"] = [];
+  const missing: number[] = [];
+  for (let i = 0; i < householdSize; i += 1) {
+    const age = ages[i] ?? 0;
+    if (!age) {
+      missing.push(i + 1);
+      continue;
     }
+    members.push({
+      age,
+      tobaccoUser: false,
+      // Utilisation is asked for the household combined, so it sits on the
+      // first member. The cost model aggregates across members anyway.
+      utilization: i === 0 ? utilisationFrom(answers) : {},
+    });
+  }
+
+  if (members.length === 0) {
+    members.push({ age: 40, tobaccoUser: false, utilization: utilisationFrom(answers) });
     flags.push(
-      `Household of ${householdSize} built from one age. Ages for the other ${householdSize - 1} are assumed and change the premium, so confirm them before quoting.`,
+      "No ages were given, so pricing assumes a single 40 year old. Every premium below is wrong until an age is entered.",
+    );
+  } else if (missing.length) {
+    flags.push(
+      `No age given for ${missing.length === 1 ? "person" : "people"} ${missing.join(", ")} of ${householdSize}. Those members are not priced, so the premiums below are too low.`,
+    );
+  }
+
+  const notEnrolling = needsCoverage.filter((v) => v === "no").length;
+  if (notEnrolling > 0) {
+    flags.push(
+      `${notEnrolling} household ${notEnrolling === 1 ? "member is" : "members are"} marked as not needing coverage. They still count toward the poverty level but are priced here, so confirm who is actually enrolling.`,
     );
   }
 

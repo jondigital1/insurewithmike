@@ -227,6 +227,24 @@
 
   .repeater { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
 
+  /* One block per household member. Premium is age rated per person, so each
+     one gets its own answers rather than being inferred from the first. */
+  .people { display: flex; flex-direction: column; gap: 28px; }
+  .person {
+    display: flex; flex-direction: column; gap: 32px;
+    padding: 20px; border: 1px solid var(--am-line);
+    border-radius: var(--r-card); background: var(--am-paper);
+  }
+  .person > .personhead {
+    font-size: 12px; font-weight: 600; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--am-muted); margin: 0;
+  }
+  .persongroup .waiting {
+    color: var(--am-ink-soft); font-size: 15px; margin: 0;
+    padding: 16px 18px; border: 1px dashed var(--am-line);
+    border-radius: var(--r-control);
+  }
+
   /* --------------------------------------------------------------- buttons */
 
   .btn {
@@ -406,30 +424,33 @@
     
     <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Sets the federal poverty level, which drives both the subsidy and the silver cost sharing tier.</p></details>
     <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
-  </div><div class="q" data-q="person_age">
-    <label class="qlabel" id="person_age-label" for="person_age">Age on 1 January</label>
+  </div><div class="persongroup" data-group="household-1">
+    <template class="persontpl"><div class="q" data-q="person_age____IDX__">
+    <label class="qlabel" id="person_age____IDX__-label" for="person_age____IDX__">Age on 1 January</label>
     
-    <div class="withunit"><input class="field short" type="number" id="person_age" name="person_age" min="0" /><span class="unit">years</span></div>
+    <div class="withunit"><input class="field short" type="number" id="person_age____IDX__" name="person_age____IDX__" min="0" /><span class="unit">years</span></div>
     
     <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Age is the only personal characteristic that changes the premium in New Jersey. We ask for age rather than date of birth on purpose.</p></details>
     <div class="meta"><div class="tags"><span class="tag">asked per person</span><span class="tag route-intake">intake</span></div></div>
-  </div><div class="q" data-q="person_relationship">
-    <label class="qlabel" id="person_relationship-label" for="person_relationship">Relationship to you</label>
+  </div><div class="q" data-q="person_relationship____IDX__">
+    <label class="qlabel" id="person_relationship____IDX__-label" for="person_relationship____IDX__">Relationship to you</label>
     
-    <div class="choices" role="radiogroup" aria-labelledby="person_relationship-label"><label class="choice"><input type="radio" name="person_relationship" value="self" /><span class="dot"></span><span class="ctext">This is me</span></label><label class="choice"><input type="radio" name="person_relationship" value="spouse" /><span class="dot"></span><span class="ctext">Spouse</span></label><label class="choice"><input type="radio" name="person_relationship" value="child" /><span class="dot"></span><span class="ctext">Child</span></label><label class="choice"><input type="radio" name="person_relationship" value="other" /><span class="dot"></span><span class="ctext">Other dependent</span></label></div>
+    <div class="choices" role="radiogroup" aria-labelledby="person_relationship____IDX__-label"><label class="choice"><input type="radio" name="person_relationship____IDX__" value="self" /><span class="dot"></span><span class="ctext">This is me</span></label><label class="choice"><input type="radio" name="person_relationship____IDX__" value="spouse" /><span class="dot"></span><span class="ctext">Spouse</span></label><label class="choice"><input type="radio" name="person_relationship____IDX__" value="child" /><span class="dot"></span><span class="ctext">Child</span></label><label class="choice"><input type="radio" name="person_relationship____IDX__" value="other" /><span class="dot"></span><span class="ctext">Other dependent</span></label></div>
     
     
     <div class="meta"><div class="tags"><span class="tag">asked per person</span><span class="tag route-intake">intake</span></div></div>
-  </div><div class="q" data-q="person_needs_coverage">
-    <label class="qlabel" id="person_needs_coverage-label" for="person_needs_coverage">Does this person need coverage on the new plan?</label>
+  </div><div class="q" data-q="person_needs_coverage____IDX__">
+    <label class="qlabel" id="person_needs_coverage____IDX__-label" for="person_needs_coverage____IDX__">Does this person need coverage on the new plan?</label>
     <p class="qhelp">Answer no for anyone who already has Medicare, military coverage or their own plan.</p>
-    <div class="choices" role="radiogroup" aria-labelledby="person_needs_coverage-label">
-        <label class="choice"><input type="radio" name="person_needs_coverage" value="yes" /><span class="dot"></span><span class="ctext">Yes</span></label>
-        <label class="choice"><input type="radio" name="person_needs_coverage" value="no" /><span class="dot"></span><span class="ctext">No</span></label>
+    <div class="choices" role="radiogroup" aria-labelledby="person_needs_coverage____IDX__-label">
+        <label class="choice"><input type="radio" name="person_needs_coverage____IDX__" value="yes" /><span class="dot"></span><span class="ctext">Yes</span></label>
+        <label class="choice"><input type="radio" name="person_needs_coverage____IDX__" value="no" /><span class="dot"></span><span class="ctext">No</span></label>
       </div>
     
     <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Counted for the poverty level either way, but only priced if they are enrolling.</p></details>
     <div class="meta"><div class="tags"><span class="tag">asked per person</span><span class="tag route-intake">intake</span></div></div>
+  </div></template>
+    <div class="people"></div>
   </div><div class="q" data-q="pregnancy">
     <label class="qlabel" id="pregnancy-label" for="pregnancy">Is anyone in the household pregnant?</label>
     
@@ -526,34 +547,37 @@
     
     <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Married filing separately generally forfeits the credit entirely.</p></details>
     <div class="meta"><div class="tags"><span class="tag cond">only if will file taxes is yes</span><span class="tag route-intake">intake</span></div></div>
-  </div><div class="q" data-q="employment_status">
-    <label class="qlabel" id="employment_status-label" for="employment_status">How do you earn money?</label>
+  </div><div class="persongroup" data-group="income-1">
+    <template class="persontpl"><div class="q" data-q="employment_status____IDX__">
+    <label class="qlabel" id="employment_status____IDX__-label" for="employment_status____IDX__">How do you earn money?</label>
     
-    <div class="choices" role="radiogroup" aria-labelledby="employment_status-label"><label class="choice"><input type="radio" name="employment_status" value="employed" /><span class="dot"></span><span class="ctext">I work for an employer</span></label><label class="choice"><input type="radio" name="employment_status" value="self" /><span class="dot"></span><span class="ctext">I am self employed or run my own business</span></label><label class="choice"><input type="radio" name="employment_status" value="both" /><span class="dot"></span><span class="ctext">Both</span></label><label class="choice"><input type="radio" name="employment_status" value="retired" /><span class="dot"></span><span class="ctext">I am retired</span></label><label class="choice"><input type="radio" name="employment_status" value="none" /><span class="dot"></span><span class="ctext">I am not working right now</span></label></div>
+    <div class="choices" role="radiogroup" aria-labelledby="employment_status____IDX__-label"><label class="choice"><input type="radio" name="employment_status____IDX__" value="employed" /><span class="dot"></span><span class="ctext">I work for an employer</span></label><label class="choice"><input type="radio" name="employment_status____IDX__" value="self" /><span class="dot"></span><span class="ctext">I am self employed or run my own business</span></label><label class="choice"><input type="radio" name="employment_status____IDX__" value="both" /><span class="dot"></span><span class="ctext">Both</span></label><label class="choice"><input type="radio" name="employment_status____IDX__" value="retired" /><span class="dot"></span><span class="ctext">I am retired</span></label><label class="choice"><input type="radio" name="employment_status____IDX__" value="none" /><span class="dot"></span><span class="ctext">I am not working right now</span></label></div>
     
     
     <div class="meta"><div class="tags"><span class="tag">asked per person</span><span class="tag route-intake">intake</span></div></div>
-  </div><div class="q" data-q="wages" data-showif-q="employment_status" data-showif-v="employed|both" hidden>
-    <label class="qlabel" id="wages-label" for="wages">Wages before tax</label>
+  </div><div class="q" data-q="wages____IDX__" data-showif-q="employment_status____IDX__" data-showif-v="employed|both" hidden>
+    <label class="qlabel" id="wages____IDX__-label" for="wages____IDX__">Wages before tax</label>
     
-    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="wages" name="wages" min="0" step="1" /></div>
-    
-    
-    <div class="meta"><div class="tags"><span class="tag">asked per person</span><span class="tag cond">only if employment status is employed or both</span><span class="tag route-intake">intake</span></div></div>
-  </div><div class="q" data-q="wages_frequency" data-showif-q="employment_status" data-showif-v="employed|both" hidden>
-    <label class="qlabel" id="wages_frequency-label" for="wages_frequency">How often?</label>
-    
-    <div class="choices" role="radiogroup" aria-labelledby="wages_frequency-label"><label class="choice"><input type="radio" name="wages_frequency" value="hourly" /><span class="dot"></span><span class="ctext">Per hour</span></label><label class="choice"><input type="radio" name="wages_frequency" value="weekly" /><span class="dot"></span><span class="ctext">Per week</span></label><label class="choice"><input type="radio" name="wages_frequency" value="biweekly" /><span class="dot"></span><span class="ctext">Every 2 weeks</span></label><label class="choice"><input type="radio" name="wages_frequency" value="semimonthly" /><span class="dot"></span><span class="ctext">Twice a month</span></label><label class="choice"><input type="radio" name="wages_frequency" value="monthly" /><span class="dot"></span><span class="ctext">Per month</span></label><label class="choice"><input type="radio" name="wages_frequency" value="yearly" /><span class="dot"></span><span class="ctext">Per year</span></label></div>
+    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="wages____IDX__" name="wages____IDX__" min="0" step="1" /></div>
     
     
     <div class="meta"><div class="tags"><span class="tag">asked per person</span><span class="tag cond">only if employment status is employed or both</span><span class="tag route-intake">intake</span></div></div>
-  </div><div class="q" data-q="self_employment_net" data-showif-q="employment_status" data-showif-v="self|both" hidden>
-    <label class="qlabel" id="self_employment_net-label" for="self_employment_net">Net business income per month, after expenses</label>
+  </div><div class="q" data-q="wages_frequency____IDX__" data-showif-q="employment_status____IDX__" data-showif-v="employed|both" hidden>
+    <label class="qlabel" id="wages_frequency____IDX__-label" for="wages_frequency____IDX__">How often?</label>
+    
+    <div class="choices" role="radiogroup" aria-labelledby="wages_frequency____IDX__-label"><label class="choice"><input type="radio" name="wages_frequency____IDX__" value="hourly" /><span class="dot"></span><span class="ctext">Per hour</span></label><label class="choice"><input type="radio" name="wages_frequency____IDX__" value="weekly" /><span class="dot"></span><span class="ctext">Per week</span></label><label class="choice"><input type="radio" name="wages_frequency____IDX__" value="biweekly" /><span class="dot"></span><span class="ctext">Every 2 weeks</span></label><label class="choice"><input type="radio" name="wages_frequency____IDX__" value="semimonthly" /><span class="dot"></span><span class="ctext">Twice a month</span></label><label class="choice"><input type="radio" name="wages_frequency____IDX__" value="monthly" /><span class="dot"></span><span class="ctext">Per month</span></label><label class="choice"><input type="radio" name="wages_frequency____IDX__" value="yearly" /><span class="dot"></span><span class="ctext">Per year</span></label></div>
+    
+    
+    <div class="meta"><div class="tags"><span class="tag">asked per person</span><span class="tag cond">only if employment status is employed or both</span><span class="tag route-intake">intake</span></div></div>
+  </div><div class="q" data-q="self_employment_net____IDX__" data-showif-q="employment_status____IDX__" data-showif-v="self|both" hidden>
+    <label class="qlabel" id="self_employment_net____IDX__-label" for="self_employment_net____IDX__">Net business income per month, after expenses</label>
     <p class="qhelp">What is left once you have paid business expenses, not what came in.</p>
-    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="self_employment_net" name="self_employment_net" min="0" step="1" /></div>
-    <label class="unsure"><input type="checkbox" name="self_employment_net_unsure" /><span>I am not sure</span></label>
+    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="self_employment_net____IDX__" name="self_employment_net____IDX__" min="0" step="1" /></div>
+    <label class="unsure"><input type="checkbox" name="self_employment_net____IDX___unsure" /><span>I am not sure</span></label>
     
     <div class="meta"><div class="tags"><span class="tag">asked per person</span><span class="tag cond">only if employment status is self or both</span><span class="tag route-intake">intake</span></div></div>
+  </div></template>
+    <div class="people"></div>
   </div><div class="q" data-q="other_income">
     <label class="qlabel" id="other_income-label" for="other_income">Does anyone receive any of these?</label>
     <p class="qhelp">Do not include child support, veterans payments or Supplemental Security Income. Those do not count.</p>
@@ -989,6 +1013,65 @@
     );
   }
 
+  // One block of questions per household member.
+  //
+  // Premium is age rated per person, so asking once and inferring the rest
+  // produces a wrong price rather than an approximate one. Blocks are built
+  // from the household size, and existing answers survive a size change so
+  // correcting a typo does not wipe what has already been entered.
+  const HOUSEHOLD_CAP = 10;
+
+  function personLabel(i) {
+    return i === 0 ? "You" : "Person " + (i + 1);
+  }
+
+  function buildPeople() {
+    const sizeField = document.querySelector('[name="household_size"]');
+    const size = Math.max(0, Math.min(HOUSEHOLD_CAP, Number(sizeField && sizeField.value) || 0));
+
+    document.querySelectorAll(".persongroup").forEach((group) => {
+      const tpl = group.querySelector(".persontpl");
+      const host = group.querySelector(".people");
+      if (!tpl || !host) return;
+
+      if (size === 0) {
+        host.innerHTML =
+          '<p class="waiting">Tell us how many people are on your tax return and we will ask about each of them.</p>';
+        return;
+      }
+      if (host.querySelectorAll(".person").length === size) return;
+
+      // Preserve anything already answered before rebuilding.
+      const saved = {};
+      host.querySelectorAll("input, textarea").forEach((el) => {
+        if (el.type === "radio" || el.type === "checkbox") {
+          if (el.checked) saved[el.name + "::" + el.value] = true;
+        } else if (el.value.trim() !== "") {
+          saved[el.name] = el.value;
+        }
+      });
+
+      host.innerHTML = "";
+      for (let i = 0; i < size; i += 1) {
+        const block = document.createElement("div");
+        block.className = "person";
+        block.dataset.person = String(i);
+        block.innerHTML =
+          '<p class="personhead">' + personLabel(i) + "</p>" +
+          tpl.innerHTML.replace(/__IDX__/g, String(i));
+        host.appendChild(block);
+      }
+
+      host.querySelectorAll("input, textarea").forEach((el) => {
+        if (el.type === "radio" || el.type === "checkbox") {
+          if (saved[el.name + "::" + el.value]) el.checked = true;
+        } else if (saved[el.name] !== undefined) {
+          el.value = saved[el.name];
+        }
+      });
+    });
+  }
+
   // Selection state, applied explicitly so it never depends on :has() support.
   function paintChoices() {
     document.querySelectorAll(".choice").forEach((row) => {
@@ -1007,7 +1090,10 @@
   });
 
   document.addEventListener("change", (e) => {
-    if (e.target.matches("input, textarea")) { paintChoices(); refresh(); }
+    if (!e.target.matches("input, textarea")) return;
+    if (e.target.name === "household_size") buildPeople();
+    paintChoices();
+    refresh();
   });
   document.addEventListener("input", (e) => {
     if (e.target.matches("input, textarea")) updateProgress();
@@ -1036,11 +1122,21 @@
 
   // Collects every answered field into a flat payload keyed by question id.
   // Checkboxes become arrays; everything else is a scalar.
+  // Per person answers come back as arrays in member order, so
+  // person_age becomes ["44", "42", "9"] rather than a single value.
   function collect() {
     const answers = {};
+    const perPerson = {};
+
     document.querySelectorAll(".q").forEach((q) => {
       if (q.hidden) return;
-      const id = q.dataset.q;
+      const raw = q.dataset.q;
+      // Doubled backslash on purpose: this script is emitted from a template
+      // literal, where an unrecognised escape like \d is silently stripped and
+      // the regex quietly stops matching.
+      const personMatch = raw.match(/^(.*)__(\d+)$/);
+      const id = personMatch ? personMatch[1] : raw;
+      const personIndex = personMatch ? Number(personMatch[2]) : -1;
       const radios = q.querySelectorAll('input[type="radio"]:checked');
       const boxes = [...q.querySelectorAll('input[type="checkbox"]:checked')].filter(
         (b) => !b.name.endsWith("_unsure"),
@@ -1050,11 +1146,28 @@
         .filter(Boolean);
       const unsure = q.querySelector('input[name$="_unsure"]:checked');
 
-      if (radios.length) answers[id] = radios[0].value;
-      else if (boxes.length) answers[id] = boxes.map((b) => b.value);
-      else if (texts.length) answers[id] = texts.length === 1 ? texts[0] : texts;
+      let value;
+      if (radios.length) value = radios[0].value;
+      else if (boxes.length) value = boxes.map((b) => b.value);
+      else if (texts.length) value = texts.length === 1 ? texts[0] : texts;
+
+      if (personIndex >= 0) {
+        if (value !== undefined) {
+          perPerson[id] = perPerson[id] || [];
+          perPerson[id][personIndex] = value;
+        }
+        if (unsure) answers[id + "_unsure"] = true;
+        return;
+      }
+
+      if (value !== undefined) answers[id] = value;
       if (unsure) answers[id + "_unsure"] = true;
     });
+
+    for (const [id, list] of Object.entries(perPerson)) {
+      // Fill gaps so index position still means member position.
+      answers[id] = Array.from(list, (v) => (v === undefined ? "" : v));
+    }
     return answers;
   }
 
@@ -1069,6 +1182,7 @@
     window.open("agent.html", "askmike-agent");
   });
 
+  buildPeople();
   paintChoices();
   refresh();
   showStep(0);
