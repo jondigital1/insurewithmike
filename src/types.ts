@@ -235,6 +235,28 @@ export interface CostBreakdown {
   estimatedAnnualTotal: number;
   /** Worst realistic year: premium plus the full out of pocket maximum. */
   worstCaseAnnualTotal: number;
+  /**
+   * What using a second tier provider costs on this plan, in dollars.
+   *
+   * Tiered plans quote their headline deductible and out of pocket maximum
+   * against tier 1. A client whose hospital sits in tier 2 pays the tier 2
+   * figures instead, and nothing on a comparison screen shows that. Null when
+   * the plan is not tiered.
+   */
+  tierTwoPenalty: TierPenalty | null;
+}
+
+export interface TierPenalty {
+  /** Extra deductible if care goes to a tier 2 provider. */
+  extraDeductible: number;
+  /** Extra exposure in a bad year. */
+  extraWorstCase: number;
+  /**
+   * True when the plan files a second tier but with identical numbers, so the
+   * tiering costs nothing in deductible or out of pocket terms. Worth saying,
+   * because it looks alarming and is not.
+   */
+  nominalOnly: boolean;
 }
 
 export interface PlanEvaluation {

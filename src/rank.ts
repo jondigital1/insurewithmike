@@ -7,7 +7,7 @@
  */
 
 import { fplPercentage } from "./assumptions.ts";
-import { evaluateCost } from "./cost.ts";
+import { evaluateCost, tierPenalty } from "./cost.ts";
 import { issuerCounties } from "./dataset.ts";
 import type { SubsidyResult } from "./subsidy.ts";
 import type {
@@ -106,6 +106,9 @@ function describeVariant(variant: CsrVariant): string {
   }
 }
 
+const money = (n: number) =>
+  n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+
 function notesFor(plan: Plan, household: Household): string[] {
   const notes: string[] = [];
 
@@ -115,9 +118,21 @@ function notesFor(plan: Plan, household: Household): string[] {
   if (plan.coinsurance === null) {
     notes.push("Coinsurance not filed in the public data, confirm with the carrier");
   }
-  if (plan.hasSecondNetworkTier) {
+
+  // Tiering is only worth a conversation when it costs something. Six of the
+  // eleven tiered plans in this market file identical numbers for both tiers,
+  // so warning about all of them buries the four that matter.
+  const tier = tierPenalty(plan);
+  if (tier?.nominalOnly) {
     notes.push(
-      "Tiered network. Costs shown assume tier 1 providers. Confirm the client's doctors are tier 1",
+      "Files a second network tier, but with identical deductible and out of pocket maximum, so which tier a provider sits in costs nothing here",
+    );
+  } else if (tier) {
+    const parts: string[] = [];
+    if (tier.extraDeductible > 0) parts.push(`${money(tier.extraDeductible)} more deductible`);
+    if (tier.extraWorstCase > 0) parts.push(`${money(tier.extraWorstCase)} more exposure in a bad year`);
+    notes.push(
+      `Tiered network, and it costs real money: a tier 2 provider means ${parts.join(" and ")}. Figures below assume tier 1, so check the client's hospital before quoting this one`,
     );
   }
   if (plan.hsaEligible) {
@@ -260,4 +275,5 @@ function balanceScore(e: PlanEvaluation): number {
   const gap = e.cost.worstCaseAnnualTotal - e.cost.estimatedAnnualTotal;
   return e.cost.estimatedAnnualTotal + gap * 0.25;
 }
+
 

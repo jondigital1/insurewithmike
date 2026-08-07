@@ -16,6 +16,7 @@ import type {
   Plan,
   PlanDataset,
   ServiceCategory,
+  TierPenalty,
 } from "./types.ts";
 
 export { monthlyListPremium };
@@ -139,6 +140,38 @@ export function applyCostSharing(
   };
 }
 
+/**
+ * What a tiered plan costs if the client's care goes to a second tier provider.
+ *
+ * Every comparison screen, including ours, quotes the tier 1 deductible and out
+ * of pocket maximum, because that is the headline figure the issuer files. A
+ * client whose hospital sits in tier 2 pays the tier 2 numbers instead, and
+ * nothing tells them until a bill arrives.
+ *
+ * We cannot say which tier a given hospital is in. Horizon's published tier
+ * list is dated October 2017 and hospitals have moved since, so answering from
+ * it would be a confident wrong answer about a financial decision. What we can
+ * do is price the risk, so the agent knows how much the question is worth
+ * before picking up the phone to check.
+ */
+export function tierPenalty(plan: Plan): TierPenalty | null {
+  if (!plan.hasSecondNetworkTier) return null;
+
+  const t1Ded = plan.deductibleIndividual ?? 0;
+  const t2Ded = plan.deductibleIndividualTier2 ?? t1Ded;
+  const t1Moop = plan.moopIndividual ?? 0;
+  const t2Moop = plan.moopIndividualTier2 ?? t1Moop;
+
+  const extraDeductible = Math.max(0, t2Ded - t1Ded);
+  const extraWorstCase = Math.max(0, t2Moop - t1Moop);
+
+  return {
+    extraDeductible,
+    extraWorstCase,
+    nominalOnly: extraDeductible === 0 && extraWorstCase === 0,
+  };
+}
+
 export function evaluateCost(
   dataset: PlanDataset,
   plan: Plan,
@@ -195,6 +228,7 @@ export function evaluateCost(
     (isFamily ? plan.moopFamily : plan.moopIndividual) ?? plan.moopIndividual ?? 0;
 
   return {
+    tierTwoPenalty: tierPenalty(plan),
     annualPremiumListed,
     federalSubsidyApplied,
     stateSubsidyApplied,
@@ -210,6 +244,7 @@ export function evaluateCost(
     worstCaseAnnualTotal: effectivePremium + moop,
   };
 }
+
 
 
 
