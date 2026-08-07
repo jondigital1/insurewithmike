@@ -177,7 +177,7 @@
 </style>
 
 <div class="notice" role="status">
-  <b>Preview.</b> Nothing you type here is saved, sent or stored anywhere. This is a draft of the form for Mike and Mar to mark up, not a real application.
+  <b>Draft for review.</b> This is not the live form yet, so it is not connected to anything. The finished version sends your answers straight to your agent before you meet.
 </div>
 
 <div class="bar">
@@ -193,7 +193,7 @@
     <h1>Before we meet, tell us about your year</h1>
     <p>This takes about ten minutes. Your agent uses it to work out which plans are worth your time, so the meeting can be about the decision rather than the paperwork.</p>
     <p>Rough answers are fine. Where you are not sure, say so rather than guessing, and your agent will pick it up.</p>
-    <div class="privacy"><b>We do not ask who you are.</b> No name, no address, no Social Security number, no date of birth. Your agent already has all of that. The code below is the only thing connecting these answers to you.</div>
+    <div class="privacy"><b>Worth having to hand:</b> your insurance card if you have one, and the bottles for anything you take regularly. Neither is essential, but they make a few of the questions much quicker to answer.</div>
   </div>
 
   <section class="sect" data-half="eligibility">
@@ -201,7 +201,7 @@
       <div class="secnum">Step 1</div>
       <h2>Getting started</h2>
       <span class="halfmark eligibility">Eligibility and price</span>
-      <p class="blurb">Your agent gave you a code. It is the only thing that identifies you here, so we never ask for your name, address or Social Security number.</p>
+      <p class="blurb">Your agent gave you a code when they sent you here. It links your answers back to your file.</p>
     </header>
     <div class="qs"><div class="q" data-q="client_code">
     <div class="qnum">1</div>
@@ -913,7 +913,7 @@
 </main>
 
 <footer>
-  Prototype generated from <code>src/intake/questionnaire.ts</code>. Nothing is saved and nothing is sent.
+  Generated from <code>src/intake/questionnaire.ts</code>, so this form and the definition we build from cannot drift apart.
   Review view reveals every conditional question, why each one is asked, and where each answer is routed.
 </footer>
 
@@ -958,7 +958,7 @@
   });
 
   document.querySelector(".submit").addEventListener("click", () => {
-    alert("Prototype only. Nothing was sent.");
+    alert("Draft form. Submitting is not wired up yet.");
   });
 
   refresh();

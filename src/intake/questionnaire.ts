@@ -118,7 +118,7 @@ export const QUESTIONNAIRE: Section[] = [
     id: "start",
     title: "Getting started",
     blurb:
-      "Your agent gave you a code. It is the only thing that identifies you here, so we never ask for your name, address or Social Security number.",
+      "Your agent gave you a code when they sent you here. It links your answers back to your file.",
     half: "eligibility",
     questions: [
       {

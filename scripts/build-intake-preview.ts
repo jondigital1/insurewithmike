@@ -330,7 +330,7 @@ const html = `<title>Ask Mike, client intake</title>
 </style>
 
 <div class="notice" role="status">
-  <b>Preview.</b> Nothing you type here is saved, sent or stored anywhere. This is a draft of the form for Mike and Mar to mark up, not a real application.
+  <b>Draft for review.</b> This is not the live form yet, so it is not connected to anything. The finished version sends your answers straight to your agent before you meet.
 </div>
 
 <div class="bar">
@@ -346,7 +346,7 @@ const html = `<title>Ask Mike, client intake</title>
     <h1>Before we meet, tell us about your year</h1>
     <p>This takes about ten minutes. Your agent uses it to work out which plans are worth your time, so the meeting can be about the decision rather than the paperwork.</p>
     <p>Rough answers are fine. Where you are not sure, say so rather than guessing, and your agent will pick it up.</p>
-    <div class="privacy"><b>We do not ask who you are.</b> No name, no address, no Social Security number, no date of birth. Your agent already has all of that. The code below is the only thing connecting these answers to you.</div>
+    <div class="privacy"><b>Worth having to hand:</b> your insurance card if you have one, and the bottles for anything you take regularly. Neither is essential, but they make a few of the questions much quicker to answer.</div>
   </div>
 
   ${sections}
@@ -359,7 +359,7 @@ const html = `<title>Ask Mike, client intake</title>
 </main>
 
 <footer>
-  Prototype generated from <code>src/intake/questionnaire.ts</code>. Nothing is saved and nothing is sent.
+  Generated from <code>src/intake/questionnaire.ts</code>, so this form and the definition we build from cannot drift apart.
   Review view reveals every conditional question, why each one is asked, and where each answer is routed.
 </footer>
 
@@ -404,7 +404,7 @@ const html = `<title>Ask Mike, client intake</title>
   });
 
   document.querySelector(".submit").addEventListener("click", () => {
-    alert("Prototype only. Nothing was sent.");
+    alert("Draft form. Submitting is not wired up yet.");
   });
 
   refresh();
