@@ -34,32 +34,21 @@ function hydrate(raw: SerialisedDataset): PlanDataset {
 }
 
 /**
- * The monthly figure the client is judging every option against.
+ * What the client pays for coverage today, which is the figure they judge
+ * every option against. The agent page reports each recommended plan as a
+ * difference against it rather than as a bare number, because a premium on its
+ * own means nothing to anybody.
  *
- * A renewal has one: what they pay today. Someone with no plan has only what
- * they were expecting to pay, which is a belief rather than a fact and is
- * labelled as such. Either way the agent page reports each recommended plan as
- * a difference against this rather than as a bare number, because a premium on
- * its own means nothing to anybody.
- *
- * Note what this is not. The form does not ask for a monthly ceiling. A client
- * who names one has committed to it before seeing a single plan, and will read
- * anything above it as a failure even when it is the right plan for them.
+ * Null for anyone with no coverage, and the page then shows premiums straight
+ * rather than comparing them to something invented. Note what this is not: the
+ * form does not ask for a monthly ceiling. A client who names one has
+ * committed to it before seeing a single plan, and will read anything above it
+ * as a failure even when it is the right plan for them.
  */
-function monthlyBaseline(
-  answers: Answers,
-): { monthly: number; source: "current" | "expected" } | null {
-  const money = (v: unknown): number => {
-    if (typeof v === "number") return v;
-    if (typeof v !== "string") return 0;
-    const n = Number(v.replace(/[$,\s]/g, ""));
-    return Number.isFinite(n) ? n : 0;
-  };
-  const current = money(answers.current_premium);
-  if (current > 0) return { monthly: current, source: "current" };
-  const expected = money(answers.expected_premium);
-  if (expected > 0) return { monthly: expected, source: "expected" };
-  return null;
+function monthlyBaseline(answers: Answers): number | null {
+  const v = answers.current_premium;
+  const n = typeof v === "number" ? v : typeof v === "string" ? Number(v.replace(/[$,\s]/g, "")) : NaN;
+  return Number.isFinite(n) && n > 0 ? n : null;
 }
 
 export function recommend(

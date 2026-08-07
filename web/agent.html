@@ -280,13 +280,12 @@
    * baseline, rather than inventing one.
    */
   function againstBaseline(monthly, baseline) {
-    if (!baseline || !baseline.monthly) return "";
-    const diff = Math.round(monthly - baseline.monthly);
-    const against = baseline.source === "current" ? "what they pay now" : "what they expected";
-    if (Math.abs(diff) < 5) return '<div class="vs same">About the same as ' + against + '<\/div>';
-    const pct = Math.round((Math.abs(diff) / baseline.monthly) * 100);
+    if (!baseline) return "";
+    const diff = Math.round(monthly - baseline);
+    if (Math.abs(diff) < 5) return '<div class="vs same">About the same as they pay now<\/div>';
+    const pct = Math.round((Math.abs(diff) / baseline) * 100);
     return '<div class="vs ' + (diff > 0 ? "up" : "down") + '">' +
-      (diff > 0 ? "+" : "&minus;") + usd(Math.abs(diff)) + '/mo against ' + against +
+      (diff > 0 ? "+" : "&minus;") + usd(Math.abs(diff)) + '/mo against what they pay now' +
       (pct >= 5 ? ', ' + pct + '%' : '') + '<\/div>';
   }
 
@@ -322,13 +321,11 @@
       html += '<p style="margin:18px 0 0;font-size:14px;color:var(--am-ink-soft)">Wants to keep: <strong>' +
         esc(h.preferredHealthSystems.join(", ")) + '</strong></p>';
     }
-    if (result.baseline) {
-      html += '<p style="margin:8px 0 0;font-size:14px;color:var(--am-ink-soft)">' +
-        (result.baseline.source === "current"
-          ? 'Paying <strong>' + usd(result.baseline.monthly) + '/mo</strong> today. Every premium below is shown against it.'
-          : 'No plan today. They were expecting around <strong>' + usd(result.baseline.monthly) +
-            '/mo</strong>, which is a guess rather than a limit, and premiums below are shown against it.') + '</p>';
-    }
+    html += '<p style="margin:8px 0 0;font-size:14px;color:var(--am-ink-soft)">' +
+      (result.baseline
+        ? 'Paying <strong>' + usd(result.baseline) + '/mo</strong> today. Every premium below is shown against it.'
+        : 'No coverage today, so there is no premium to compare against. The figures below stand on their own.') +
+      '</p>';
     html += '</section>';
 
     // ---- how many decisions this actually is
