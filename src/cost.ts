@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Deterministic cost model.
  *
  * Given a household's expected utilization and a plan's filed cost sharing,
@@ -9,7 +9,7 @@
 
 import { ALLOWED_AMOUNTS } from "./assumptions.ts";
 import { monthlyListPremium } from "./premium.ts";
-import { netAnnualPremium, type SubsidyResult } from "./subsidy.ts";
+import { netAnnualPremium, njHealthPlanSavings, type SubsidyResult } from "./subsidy.ts";
 import type {
   CostBreakdown,
   Household,
@@ -165,14 +165,22 @@ export function evaluateCost(
   const outOfPocketSource: "filed" | "simulated" = filed ? "filed" : "simulated";
 
   const annualPremiumListed = listMonthly * 12;
-  const annualPremiumNet = subsidy
+  const afterFederal = subsidy
     ? netAnnualPremium(plan, annualPremiumListed, subsidy)
     : annualPremiumListed;
-  const federalSubsidyApplied = annualPremiumListed - annualPremiumNet;
+  const federalSubsidyApplied = annualPremiumListed - afterFederal;
+
+  // The state subsidy stacks on the federal credit rather than reducing it,
+  // which is what DOBI states, so it comes off afterwards. It cannot take the
+  // premium below zero.
+  const state = njHealthPlanSavings(household, plan.metalLevel, household.members.length);
+  const stateSubsidyApplied = Math.min(afterFederal, state.annualAmount);
+  const annualPremiumNet = Math.max(0, afterFederal - stateSubsidyApplied);
   const annualPremiumQuoted =
     quotedMonthlyPremium === null ? null : quotedMonthlyPremium * 12;
-  // The agent's quoted figure always wins, because it comes from GetCoveredNJ
-  // and carries the state subsidy we cannot yet compute.
+  // The agent's quoted figure still wins when supplied. Ours estimates the
+  // state subsidy from a published average; GetCoveredNJ computes the exact
+  // entitlement, so its number is the better one whenever it exists.
   const effectivePremium = annualPremiumQuoted ?? annualPremiumNet;
 
   const moop =
@@ -181,6 +189,7 @@ export function evaluateCost(
   return {
     annualPremiumListed,
     federalSubsidyApplied,
+    stateSubsidyApplied,
     annualPremiumNet,
     annualPremiumQuoted,
     estimatedAllowedCharges: allowed,
@@ -193,3 +202,4 @@ export function evaluateCost(
     worstCaseAnnualTotal: effectivePremium + moop,
   };
 }
+

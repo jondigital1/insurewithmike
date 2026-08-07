@@ -194,7 +194,13 @@ export interface CostBreakdown {
   annualPremiumListed: number;
   /** Federal advance premium tax credit applied to this plan, dollars. */
   federalSubsidyApplied: number;
-  /** List premium less the federal credit. Still before any NJ state subsidy. */
+  /**
+   * Estimated New Jersey Health Plan Savings applied to this plan, dollars.
+   * An average rather than a computed entitlement, because the state does not
+   * publish the schedule.
+   */
+  stateSubsidyApplied: number;
+  /** List premium less both subsidies. Never below zero. */
   annualPremiumNet: number;
   /** Twelve months of premium the agent actually quoted, when supplied. */
   annualPremiumQuoted: number | null;

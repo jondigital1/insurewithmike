@@ -248,6 +248,8 @@ ${TOKENS}
       ["Federal poverty level", result.fplPercentage.toFixed(0) + "%", "of " + usd(result.federalPovertyLevel)],
       ["Cost sharing tier", result.silverVariant === "standard" ? "Standard silver" : result.silverVariant.replace("csr", "") + "% silver"],
       ["Federal credit", usd(result.subsidy.federalAnnualSubsidy) + "/yr"],
+      ["NJ Health Plan Savings", result.stateSubsidy.eligible ? usd(result.stateSubsidy.annualAmount) + "/yr" : "not eligible",
+        result.stateSubsidy.eligible ? "estimated, " + usd(result.stateSubsidy.perMemberPerMonth) + " per person monthly" : ""],
     ];
     for (const [k, v, small] of facts) {
       html += '<div class="fact"><dt>' + esc(k) + '</dt><dd>' + esc(v) + (small ? '<small>' + esc(small) + '</small>' : '') + '</dd></div>';
@@ -281,7 +283,7 @@ ${TOKENS}
       html += '<p class="why">' + esc(p.rationale) + '</p>';
       html += '<div class="figures">';
       html += '<div class="fig lead"><div class="k">Expected for the year</div><div class="v">' + usd(c.estimatedAnnualTotal) + '</div></div>';
-      html += '<div class="fig"><div class="k">Premium after credit</div><div class="v">' + usd(c.annualPremiumNet / 12) + '/mo</div></div>';
+      html += '<div class="fig"><div class="k">Premium after help</div><div class="v">' + usd(c.annualPremiumNet / 12) + '/mo</div></div>';
       html += '<div class="fig"><div class="k">Expected out of pocket</div><div class="v">' + usd(c.estimatedOutOfPocket) + '</div></div>';
       html += '<div class="fig"><div class="k">If the year goes badly</div><div class="v">' + usd(c.worstCaseAnnualTotal) + '</div></div>';
       html += '</div>';
@@ -317,7 +319,7 @@ ${TOKENS}
 
     out.innerHTML = html;
     document.getElementById("colophon").textContent =
-      "Plan year " + ${dataset.planYear} + ", New Jersey individual marketplace. Figures use the list premium less the federal credit; the New Jersey state subsidy is not yet modelled, so the agent's quoted premium will be lower.";
+      "Plan year " + ${dataset.planYear} + ", New Jersey individual marketplace. Premiums are the filed list rate less the federal credit and an estimate of New Jersey Health Plan Savings. The state does not publish its subsidy schedule, so that part is the published average rather than this household's exact entitlement, and the agent's quoted premium remains the real figure.";
   }
 
   function load() {

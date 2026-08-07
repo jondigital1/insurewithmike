@@ -169,28 +169,83 @@ export function netAnnualPremium(
   return Math.max(0, listAnnualPremium - subsidy.federalAnnualSubsidy);
 }
 
+/** Income ceiling for the New Jersey state subsidy, as a percentage of the FPL. */
+export const NJHPS_CEILING_PCT = 600;
+
 /**
- * New Jersey Health Plan Savings, the state subsidy that stacks on top of the
- * federal credit and reaches up to 600 percent of the federal poverty level.
+ * Average New Jersey Health Plan Savings per member per month, by metal level.
  *
- * NOT YET IMPLEMENTED. The state publishes fixed per member monthly amounts by
- * income band rather than a formula, and those amounts are not present in any
- * dataset we hold. Until the schedule is obtained from GetCoveredNJ or DOBI,
- * this returns zero and the agent's quoted premium remains the source of truth
- * for households under 600 percent of the poverty level.
+ * Source: New Jersey Department of Banking and Insurance, response to the
+ * Office of Legislative Services FY 2026-2027 budget discussion points. Those
+ * are observed averages across everyone actually enrolled, not a schedule.
+ *
+ * The state does not publish the schedule itself. GetCoveredNJ computes an
+ * amount inside its shopping tool and shows the result, so the only figures in
+ * the public record are these averages. That makes this an estimate of the
+ * right order rather than the household's exact entitlement, and it is
+ * labelled that way everywhere it surfaces.
+ *
+ * DOBI has confirmed NJHPS continues to 600 percent of the poverty level for
+ * 2026. The 2027 allocation is undetermined, so this needs revisiting before
+ * the next plan year.
  */
-export function njHealthPlanSavings(household: Household): {
-  amount: number;
-  implemented: boolean;
+const NJHPS_PMPM_BY_METAL: Record<string, number> = {
+  Bronze: 46.6,
+  "Expanded Bronze": 46.6,
+  Silver: 43.6,
+  Gold: 39.77,
+  Platinum: 39.77,
+  // Catastrophic plans cannot take the federal credit. Whether the state
+  // subsidy attaches to them is not stated in any source we hold, so nothing
+  // is assumed.
+  Catastrophic: 0,
+};
+
+export interface StateSubsidyResult {
+  /** Estimated annual New Jersey Health Plan Savings, dollars. */
+  annualAmount: number;
+  perMemberPerMonth: number;
+  eligible: boolean;
+  /** True when the figure is an average rather than a computed entitlement. */
+  isEstimate: boolean;
   note: string;
-} {
+}
+
+/**
+ * Estimates the New Jersey state subsidy for a household on a given plan.
+ *
+ * It stacks on top of the federal credit and does not reduce it, which DOBI
+ * states explicitly, so it is applied after the federal calculation rather
+ * than inside it.
+ */
+export function njHealthPlanSavings(
+  household: Household,
+  metalLevel = "Silver",
+  enrolledMembers = household.members.length,
+): StateSubsidyResult {
   const fplPct = fplPercentage(household.annualIncome, household.householdSize);
-  const eligible = fplPct <= 600;
+  const eligible = fplPct <= NJHPS_CEILING_PCT;
+  const pmpm = NJHPS_PMPM_BY_METAL[metalLevel] ?? NJHPS_PMPM_BY_METAL.Silver!;
+
+  if (!eligible) {
+    return {
+      annualAmount: 0,
+      perMemberPerMonth: 0,
+      eligible: false,
+      isEstimate: false,
+      note: `Household is at ${fplPct.toFixed(0)} percent of the poverty level, above the 600 percent ceiling for New Jersey Health Plan Savings.`,
+    };
+  }
+
+  const annualAmount = pmpm * Math.max(1, enrolledMembers) * 12;
   return {
-    amount: 0,
-    implemented: false,
-    note: eligible
-      ? `Household at ${fplPct.toFixed(0)} percent of the poverty level likely qualifies for NJ Health Plan Savings, which is not yet modelled. The agent's quoted premium will be lower than the figure shown here.`
-      : `Household at ${fplPct.toFixed(0)} percent of the poverty level is above the 600 percent NJ Health Plan Savings ceiling.`,
+    annualAmount,
+    perMemberPerMonth: pmpm,
+    eligible: true,
+    isEstimate: true,
+    note:
+      fplPct > PTC_INCOME_CEILING_PCT
+        ? `Above the 400 percent federal cliff, so New Jersey Health Plan Savings is the only help available. Estimated at the published average of $${pmpm.toFixed(2)} per person per month; the agent's quoted premium is the real figure.`
+        : `New Jersey Health Plan Savings estimated at the published average of $${pmpm.toFixed(2)} per person per month, stacked on the federal credit. The state does not publish the schedule, so treat this as the right order of magnitude rather than the exact entitlement.`,
   };
 }

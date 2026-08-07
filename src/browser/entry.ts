@@ -39,7 +39,10 @@ export function recommend(answers: Answers, raw: SerialisedDataset) {
   const evaluations = evaluateAllPlans(dataset, household, new Map(), subsidy);
   const shortlist = buildShortlist(evaluations);
   const eligible = evaluations.filter((e) => e.disqualifiers.length === 0);
-  const njhps = njHealthPlanSavings(household);
+  // Reported against silver, which is what most households enrol in. The
+  // per plan figure varies with metal level and is applied inside the cost
+  // model, not here.
+  const njhps = njHealthPlanSavings(household, "Silver");
 
   const excluded = new Map<string, number>();
   for (const e of evaluations) {
@@ -51,6 +54,7 @@ export function recommend(answers: Answers, raw: SerialisedDataset) {
     flags: [...flags, ...subsidy.notes, njhps.note],
     unsure,
     subsidy,
+    stateSubsidy: njhps,
     silverVariant: eligibleSilverVariant(household),
     fplPercentage: fplPercentage(household.annualIncome, household.householdSize),
     federalPovertyLevel: federalPovertyLevel(household.householdSize),
