@@ -14,18 +14,6 @@ import { dirname } from "node:path";
 import { QUESTIONNAIRE, allQuestions } from "../src/intake/questionnaire.ts";
 import type { Question, Section } from "../src/intake/questionnaire.ts";
 
-/**
- * Pay periods per year, read off the questionnaire rather than restated here,
- * so the annualising the page does cannot drift from the options it offers.
- */
-const FREQUENCY_PERIODS = (allQuestions().find((q) => q.id === "wages_frequency")?.options ?? []).map(
-  (o) => ({ value: o.value, periods: o.midpoint ?? 1 }),
-);
-if (!FREQUENCY_PERIODS.length || FREQUENCY_PERIODS.some((f) => !f.periods)) {
-  console.error("\nwages_frequency options are missing periods per year. Income cannot be annualised.");
-  process.exit(1);
-}
-
 // ---------------------------------------------------------------- validation
 
 const problems: string[] = [];
@@ -332,7 +320,13 @@ const html = `<title>Ask Mike, client intake</title>
     display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
   }
 
-  .lockup { display: inline-flex; align-items: center; gap: 0.34em; margin-right: auto; }
+  .lockup {
+    display: inline-flex; align-items: center; gap: 0.34em; margin-right: auto;
+    text-decoration: none; border-radius: 8px; padding: 2px 4px; margin-left: -4px;
+    transition: opacity 150ms ease-out;
+  }
+  .lockup:hover { opacity: .78; }
+  .lockup:focus-visible { outline: 2px solid var(--am-blue-600); outline-offset: 2px; }
   .lockup .word {
     font-family: var(--display); font-weight: 400; font-size: 26px;
     line-height: 1; letter-spacing: -0.015em; color: var(--am-ink);
@@ -742,7 +736,7 @@ const html = `<title>Ask Mike, client intake</title>
 </div>
 
 <div class="topbar">
-  <span class="lockup">${MARK(32)}<span class="word">Ask Mike</span></span>
+  <a class="lockup" href="/" id="home" aria-label="Ask Mike, back to the start">${MARK(32)}<span class="word">Ask Mike</span></a>
   <div class="progress">
     <div class="track" id="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="${QUESTIONNAIRE.length}" aria-valuenow="0" aria-label="Progress through the form">
       <div class="fill" id="progress-fill"></div>
@@ -825,12 +819,6 @@ const html = `<title>Ask Mike, client intake</title>
     updateProgress();
   }
 
-  // Pay periods per year, so a client can quote whichever figure they actually
-  // know rather than converting in their head.
-  const PERIODS = ${JSON.stringify(
-    Object.fromEntries(FREQUENCY_PERIODS.map((o) => [o.value, o.periods])),
-  )};
-
   const money = (n) => Math.round(n).toLocaleString("en-US");
 
   const STILL = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -876,10 +864,10 @@ const html = `<title>Ask Mike, client intake</title>
   /**
    * Adds the income boxes up and shows the total back for confirmation.
    *
-   * Wages are annualised by pay period, self employment is filed monthly and
-   * multiplied by twelve, and deductions come off the top because they lower
-   * the income the subsidy is figured on. Anyone who says the total is wrong
-   * types their own figure and that wins.
+   * Every box is already a yearly figure, so this is addition, with deductions
+   * coming off the top because they lower the income the subsidy is figured
+   * on. Anyone who says the total is wrong types their own figure and that
+   * wins.
    */
   function updateIncome() {
     document.querySelectorAll("[data-estimate]").forEach((panel) => {
@@ -894,10 +882,8 @@ const html = `<title>Ask Mike, client intake</title>
       let wages = 0;
       let selfEmployed = 0;
       members.forEach((i) => {
-        const amount = numOf("wages__" + i);
-        const freq = document.querySelector('[name="wages_frequency__' + i + '"]:checked');
-        if (amount && freq && PERIODS[freq.value]) wages += amount * PERIODS[freq.value];
-        selfEmployed += numOf("self_employment_net__" + i) * 12;
+        wages += numOf("wages__" + i);
+        selfEmployed += numOf("self_employment_net__" + i);
       });
 
       const other = numOf("other_income_amount");
@@ -1210,6 +1196,20 @@ const html = `<title>Ask Mike, client intake</title>
     window.open("agent.html", "askmike-agent");
     window.location.href = "thanks.html";
   });
+
+  // The logo goes home, and on this page home is step one. Reloading would be
+  // the literal reading and would throw away everything typed so far, so it
+  // moves rather than navigates. The href stays real for middle click and for
+  // anyone with scripting off.
+  const homeLink = document.getElementById("home");
+  if (homeLink) {
+    homeLink.addEventListener("click", (e) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+      e.preventDefault();
+      if (body.classList.contains("reviewing")) setView(false);
+      showStep(0);
+    });
+  }
 
   buildPeople();
   paintChoices();

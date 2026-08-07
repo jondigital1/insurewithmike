@@ -65,5 +65,17 @@ export const FAVICON =
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><rect width="48" height="48" rx="10" fill="#FCFBF8"/><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#0F7CC0"/><circle cx="24" cy="20.5" r="6" fill="#F2A65A"/></svg>`,
   );
 
-export const lockup = (size = 32): string =>
-  `<span class="lockup">${mark(size)}<span class="word">Ask Mike</span></span>`;
+/**
+ * The lockup, as a link home.
+ *
+ * Clicking the logo to get back to the start is the one navigation convention
+ * everybody already knows, and this page has no other way out. Pass null for
+ * href to render it as plain text, which is right on a page where leaving
+ * would lose work.
+ */
+export const lockup = (size = 32, href: string | null = "/"): string => {
+  const inner = `${mark(size)}<span class="word">Ask Mike</span>`;
+  return href === null
+    ? `<span class="lockup">${inner}</span>`
+    : `<a class="lockup" href="${href}" aria-label="Ask Mike, back to the start">${inner}</a>`;
+};

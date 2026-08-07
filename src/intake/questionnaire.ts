@@ -103,16 +103,6 @@ const VISIT_BANDS: Option[] = [
   { value: "21+", label: "More than 20", midpoint: 26 },
 ];
 
-/** Pay periods per year, used to annualise whatever figure someone quotes. */
-const FREQUENCIES: Option[] = [
-  { value: "hourly", label: "Per hour", midpoint: 2080 },
-  { value: "weekly", label: "Per week", midpoint: 52 },
-  { value: "biweekly", label: "Every 2 weeks", midpoint: 26 },
-  { value: "semimonthly", label: "Twice a month", midpoint: 24 },
-  { value: "monthly", label: "Per month", midpoint: 12 },
-  { value: "yearly", label: "Per year", midpoint: 1 },
-];
-
 const RARE_BANDS: Option[] = [
   { value: "0", label: "None", midpoint: 0 },
   { value: "1", label: "Once", midpoint: 1 },
@@ -374,28 +364,20 @@ export const QUESTIONNAIRE: Section[] = [
       {
         id: "wages",
         kind: "currency",
-        label: "Pay before tax",
-        help: "Whatever figure is easiest to quote. The next box says how often it arrives.",
+        label: "Estimated yearly earnings, before tax",
+        help: "For the whole year, before anything is taken out. If you are paid hourly or weekly, a rough total for the year is fine.",
         required: true,
         perPerson: true,
         showIf: { question: "employment_status", equals: ["employed", "both"] },
         routing: "intake",
-      },
-      {
-        id: "wages_frequency",
-        kind: "choice",
-        label: "How often?",
-        options: FREQUENCIES,
-        required: true,
-        perPerson: true,
-        showIf: { question: "employment_status", equals: ["employed", "both"] },
-        routing: "intake",
+        rationale:
+          "One yearly figure rather than an amount and a pay period. The pay period list added a screen of buttons to every earner in the household and bought nothing: the subsidy runs on the annual number, and someone paid every two weeks still knows roughly what they make in a year.",
       },
       {
         id: "self_employment_net",
         kind: "currency",
-        label: "Net business income per month, after expenses",
-        help: "What is left once you have paid business expenses, not what came in.",
+        label: "Net business income for the year, after expenses",
+        help: "What is left once you have paid business expenses, not what came in. A rough figure for the year.",
         required: true,
         perPerson: true,
         allowUnsure: true,

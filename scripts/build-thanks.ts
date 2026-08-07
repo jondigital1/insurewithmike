@@ -160,7 +160,13 @@ ${TOKENS}
     background: var(--am-white); border-bottom: 1px solid var(--am-line);
     padding: 12px clamp(16px, 4vw, 32px); display: flex; align-items: center;
   }
-  .lockup { display: inline-flex; align-items: center; gap: 0.34em; }
+  .lockup {
+    display: inline-flex; align-items: center; gap: 0.34em;
+    text-decoration: none; border-radius: 8px; padding: 2px 4px; margin-left: -4px;
+    transition: opacity 150ms ease-out;
+  }
+  .lockup:hover { opacity: .78; }
+  .lockup:focus-visible { outline: 2px solid var(--am-blue-600); outline-offset: 2px; }
   .lockup .word {
     font-family: var(--display); font-weight: 400; font-size: 26px;
     line-height: 1; letter-spacing: -0.015em; color: var(--am-ink);

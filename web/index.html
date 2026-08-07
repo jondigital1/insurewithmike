@@ -78,7 +78,13 @@
     display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
   }
 
-  .lockup { display: inline-flex; align-items: center; gap: 0.34em; margin-right: auto; }
+  .lockup {
+    display: inline-flex; align-items: center; gap: 0.34em; margin-right: auto;
+    text-decoration: none; border-radius: 8px; padding: 2px 4px; margin-left: -4px;
+    transition: opacity 150ms ease-out;
+  }
+  .lockup:hover { opacity: .78; }
+  .lockup:focus-visible { outline: 2px solid var(--am-blue-600); outline-offset: 2px; }
   .lockup .word {
     font-family: var(--display); font-weight: 400; font-size: 26px;
     line-height: 1; letter-spacing: -0.015em; color: var(--am-ink);
@@ -488,7 +494,7 @@
 </div>
 
 <div class="topbar">
-  <span class="lockup"><svg class="mark" width="32" height="32" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M6 17a11 11 0 0 1 11-11h14a11 11 0 0 1 11 11v7a11 11 0 0 1-11 11h-8l-9 6.5V35A11 11 0 0 1 6 24z" fill="#0F7CC0"/><circle cx="24" cy="20.5" r="5.5" fill="#F2A65A"/></svg><span class="word">Ask Mike</span></span>
+  <a class="lockup" href="/" id="home" aria-label="Ask Mike, back to the start"><svg class="mark" width="32" height="32" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M6 17a11 11 0 0 1 11-11h14a11 11 0 0 1 11 11v7a11 11 0 0 1-11 11h-8l-9 6.5V35A11 11 0 0 1 6 24z" fill="#0F7CC0"/><circle cx="24" cy="20.5" r="5.5" fill="#F2A65A"/></svg><span class="word">Ask Mike</span></a>
   <div class="progress">
     <div class="track" id="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-label="Progress through the form">
       <div class="fill" id="progress-fill"></div>
@@ -712,22 +718,15 @@
     
     <div class="meta"><div class="tags"><span class="tag">asked per person</span><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="wages____IDX__" data-showif-q="employment_status____IDX__" data-showif-v="employed|both" hidden>
-    <label class="qlabel" id="wages____IDX__-label" for="wages____IDX__">Pay before tax</label>
-    <p class="qhelp">Whatever figure is easiest to quote. The next box says how often it arrives.</p>
+    <label class="qlabel" id="wages____IDX__-label" for="wages____IDX__">Estimated yearly earnings, before tax</label>
+    <p class="qhelp">For the whole year, before anything is taken out. If you are paid hourly or weekly, a rough total for the year is fine.</p>
     <div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="wages____IDX__" name="wages____IDX__" min="0" step="1" /></div>
     
-    
-    <div class="meta"><div class="tags"><span class="tag">asked per person</span><span class="tag cond">only if employment status is employed or both</span><span class="tag route-intake">intake</span></div></div>
-  </div><div class="q" data-q="wages_frequency____IDX__" data-showif-q="employment_status____IDX__" data-showif-v="employed|both" hidden>
-    <label class="qlabel" id="wages_frequency____IDX__-label" for="wages_frequency____IDX__">How often?</label>
-    
-    <div class="choices" role="radiogroup" aria-labelledby="wages_frequency____IDX__-label"><label class="choice"><input type="radio" name="wages_frequency____IDX__" value="hourly" /><span class="dot"></span><span class="ctext">Per hour</span></label><label class="choice"><input type="radio" name="wages_frequency____IDX__" value="weekly" /><span class="dot"></span><span class="ctext">Per week</span></label><label class="choice"><input type="radio" name="wages_frequency____IDX__" value="biweekly" /><span class="dot"></span><span class="ctext">Every 2 weeks</span></label><label class="choice"><input type="radio" name="wages_frequency____IDX__" value="semimonthly" /><span class="dot"></span><span class="ctext">Twice a month</span></label><label class="choice"><input type="radio" name="wages_frequency____IDX__" value="monthly" /><span class="dot"></span><span class="ctext">Per month</span></label><label class="choice"><input type="radio" name="wages_frequency____IDX__" value="yearly" /><span class="dot"></span><span class="ctext">Per year</span></label></div>
-    
-    
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>One yearly figure rather than an amount and a pay period. The pay period list added a screen of buttons to every earner in the household and bought nothing: the subsidy runs on the annual number, and someone paid every two weeks still knows roughly what they make in a year.</p></details>
     <div class="meta"><div class="tags"><span class="tag">asked per person</span><span class="tag cond">only if employment status is employed or both</span><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="self_employment_net____IDX__" data-showif-q="employment_status____IDX__" data-showif-v="self|both" hidden>
-    <label class="qlabel" id="self_employment_net____IDX__-label" for="self_employment_net____IDX__">Net business income per month, after expenses</label>
-    <p class="qhelp">What is left once you have paid business expenses, not what came in.</p>
+    <label class="qlabel" id="self_employment_net____IDX__-label" for="self_employment_net____IDX__">Net business income for the year, after expenses</label>
+    <p class="qhelp">What is left once you have paid business expenses, not what came in. A rough figure for the year.</p>
     <div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="self_employment_net____IDX__" name="self_employment_net____IDX__" min="0" step="1" /></div>
     <label class="unsure"><input type="checkbox" name="self_employment_net____IDX___unsure" /><span>I am not sure</span></label>
     
@@ -1150,10 +1149,6 @@
     updateProgress();
   }
 
-  // Pay periods per year, so a client can quote whichever figure they actually
-  // know rather than converting in their head.
-  const PERIODS = {"hourly":2080,"weekly":52,"biweekly":26,"semimonthly":24,"monthly":12,"yearly":1};
-
   const money = (n) => Math.round(n).toLocaleString("en-US");
 
   const STILL = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -1199,10 +1194,10 @@
   /**
    * Adds the income boxes up and shows the total back for confirmation.
    *
-   * Wages are annualised by pay period, self employment is filed monthly and
-   * multiplied by twelve, and deductions come off the top because they lower
-   * the income the subsidy is figured on. Anyone who says the total is wrong
-   * types their own figure and that wins.
+   * Every box is already a yearly figure, so this is addition, with deductions
+   * coming off the top because they lower the income the subsidy is figured
+   * on. Anyone who says the total is wrong types their own figure and that
+   * wins.
    */
   function updateIncome() {
     document.querySelectorAll("[data-estimate]").forEach((panel) => {
@@ -1217,10 +1212,8 @@
       let wages = 0;
       let selfEmployed = 0;
       members.forEach((i) => {
-        const amount = numOf("wages__" + i);
-        const freq = document.querySelector('[name="wages_frequency__' + i + '"]:checked');
-        if (amount && freq && PERIODS[freq.value]) wages += amount * PERIODS[freq.value];
-        selfEmployed += numOf("self_employment_net__" + i) * 12;
+        wages += numOf("wages__" + i);
+        selfEmployed += numOf("self_employment_net__" + i);
       });
 
       const other = numOf("other_income_amount");
@@ -1533,6 +1526,20 @@
     window.open("agent.html", "askmike-agent");
     window.location.href = "thanks.html";
   });
+
+  // The logo goes home, and on this page home is step one. Reloading would be
+  // the literal reading and would throw away everything typed so far, so it
+  // moves rather than navigates. The href stays real for middle click and for
+  // anyone with scripting off.
+  const homeLink = document.getElementById("home");
+  if (homeLink) {
+    homeLink.addEventListener("click", (e) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+      e.preventDefault();
+      if (body.classList.contains("reviewing")) setView(false);
+      showStep(0);
+    });
+  }
 
   buildPeople();
   paintChoices();
