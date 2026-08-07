@@ -9,3 +9,5 @@ dist/
 data/testing.sqlite
 data/testing.sqlite-*
 
+data/sbc/source/
+

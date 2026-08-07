@@ -79,10 +79,17 @@ interface CostSharingResult {
  * as deductible then coinsurance. This overstates cost for low utilisers on
  * copay heavy plans and understates the value of a rich plan's flat copays.
  */
+/** Office visits that a plan meters by flat copay rather than by coinsurance. */
+export interface CopayMeteredVisits {
+  primaryCareVisits?: number;
+  specialistVisits?: number;
+}
+
 export function applyCostSharing(
   plan: Plan,
   allowedCharges: number,
   isFamily: boolean,
+  visits?: CopayMeteredVisits,
 ): CostSharingResult {
   const deductible =
     (isFamily ? plan.deductibleFamily : plan.deductibleIndividual) ??
@@ -92,11 +99,36 @@ export function applyCostSharing(
     (isFamily ? plan.moopFamily : plan.moopIndividual) ?? plan.moopIndividual ?? Infinity;
   const coinsuranceRate = plan.coinsurance ?? 0;
 
-  const deductibleApplied = Math.min(allowedCharges, deductible);
-  const afterDeductible = Math.max(0, allowedCharges - deductible);
+  // Office visits metered by a flat copay sit outside the deductible entirely,
+  // which is exactly the mechanism the model was blind to. Their allowed cost
+  // comes out of the base before the deductible is applied, and the member pays
+  // the copay instead.
+  //
+  // Health savings account plans are the exception. Federal rules bar them from
+  // charging a copay before the deductible is met for anything but preventive
+  // care, so on those plans the visits stay in the deductible base and this
+  // does nothing.
+  let copayApplied = 0;
+  let base = allowedCharges;
+  if (visits && !plan.hsaEligible) {
+    const pcp = visits.primaryCareVisits ?? 0;
+    const spec = visits.specialistVisits ?? 0;
+    if (plan.copayPrimaryCare !== null && pcp > 0) {
+      copayApplied += pcp * plan.copayPrimaryCare;
+      base -= pcp * ALLOWED_AMOUNTS.primaryCareVisit;
+    }
+    if (plan.copaySpecialist !== null && spec > 0) {
+      copayApplied += spec * plan.copaySpecialist;
+      base -= spec * ALLOWED_AMOUNTS.specialistVisit;
+    }
+    base = Math.max(0, base);
+  }
+
+  const deductibleApplied = Math.min(base, deductible);
+  const afterDeductible = Math.max(0, base - deductible);
   const coinsuranceApplied = afterDeductible * coinsuranceRate;
 
-  const uncapped = deductibleApplied + coinsuranceApplied;
+  const uncapped = deductibleApplied + coinsuranceApplied + copayApplied;
   const outOfPocket = Math.min(uncapped, moop);
 
   return {

@@ -135,11 +135,40 @@ function coverageExample(
   };
 }
 
+/**
+ * Pulls the office visit copay pair out of a plan's marketing name.
+ *
+ * The New Jersey filings carry no copay columns at all, but some issuers put
+ * them in the plan name: "IHC Silver EPO AmeriHealth Advantage $25/$60" means
+ * $25 to see a primary care doctor and $60 to see a specialist. It is the only
+ * copay data in the dataset, so it is worth taking.
+ *
+ * The convention is primary first, specialist second, and it holds across
+ * every plan named this way. Anything that does not match the pattern returns
+ * nulls rather than a guess.
+ */
+export function copaysFromName(marketingName: string): {
+  primary: number | null;
+  specialist: number | null;
+} {
+  const m = marketingName.match(/\$(\d{1,3})\s*\/\s*\$(\d{1,3})\b/);
+  if (!m) return { primary: null, specialist: null };
+  const primary = Number(m[1]);
+  const specialist = Number(m[2]);
+  // A specialist visit never costs less than a primary care visit. If the pair
+  // reads the other way round it is not a copay pair, so take neither.
+  if (!Number.isFinite(primary) || !Number.isFinite(specialist) || specialist < primary) {
+    return { primary: null, specialist: null };
+  }
+  return { primary, specialist };
+}
+
 function loadPlans(dir: string): Plan[] {
   return readCsv(dir, "NJPlans")
     .filter((r) => r["DENTAL ONLY PLAN"] === "No")
     .map((r): Plan => {
       const issuerId = r["ISSUER ID"] ?? "";
+      const copays = copaysFromName(r["PLAN MARKETING NAME"] ?? "");
       return {
         planId: r["PLAN ID"] ?? "",
         standardComponentId: r["STANDARD COMPONENT ID"] ?? "",
@@ -213,6 +242,9 @@ function loadPlans(dir: string): Plan[] {
             "SBC HAVING SIMPLE FRACTURE LIMIT",
           ),
         },
+
+        copayPrimaryCare: copays.primary,
+        copaySpecialist: copays.specialist,
 
         hasSecondNetworkTier: yesNo(r["MULTIPLE NETWORK TIERS"]),
         deductibleIndividualTier2: preferTotal(

@@ -55,6 +55,15 @@ export interface Plan {
   /** In network tier 1 family out of pocket maximum, per group, dollars. */
   moopFamily: number | null;
 
+  /**
+   * Office visit copays, where the issuer states them in the plan's marketing
+   * name, for example "IHC Silver EPO AmeriHealth Advantage $25/$60". The
+   * filings carry no copay columns, so this is the only copay data in the
+   * dataset. Only AmeriHealth names their plans this way.
+   */
+  copayPrimaryCare: number | null;
+  copaySpecialist: number | null;
+
   /** True when the plan files a distinct second network tier. */
   hasSecondNetworkTier: boolean;
   deductibleIndividualTier2: number | null;
