@@ -12,6 +12,7 @@ import { toHousehold, type Answers } from "../intake/toHousehold.ts";
 import { buildShortlist, evaluateAllPlans, eligibleSilverVariant } from "../rank.ts";
 import { computeSubsidy, njHealthPlanSavings } from "../subsidy.ts";
 import { CATEGORY_LABELS, federalPovertyLevel, fplPercentage } from "../assumptions.ts";
+import { coverageTimeline } from "../planyear.ts";
 import type { PlanDataset, RateRow } from "../types.ts";
 
 interface SerialisedDataset {
@@ -49,8 +50,19 @@ export function recommend(answers: Answers, raw: SerialisedDataset) {
     for (const r of e.disqualifiers) excluded.set(r, (excluded.get(r) ?? 0) + 1);
   }
 
+  // A client enrolling outside open enrolment is making two decisions, not
+  // one, and the second has its own deadline.
+  const startPreference =
+    answers.coverage_start === "january"
+      ? "january"
+      : answers.coverage_start === "unsure"
+        ? "unsure"
+        : "asap";
+  const timeline = coverageTimeline(new Date(), startPreference, [raw.planYear]);
+
   return {
     household,
+    timeline,
     flags: [...flags, ...subsidy.notes, njhps.note],
     unsure,
     subsidy,
