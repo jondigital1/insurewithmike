@@ -194,11 +194,11 @@
 
   .scroll { overflow-x: auto; }
   table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 14px; }
-  /* The full plan list is seven columns, four of them money. Wide enough that
+  /* The full plan list is six columns, three of them money. Wide enough that
      the plan name gets two lines rather than five and no figure wraps. Below
      that the wrapper scrolls, which is the right answer for a table this wide;
      squeezing it until the last column falls off the end is not. */
-  table.plans { min-width: 900px; }
+  table.plans { min-width: 820px; }
   th {
     text-align: left; font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
     color: var(--am-muted); font-weight: 600; padding: 8px 10px;
@@ -401,13 +401,16 @@
 
     // ---- everything else
     html += '<section class="card"><h2>Every plan available to them</h2><div class="scroll"><table class="plans">';
-    html += '<thead><tr><th>Carrier</th><th>Plan</th><th>Metal</th><th class="n">Premium/mo</th><th class="n">Out of pocket</th><th class="n">Expected total</th><th class="n">Worst case</th></tr></thead><tbody>';
+    // No worst case column. The table gets printed and read across the desk
+    // alongside the cards, so leaving it here would have undone taking it off
+    // them. The figure is still computed and still ranked on; it is out of the
+    // client's eyeline, not out of the maths.
+    html += '<thead><tr><th>Carrier</th><th>Plan</th><th>Metal</th><th class="n">Premium/mo</th><th class="n">Out of pocket</th><th class="n">Expected total</th></tr></thead><tbody>';
     for (const e of result.allEligible) {
       html += '<tr><td class="carrier">' + esc(e.plan.issuerName.split(" ")[0]) + '</td><td class="planname">' + esc(e.plan.marketingName) + '</td><td>' + esc(e.plan.metalLevel) + '</td>' +
         '<td class="n">' + usd(e.cost.annualPremiumNet / 12) + '</td>' +
         '<td class="n">' + usd(e.cost.estimatedOutOfPocket) + '</td>' +
-        '<td class="n">' + usd(e.cost.estimatedAnnualTotal) + '</td>' +
-        '<td class="n">' + usd(e.cost.worstCaseAnnualTotal) + '</td></tr>';
+        '<td class="n">' + usd(e.cost.estimatedAnnualTotal) + '</td></tr>';
     }
     html += '</tbody></table></div>';
     if (result.excluded.length) {
