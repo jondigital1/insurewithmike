@@ -1,0 +1,19 @@
+{
+  "name": "insurewithmike",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Plan comparison engine for New Jersey individual health coverage",
+  "type": "module",
+  "scripts": {
+    "demo": "tsx scripts/demo.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "csv-parse": "^6.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "tsx": "^4.20.6",
+    "typescript": "^7.0.2"
+  }
+}

@@ -1,0 +1,263 @@
+"BUSINESS YEAR","STATE CODE","ISSUER ID","SOURCE NAME","VERSION NUMBER","IMPORT DATE","SERVICE AREA ID","SERVICE AREA NAME","COVER ENTIRE STATE",COUNTY,"COUNTY NAME","PARTIAL COUNTY","ZIP CODE","PARTIAL COUNTY JUSTIFICATION","MARKET COVERAGE","DENTAL PLAN ONLY"
+2026,NJ,17970,SERFF,1,01-13-2026,NJS001,"Ambetter from WellCare of New Jersey",false,"Ocean - 34029",Ocean,false,,,Individual,No
+2026,NJ,17970,SERFF,1,01-13-2026,NJS001,"Ambetter from WellCare of New Jersey",false,"Cumberland - 34011",Cumberland,false,,,Individual,No
+2026,NJ,17970,SERFF,1,01-13-2026,NJS001,"Ambetter from WellCare of New Jersey",false,"Middlesex - 34023",Middlesex,false,,,Individual,No
+2026,NJ,17970,SERFF,1,01-13-2026,NJS001,"Ambetter from WellCare of New Jersey",false,"Bergen - 34003",Bergen,false,,,Individual,No
+2026,NJ,17970,SERFF,1,01-13-2026,NJS001,"Ambetter from WellCare of New Jersey",false,"Union - 34039",Union,false,,,Individual,No
+2026,NJ,17970,SERFF,1,01-13-2026,NJS001,"Ambetter from WellCare of New Jersey",false,"Sussex - 34037",Sussex,false,,,Individual,No
+2026,NJ,17970,SERFF,1,01-13-2026,NJS001,"Ambetter from WellCare of New Jersey",false,"Morris - 34027",Morris,false,,,Individual,No
+2026,NJ,17970,SERFF,1,01-13-2026,NJS001,"Ambetter from WellCare of New Jersey",false,"Essex - 34013",Essex,false,,,Individual,No
+2026,NJ,17970,SERFF,1,01-13-2026,NJS001,"Ambetter from WellCare of New Jersey",false,"Passaic - 34031",Passaic,false,,,Individual,No
+2026,NJ,17970,SERFF,1,01-13-2026,NJS001,"Ambetter from WellCare of New Jersey",false,"Burlington - 34005",Burlington,false,,,Individual,No
+2026,NJ,17970,SERFF,1,01-13-2026,NJS001,"Ambetter from WellCare of New Jersey",false,"Gloucester - 34015",Gloucester,false,,,Individual,No
+2026,NJ,17970,SERFF,1,01-13-2026,NJS001,"Ambetter from WellCare of New Jersey",false,"Somerset - 34035",Somerset,false,,,Individual,No
+2026,NJ,17970,SERFF,1,01-13-2026,NJS001,"Ambetter from WellCare of New Jersey",false,"Camden - 34007",Camden,false,,,Individual,No
+2026,NJ,17970,SERFF,1,01-13-2026,NJS001,"Ambetter from WellCare of New Jersey",false,"Hudson - 34017",Hudson,false,,,Individual,No
+2026,NJ,17970,SERFF,1,01-13-2026,NJS001,"Ambetter from WellCare of New Jersey",false,"Monmouth - 34025",Monmouth,false,,,Individual,No
+2026,NJ,17970,SERFF,1,01-13-2026,NJS001,"Ambetter from WellCare of New Jersey",false,"Mercer - 34021",Mercer,false,,,Individual,No
+2026,NJ,17970,SERFF,1,01-13-2026,NJS001,"Ambetter from WellCare of New Jersey",false,"Atlantic - 34001",Atlantic,false,,,Individual,No
+2026,NJ,23818,SERFF,1,01-13-2026,NJS001,"Oscar New Jersey",false,"Cape May - 34009","Cape May",false,,,Individual,No
+2026,NJ,23818,SERFF,1,01-13-2026,NJS001,"Oscar New Jersey",false,"Sussex - 34037",Sussex,false,,,Individual,No
+2026,NJ,23818,SERFF,1,01-13-2026,NJS001,"Oscar New Jersey",false,"Burlington - 34005",Burlington,false,,,Individual,No
+2026,NJ,23818,SERFF,1,01-13-2026,NJS001,"Oscar New Jersey",false,"Monmouth - 34025",Monmouth,false,,,Individual,No
+2026,NJ,23818,SERFF,1,01-13-2026,NJS001,"Oscar New Jersey",false,"Somerset - 34035",Somerset,false,,,Individual,No
+2026,NJ,23818,SERFF,1,01-13-2026,NJS001,"Oscar New Jersey",false,"Middlesex - 34023",Middlesex,false,,,Individual,No
+2026,NJ,23818,SERFF,1,01-13-2026,NJS001,"Oscar New Jersey",false,"Salem - 34033",Salem,false,,,Individual,No
+2026,NJ,23818,SERFF,1,01-13-2026,NJS001,"Oscar New Jersey",false,"Essex - 34013",Essex,false,,,Individual,No
+2026,NJ,23818,SERFF,1,01-13-2026,NJS001,"Oscar New Jersey",false,"Gloucester - 34015",Gloucester,false,,,Individual,No
+2026,NJ,23818,SERFF,1,01-13-2026,NJS001,"Oscar New Jersey",false,"Bergen - 34003",Bergen,false,,,Individual,No
+2026,NJ,23818,SERFF,1,01-13-2026,NJS001,"Oscar New Jersey",false,"Cumberland - 34011",Cumberland,false,,,Individual,No
+2026,NJ,23818,SERFF,1,01-13-2026,NJS001,"Oscar New Jersey",false,"Morris - 34027",Morris,false,,,Individual,No
+2026,NJ,23818,SERFF,1,01-13-2026,NJS001,"Oscar New Jersey",false,"Passaic - 34031",Passaic,false,,,Individual,No
+2026,NJ,23818,SERFF,1,01-13-2026,NJS001,"Oscar New Jersey",false,"Hunterdon - 34019",Hunterdon,false,,,Individual,No
+2026,NJ,23818,SERFF,1,01-13-2026,NJS001,"Oscar New Jersey",false,"Hudson - 34017",Hudson,false,,,Individual,No
+2026,NJ,23818,SERFF,1,01-13-2026,NJS001,"Oscar New Jersey",false,"Union - 34039",Union,false,,,Individual,No
+2026,NJ,23818,SERFF,1,01-13-2026,NJS001,"Oscar New Jersey",false,"Ocean - 34029",Ocean,false,,,Individual,No
+2026,NJ,23818,SERFF,1,01-13-2026,NJS001,"Oscar New Jersey",false,"Camden - 34007",Camden,false,,,Individual,No
+2026,NJ,23818,SERFF,1,01-13-2026,NJS001,"Oscar New Jersey",false,"Warren - 34041",Warren,false,,,Individual,No
+2026,NJ,23818,SERFF,1,01-13-2026,NJS001,"Oscar New Jersey",false,"Atlantic - 34001",Atlantic,false,,,Individual,No
+2026,NJ,23818,SERFF,1,01-13-2026,NJS001,"Oscar New Jersey",false,"Mercer - 34021",Mercer,false,,,Individual,No
+2026,NJ,35152,SERFF,1,01-13-2026,NJS001,"SELECT PLAN",false,"Gloucester - 34015",Gloucester,false,,,Individual,Yes
+2026,NJ,35152,SERFF,1,01-13-2026,NJS001,"SELECT PLAN",false,"Cumberland - 34011",Cumberland,false,,,Individual,Yes
+2026,NJ,35152,SERFF,1,01-13-2026,NJS001,"SELECT PLAN",false,"Camden - 34007",Camden,false,,,Individual,Yes
+2026,NJ,35152,SERFF,1,01-13-2026,NJS002,"CHOICE PPO",true,,,,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS011,"Individual Exchange",true,,,,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS011,"Individual Exchange",true,,,,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Cape May - 34009","Cape May",false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Monmouth - 34025",Monmouth,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Essex - 34013",Essex,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Morris - 34027",Morris,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Hudson - 34017",Hudson,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Hunterdon - 34019",Hunterdon,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Atlantic - 34001",Atlantic,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Ocean - 34029",Ocean,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Bergen - 34003",Bergen,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Hudson - 34017",Hudson,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Middlesex - 34023",Middlesex,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Mercer - 34021",Mercer,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Cape May - 34009","Cape May",false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Union - 34039",Union,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Middlesex - 34023",Middlesex,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Gloucester - 34015",Gloucester,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Camden - 34007",Camden,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Cumberland - 34011",Cumberland,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Warren - 34041",Warren,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Burlington - 34005",Burlington,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Bergen - 34003",Bergen,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Cumberland - 34011",Cumberland,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Camden - 34007",Camden,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Morris - 34027",Morris,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Atlantic - 34001",Atlantic,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Passaic - 34031",Passaic,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Hunterdon - 34019",Hunterdon,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Gloucester - 34015",Gloucester,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Passaic - 34031",Passaic,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Essex - 34013",Essex,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Union - 34039",Union,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Burlington - 34005",Burlington,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Monmouth - 34025",Monmouth,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Warren - 34041",Warren,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Mercer - 34021",Mercer,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS016,"EssentialSmile New Jersey - Total Care (Dental)",false,"Ocean - 34029",Ocean,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Essex - 34013",Essex,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Somerset - 34035",Somerset,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Sussex - 34037",Sussex,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Somerset - 34035",Somerset,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Union - 34039",Union,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Hudson - 34017",Hudson,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Hudson - 34017",Hudson,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Bergen - 34003",Bergen,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Gloucester - 34015",Gloucester,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Hunterdon - 34019",Hunterdon,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Burlington - 34005",Burlington,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Middlesex - 34023",Middlesex,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Ocean - 34029",Ocean,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Essex - 34013",Essex,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Gloucester - 34015",Gloucester,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Hunterdon - 34019",Hunterdon,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Cumberland - 34011",Cumberland,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Ocean - 34029",Ocean,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Cape May - 34009","Cape May",false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Morris - 34027",Morris,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Mercer - 34021",Mercer,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Atlantic - 34001",Atlantic,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Passaic - 34031",Passaic,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Morris - 34027",Morris,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Cumberland - 34011",Cumberland,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Burlington - 34005",Burlington,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Monmouth - 34025",Monmouth,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Union - 34039",Union,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Monmouth - 34025",Monmouth,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Mercer - 34021",Mercer,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Salem - 34033",Salem,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Camden - 34007",Camden,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Cape May - 34009","Cape May",false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Camden - 34007",Camden,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Atlantic - 34001",Atlantic,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Middlesex - 34023",Middlesex,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Bergen - 34003",Bergen,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Salem - 34033",Salem,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Passaic - 34031",Passaic,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Sussex - 34037",Sussex,false,,,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Warren - 34041",Warren,false,,,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJS017,"Smile Now New Jersey - PPO (Dental)",false,"Warren - 34041",Warren,false,,,Individual,Yes
+2026,NJ,48608,SERFF,1,01-13-2026,NJS001,"Dentegra PPO",false,"Ocean - 34029",Ocean,false,,,Individual,Yes
+2026,NJ,48608,SERFF,1,01-13-2026,NJS001,"Dentegra PPO",false,"Salem - 34033",Salem,false,,,Individual,Yes
+2026,NJ,48608,SERFF,1,01-13-2026,NJS001,"Dentegra PPO",false,"Monmouth - 34025",Monmouth,false,,,Individual,Yes
+2026,NJ,48608,SERFF,1,01-13-2026,NJS001,"Dentegra PPO",false,"Gloucester - 34015",Gloucester,false,,,Individual,Yes
+2026,NJ,48608,SERFF,1,01-13-2026,NJS001,"Dentegra PPO",false,"Cumberland - 34011",Cumberland,false,,,Individual,Yes
+2026,NJ,48608,SERFF,1,01-13-2026,NJS001,"Dentegra PPO",false,"Middlesex - 34023",Middlesex,false,,,Individual,Yes
+2026,NJ,48608,SERFF,1,01-13-2026,NJS001,"Dentegra PPO",false,"Morris - 34027",Morris,false,,,Individual,Yes
+2026,NJ,48608,SERFF,1,01-13-2026,NJS001,"Dentegra PPO",false,"Hudson - 34017",Hudson,false,,,Individual,Yes
+2026,NJ,48608,SERFF,1,01-13-2026,NJS001,"Dentegra PPO",false,"Union - 34039",Union,false,,,Individual,Yes
+2026,NJ,48608,SERFF,1,01-13-2026,NJS001,"Dentegra PPO",false,"Essex - 34013",Essex,false,,,Individual,Yes
+2026,NJ,48608,SERFF,1,01-13-2026,NJS001,"Dentegra PPO",false,"Cape May - 34009","Cape May",false,,,Individual,Yes
+2026,NJ,48608,SERFF,1,01-13-2026,NJS001,"Dentegra PPO",false,"Camden - 34007",Camden,false,,,Individual,Yes
+2026,NJ,48608,SERFF,1,01-13-2026,NJS001,"Dentegra PPO",false,"Hunterdon - 34019",Hunterdon,false,,,Individual,Yes
+2026,NJ,48608,SERFF,1,01-13-2026,NJS001,"Dentegra PPO",false,"Bergen - 34003",Bergen,false,,,Individual,Yes
+2026,NJ,48608,SERFF,1,01-13-2026,NJS001,"Dentegra PPO",false,"Mercer - 34021",Mercer,false,,,Individual,Yes
+2026,NJ,48608,SERFF,1,01-13-2026,NJS001,"Dentegra PPO",false,"Atlantic - 34001",Atlantic,false,,,Individual,Yes
+2026,NJ,48608,SERFF,1,01-13-2026,NJS001,"Dentegra PPO",false,"Burlington - 34005",Burlington,false,,,Individual,Yes
+2026,NJ,48608,SERFF,1,01-13-2026,NJS001,"Dentegra PPO",false,"Warren - 34041",Warren,false,,,Individual,Yes
+2026,NJ,48608,SERFF,1,01-13-2026,NJS001,"Dentegra PPO",false,"Passaic - 34031",Passaic,false,,,Individual,Yes
+2026,NJ,91661,SERFF,1,01-13-2026,NJS001,"New Jersey - IND Medical",true,,,,,,Individual,Yes
+2026,NJ,91661,SERFF,1,01-13-2026,NJS001,"New Jersey - IND Medical",true,,,,,,Individual,No
+2026,NJ,91661,SERFF,1,01-13-2026,NJS002,"New Jersey - SG Medical",true,,,,,,Individual,No
+2026,NJ,91661,SERFF,1,01-13-2026,NJS002,"New Jersey - SG Medical",true,,,,,,Individual,Yes
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Salem - 34033",Salem,false,,,Individual,Yes
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Gloucester - 34015",Gloucester,false,,,Individual,Yes
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Mercer - 34021",Mercer,false,,,Individual,No
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Atlantic - 34001",Atlantic,false,,,Individual,No
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Hudson - 34017",Hudson,false,,,Individual,Yes
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Monmouth - 34025",Monmouth,false,,,Individual,No
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Bergen - 34003",Bergen,false,,,Individual,Yes
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Mercer - 34021",Mercer,false,,,Individual,Yes
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Warren - 34041",Warren,false,,,Individual,No
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Somerset - 34035",Somerset,false,,,Individual,Yes
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Essex - 34013",Essex,false,,,Individual,Yes
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Salem - 34033",Salem,false,,,Individual,No
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Atlantic - 34001",Atlantic,false,,,Individual,Yes
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Hunterdon - 34019",Hunterdon,false,,,Individual,Yes
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Sussex - 34037",Sussex,false,,,Individual,No
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Sussex - 34037",Sussex,false,,,Individual,Yes
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Warren - 34041",Warren,false,,,Individual,Yes
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Morris - 34027",Morris,false,,,Individual,Yes
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Burlington - 34005",Burlington,false,,,Individual,Yes
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Camden - 34007",Camden,false,,,Individual,Yes
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Passaic - 34031",Passaic,false,,,Individual,Yes
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Cape May - 34009","Cape May",false,,,Individual,Yes
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Somerset - 34035",Somerset,false,,,Individual,No
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Essex - 34013",Essex,false,,,Individual,No
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Hudson - 34017",Hudson,false,,,Individual,No
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Morris - 34027",Morris,false,,,Individual,No
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Camden - 34007",Camden,false,,,Individual,No
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Middlesex - 34023",Middlesex,false,,,Individual,No
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Cumberland - 34011",Cumberland,false,,,Individual,No
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Gloucester - 34015",Gloucester,false,,,Individual,No
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Burlington - 34005",Burlington,false,,,Individual,No
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Middlesex - 34023",Middlesex,false,,,Individual,Yes
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Cumberland - 34011",Cumberland,false,,,Individual,Yes
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Union - 34039",Union,false,,,Individual,No
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Monmouth - 34025",Monmouth,false,,,Individual,Yes
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Bergen - 34003",Bergen,false,,,Individual,No
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Union - 34039",Union,false,,,Individual,Yes
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Hunterdon - 34019",Hunterdon,false,,,Individual,No
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Cape May - 34009","Cape May",false,,,Individual,No
+2026,NJ,91661,SERFF,1,01-13-2026,NJS003,"NJ DA - Medical",false,"Passaic - 34031",Passaic,false,,,Individual,No
+2026,NJ,91661,SERFF,1,01-13-2026,NJS004,"New Jersey - IND Dental",true,,,,,,Individual,No
+2026,NJ,91661,SERFF,1,01-13-2026,NJS004,"New Jersey - IND Dental",true,,,,,,Individual,Yes
+2026,NJ,91661,SERFF,1,01-13-2026,NJS005,"New Jersey - SG Dental",true,,,,,,Individual,No
+2026,NJ,91661,SERFF,1,01-13-2026,NJS005,"New Jersey - SG Dental",true,,,,,,Individual,Yes
+2026,NJ,91762,SERFF,1,01-13-2026,NJS001,"Preferred Consumer",true,,,,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS002,"Value Consumer",false,"Cape May - 34009","Cape May",false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS002,"Value Consumer",false,"Union - 34039",Union,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS002,"Value Consumer",false,"Middlesex - 34023",Middlesex,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS002,"Value Consumer",false,"Sussex - 34037",Sussex,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS002,"Value Consumer",false,"Burlington - 34005",Burlington,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS002,"Value Consumer",false,"Warren - 34041",Warren,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS002,"Value Consumer",false,"Hudson - 34017",Hudson,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS002,"Value Consumer",false,"Monmouth - 34025",Monmouth,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS002,"Value Consumer",false,"Ocean - 34029",Ocean,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS002,"Value Consumer",false,"Bergen - 34003",Bergen,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS002,"Value Consumer",false,"Somerset - 34035",Somerset,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS002,"Value Consumer",false,"Essex - 34013",Essex,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS002,"Value Consumer",false,"Morris - 34027",Morris,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS002,"Value Consumer",false,"Mercer - 34021",Mercer,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS002,"Value Consumer",false,"Salem - 34033",Salem,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS002,"Value Consumer",false,"Atlantic - 34001",Atlantic,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS002,"Value Consumer",false,"Passaic - 34031",Passaic,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS002,"Value Consumer",false,"Cumberland - 34011",Cumberland,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS002,"Value Consumer",false,"Gloucester - 34015",Gloucester,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS002,"Value Consumer",false,"Camden - 34007",Camden,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS003,"AmeriHealth Advantage Consumer",false,"Gloucester - 34015",Gloucester,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS003,"AmeriHealth Advantage Consumer",false,"Mercer - 34021",Mercer,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS003,"AmeriHealth Advantage Consumer",false,"Hudson - 34017",Hudson,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS003,"AmeriHealth Advantage Consumer",false,"Cape May - 34009","Cape May",false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS003,"AmeriHealth Advantage Consumer",false,"Camden - 34007",Camden,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS003,"AmeriHealth Advantage Consumer",false,"Ocean - 34029",Ocean,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS003,"AmeriHealth Advantage Consumer",false,"Burlington - 34005",Burlington,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS003,"AmeriHealth Advantage Consumer",false,"Union - 34039",Union,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS003,"AmeriHealth Advantage Consumer",false,"Monmouth - 34025",Monmouth,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS003,"AmeriHealth Advantage Consumer",false,"Middlesex - 34023",Middlesex,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS003,"AmeriHealth Advantage Consumer",false,"Atlantic - 34001",Atlantic,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS003,"AmeriHealth Advantage Consumer",false,"Essex - 34013",Essex,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS003,"AmeriHealth Advantage Consumer",false,"Somerset - 34035",Somerset,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS004,"Dental Consumer",true,,,,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS005,"Dental Small Group",true,,,,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS006,"Preferred Small Group",true,,,,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS007,"Value Small Group",false,"Burlington - 34005",Burlington,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS007,"Value Small Group",false,"Camden - 34007",Camden,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS007,"Value Small Group",false,"Cumberland - 34011",Cumberland,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS007,"Value Small Group",false,"Gloucester - 34015",Gloucester,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS007,"Value Small Group",false,"Sussex - 34037",Sussex,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS007,"Value Small Group",false,"Monmouth - 34025",Monmouth,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS007,"Value Small Group",false,"Middlesex - 34023",Middlesex,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS007,"Value Small Group",false,"Atlantic - 34001",Atlantic,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS007,"Value Small Group",false,"Cape May - 34009","Cape May",false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS007,"Value Small Group",false,"Somerset - 34035",Somerset,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS007,"Value Small Group",false,"Morris - 34027",Morris,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS007,"Value Small Group",false,"Ocean - 34029",Ocean,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS007,"Value Small Group",false,"Hudson - 34017",Hudson,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS007,"Value Small Group",false,"Mercer - 34021",Mercer,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS007,"Value Small Group",false,"Bergen - 34003",Bergen,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS007,"Value Small Group",false,"Passaic - 34031",Passaic,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS007,"Value Small Group",false,"Warren - 34041",Warren,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS007,"Value Small Group",false,"Union - 34039",Union,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS007,"Value Small Group",false,"Salem - 34033",Salem,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS007,"Value Small Group",false,"Essex - 34013",Essex,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS008,"AmeriHealth Advantage Small Group",false,"Monmouth - 34025",Monmouth,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS008,"AmeriHealth Advantage Small Group",false,"Ocean - 34029",Ocean,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS008,"AmeriHealth Advantage Small Group",false,"Somerset - 34035",Somerset,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS008,"AmeriHealth Advantage Small Group",false,"Union - 34039",Union,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS008,"AmeriHealth Advantage Small Group",false,"Burlington - 34005",Burlington,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS008,"AmeriHealth Advantage Small Group",false,"Essex - 34013",Essex,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS008,"AmeriHealth Advantage Small Group",false,"Cape May - 34009","Cape May",false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS008,"AmeriHealth Advantage Small Group",false,"Middlesex - 34023",Middlesex,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS008,"AmeriHealth Advantage Small Group",false,"Hudson - 34017",Hudson,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS008,"AmeriHealth Advantage Small Group",false,"Atlantic - 34001",Atlantic,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS008,"AmeriHealth Advantage Small Group",false,"Mercer - 34021",Mercer,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS008,"AmeriHealth Advantage Small Group",false,"Gloucester - 34015",Gloucester,false,,,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJS008,"AmeriHealth Advantage Small Group",false,"Camden - 34007",Camden,false,,,Individual,No
+2026,NJ,93627,SERFF,1,01-13-2026,NJS001,"GLIC Individual PPO On and Off Exchange",true,,,,,,Individual,Yes
+2026,NJ,93627,SERFF,1,01-13-2026,NJS002,"GLIC Group PPO Off Exchange",true,,,,,,Individual,Yes
+2026,NJ,99708,SERFF,1,01-13-2026,NJS001,"New Jersey",true,,,,,,Individual,Yes

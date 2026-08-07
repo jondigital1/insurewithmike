@@ -1,0 +1,17 @@
+"BUSINESS YEAR","STATE CODE","ISSUER ID","SOURCE NAME","VERSION NUMBER","IMPORT DATE","NETWORK ID","NETWORK NAME","NETWORK URL","MARKET COVERAGE","DENTAL PLAN ONLY"
+2026,NJ,17970,SERFF,1,01-13-2026,NJN001,Premier,,Individual,No
+2026,NJ,23818,SERFF,1,01-13-2026,NJN001,"Individual New Jersey",,Individual,No
+2026,NJ,35152,SERFF,1,01-13-2026,NJN001,"Select Plan",,Individual,Yes
+2026,NJ,35152,SERFF,1,01-13-2026,NJN002,"Choice PPO",,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJN011,"Oxford Metro ",,Individual,No
+2026,NJ,37777,SERFF,1,01-13-2026,NJN016,"EssentialSmile New Jersey - Total Care",,Individual,Yes
+2026,NJ,37777,SERFF,1,01-13-2026,NJN017,"Smile Now New Jersey - PPO",,Individual,Yes
+2026,NJ,48608,SERFF,1,01-13-2026,NJN001,"Dentegra PPO Individual",,Individual,Yes
+2026,NJ,91661,SERFF,1,01-13-2026,NJN001,"Horizon BCBSNJ Managed Care network, Ind",,Individual,No
+2026,NJ,91661,SERFF,1,01-13-2026,NJN003,"Horizon BCBSNJ Managed Care network (value based OMNIA), Ind",,Individual,No
+2026,NJ,91661,SERFF,1,01-13-2026,NJN005,"Dental, Ind",,Individual,Yes
+2026,NJ,91762,SERFF,1,01-13-2026,NJN001,"Regional Preferred Consumer",,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJN002,"Local Value Consumer",,Individual,No
+2026,NJ,91762,SERFF,1,01-13-2026,NJN003,"AmeriHealth Advantage Consumer",,Individual,No
+2026,NJ,93627,SERFF,1,01-13-2026,NJN002,"DentalGuard Preferred - Individual",,Individual,Yes
+2026,NJ,99708,SERFF,1,01-13-2026,NJN002,"Delta Dental PPO",,Individual,Yes

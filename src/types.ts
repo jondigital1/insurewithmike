@@ -1,0 +1,181 @@
+/**
+ * Domain types for the New Jersey individual marketplace plan engine.
+ *
+ * Source of plan data: CMS State-Based Exchange QHP Public Use Files,
+ * New Jersey, plan year 2026 (SERFF filings via NAIC).
+ */
+
+export type MetalLevel =
+  | "Catastrophic"
+  | "Expanded Bronze"
+  | "Bronze"
+  | "Silver"
+  | "Gold"
+  | "Platinum";
+
+/**
+ * Cost sharing reduction variant. New Jersey silver plans are filed at four
+ * levels; which one a household receives is determined by income as a
+ * percentage of the federal poverty level, not by choice.
+ */
+export type CsrVariant =
+  | "standard"
+  | "csr73"
+  | "csr87"
+  | "csr94"
+  | "zeroCostSharing"
+  | "limitedCostSharing";
+
+export interface Plan {
+  /** Full 16 character plan id including variant suffix, e.g. 91661NJ2270001-01 */
+  planId: string;
+  /** 14 character base plan id shared by every variant, e.g. 91661NJ2270001 */
+  standardComponentId: string;
+  issuerId: string;
+  issuerName: string;
+  marketingName: string;
+  metalLevel: MetalLevel;
+  planType: string;
+  csrVariant: CsrVariant;
+  networkId: string;
+  formularyId: string;
+  serviceAreaId: string;
+  hsaEligible: boolean;
+  /** Issuer filed actuarial value, 0 to 1 */
+  actuarialValue: number | null;
+
+  /** In network tier 1 individual deductible, dollars. Null when not filed. */
+  deductibleIndividual: number | null;
+  /** In network tier 1 family deductible, per group, dollars. */
+  deductibleFamily: number | null;
+  /** Default in network coinsurance the member pays after deductible, 0 to 1. */
+  coinsurance: number | null;
+  /** In network tier 1 individual out of pocket maximum, dollars. */
+  moopIndividual: number | null;
+  /** In network tier 1 family out of pocket maximum, per group, dollars. */
+  moopFamily: number | null;
+
+  /** True when the plan files a distinct second network tier. */
+  hasSecondNetworkTier: boolean;
+  deductibleIndividualTier2: number | null;
+  moopIndividualTier2: number | null;
+}
+
+export interface RateRow {
+  planId: string;
+  /** Age band label as filed, e.g. "0-14", "21", "64 and over" */
+  age: string;
+  individualRate: number;
+  individualTobaccoRate: number | null;
+}
+
+export interface ServiceArea {
+  serviceAreaId: string;
+  issuerId: string;
+  countyName: string;
+  coversEntireState: boolean;
+}
+
+export interface BenefitRow {
+  planId: string;
+  standardComponentId: string;
+  benefitName: string;
+  isCovered: boolean;
+  isEhb: boolean;
+  isStateMandate: boolean;
+  subjectToDeductibleTier1: boolean | null;
+  excludedFromInnMoop: boolean | null;
+  quantityLimit: string | null;
+  exclusions: string | null;
+}
+
+export interface PlanDataset {
+  planYear: number;
+  plans: Plan[];
+  rates: Map<string, RateRow[]>;
+  serviceAreas: ServiceArea[];
+  benefits: Map<string, BenefitRow[]>;
+}
+
+/**
+ * Service categories the intake form asks about. These are deliberately
+ * phrased as things a client can actually count, not as insurance jargon.
+ */
+export type ServiceCategory =
+  | "primaryCareVisit"
+  | "specialistVisit"
+  | "urgentCare"
+  | "emergencyRoom"
+  | "inpatientAdmission"
+  | "outpatientSurgery"
+  | "labWork"
+  | "advancedImaging"
+  | "mentalHealthVisit"
+  | "physicalTherapy"
+  | "genericDrugMonths"
+  | "preferredBrandDrugMonths"
+  | "specialtyDrugMonths";
+
+export type Utilization = Partial<Record<ServiceCategory, number>>;
+
+export interface HouseholdMember {
+  /** Age on the plan effective date. */
+  age: number;
+  tobaccoUser: boolean;
+  utilization: Utilization;
+}
+
+export interface Household {
+  county: string;
+  /** Modified adjusted gross income for the coverage year, dollars. */
+  annualIncome: number;
+  /** Household size for federal poverty level purposes. */
+  householdSize: number;
+  members: HouseholdMember[];
+  /** Health systems the household wants to keep, e.g. ["Penn", "Jefferson"]. */
+  preferredHealthSystems: string[];
+  /** Plan id of the coverage they hold today, when known. */
+  currentPlanId?: string;
+  /** What the client believes they spent out of pocket last year. */
+  perceivedAnnualSpend?: number;
+  /**
+   * Set when the household holds an approved hardship or affordability
+   * exemption, which is the only route into catastrophic coverage for anyone
+   * aged 30 or over.
+   */
+  hardshipExemption?: boolean;
+}
+
+export interface CostBreakdown {
+  /** Twelve months of premium at the filed list rate, before any subsidy. */
+  annualPremiumListed: number;
+  /** Federal advance premium tax credit applied to this plan, dollars. */
+  federalSubsidyApplied: number;
+  /** List premium less the federal credit. Still before any NJ state subsidy. */
+  annualPremiumNet: number;
+  /** Twelve months of premium the agent actually quoted, when supplied. */
+  annualPremiumQuoted: number | null;
+  /** Estimated allowed charges across the household for the year. */
+  estimatedAllowedCharges: number;
+  /** Member share applied to the deductible. */
+  deductibleApplied: number;
+  /** Member share paid as coinsurance after the deductible. */
+  coinsuranceApplied: number;
+  /** Estimated out of pocket cost for care, after the maximum is applied. */
+  estimatedOutOfPocket: number;
+  /** True when estimated spending reaches the out of pocket maximum. */
+  reachesMoop: boolean;
+  /** Premium plus out of pocket. Uses the quoted premium when available. */
+  estimatedAnnualTotal: number;
+  /** Worst realistic year: premium plus the full out of pocket maximum. */
+  worstCaseAnnualTotal: number;
+}
+
+export interface PlanEvaluation {
+  plan: Plan;
+  cost: CostBreakdown;
+  /** Reasons this plan was excluded from consideration, empty when eligible. */
+  disqualifiers: string[];
+  /** Human readable notes for the agent, including data gaps. */
+  notes: string[];
+}

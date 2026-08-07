@@ -1,0 +1,20 @@
+"BUSINESS YEAR","STATE CODE","ISSUER ID","SOURCE NAME","VERSION NUMBER","IMPORT DATE","NETWORK ID","NETWORK NAME","NETWORK URL","MARKET COVERAGE","DENTAL PLAN ONLY"
+2025,NJ,17970,SERFF,1,01-13-2025,NJN001,"Premier NJ",,Individual,No
+2025,NJ,23818,SERFF,1,01-13-2025,NJN001,"New Jersey EPO Individual",,Individual,No
+2025,NJ,35152,SERFF,1,01-13-2025,NJN001,"SELECT PLAN",,Individual,Yes
+2025,NJ,35152,SERFF,1,01-13-2025,NJN002,"CHOICE PPO",,Individual,Yes
+2025,NJ,37777,SERFF,1,01-13-2025,NJN011,"Oxford Metro Benefit Plans",,Individual,No
+2025,NJ,37777,SERFF,1,01-13-2025,NJN016,"EssentialSmile New Jersey - Total Care",,Individual,Yes
+2025,NJ,37777,SERFF,1,01-13-2025,NJN017,"Smile Now New Jersey - PPO",,Individual,Yes
+2025,NJ,48608,SERFF,1,01-13-2025,NJN001,"Dentegra PPO Individual",,Individual,Yes
+2025,NJ,89217,SERFF,1,01-13-2025,NJN001,"Aetna Whole Health New Jersey",,Individual,No
+2025,NJ,91661,SERFF,1,01-13-2025,NJN001,"Horizon BCBSNJ Managed Care network, Ind",,Individual,No
+2025,NJ,91661,SERFF,1,01-13-2025,NJN002,"Horizon BCBSNJ Managed Care network, SG",,"SHOP (Small Group)",No
+2025,NJ,91661,SERFF,1,01-13-2025,NJN003,"Horizon BCBSNJ Managed Care network (value based OMNIA), Ind",,Individual,No
+2025,NJ,91661,SERFF,1,01-13-2025,NJN004,"Horizon BCBSNJ Managed Care network (value based OMNIA), SG",,"SHOP (Small Group)",No
+2025,NJ,91661,SERFF,1,01-13-2025,NJN005,"Dental, Ind",,Individual,Yes
+2025,NJ,91762,SERFF,1,01-13-2025,NJN001,"Regional Preferred Consumer",,Individual,No
+2025,NJ,91762,SERFF,1,01-13-2025,NJN002,"Local Value Consumer",,Individual,No
+2025,NJ,91762,SERFF,1,01-13-2025,NJN003,"AmeriHealth Advantage Consumer",,Individual,No
+2025,NJ,93627,SERFF,1,01-13-2025,NJN002,"DentalGuard Preferred - Individual ",,Individual,Yes
+2025,NJ,99708,SERFF,1,01-13-2025,NJN002,"Delta Dental PPO",,Individual,Yes

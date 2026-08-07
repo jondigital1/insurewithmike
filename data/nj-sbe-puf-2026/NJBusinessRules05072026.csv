@@ -1,0 +1,403 @@
+"BUSINESS YEAR","STATE CODE","ISSUER ID","SOURCE NAME","VERSION NUMBER","IMPORT DATE","PRODUCT ID","STANDARD COMPONENT ID","DEPENDENT MAX AGE RULE","AGE DETERMINATION RULE","MINIMUM TOBACCO FREE MONTHS RULE","COHABITATION RULE REQUIRED","COHABITATION RULE CODE","MARKET COVERAGE","DENTAL ONLY PLAN","MEDICAL OR DENTAL RULE","MAX CHILDREN IN POLICY"
+2026,NJ,17970,SERFF,1,01-13-2026,,,25,"Age on effective date",6,No,"Stepson or Stepdaughter",,,Medical,3
+2026,NJ,17970,SERFF,1,01-13-2026,,,25,"Age on effective date",6,Yes,Self,,,Medical,3
+2026,NJ,17970,SERFF,1,01-13-2026,,,25,"Age on effective date",6,No,Spouse,,,Medical,3
+2026,NJ,17970,SERFF,1,01-13-2026,,,25,"Age on effective date",6,No,Child,,,Medical,3
+2026,NJ,17970,SERFF,1,01-13-2026,,,25,"Age on effective date",6,No,"Foster Child",,,Medical,3
+2026,NJ,17970,SERFF,1,01-13-2026,,,25,"Age on effective date",6,No,"Life Partner",,,Medical,3
+2026,NJ,17970,SERFF,1,01-13-2026,,,25,"Age on effective date",6,No,Ward,,,Medical,3
+2026,NJ,23818,SERFF,1,01-13-2026,,,25,"Age on effective date",6,No,Child,,,Medical,3
+2026,NJ,23818,SERFF,1,01-13-2026,,,25,"Age on effective date",6,No,Ward,,,Medical,3
+2026,NJ,23818,SERFF,1,01-13-2026,,,25,"Age on effective date",6,Yes,Self,,,Medical,3
+2026,NJ,23818,SERFF,1,01-13-2026,,,25,"Age on effective date",6,No,"Foster Child",,,Medical,3
+2026,NJ,23818,SERFF,1,01-13-2026,,,25,"Age on effective date",6,No,"Stepson or Stepdaughter",,,Medical,3
+2026,NJ,23818,SERFF,1,01-13-2026,,,25,"Age on effective date",6,No,"Life Partner",,,Medical,3
+2026,NJ,23818,SERFF,1,01-13-2026,,,25,"Age on effective date",6,No,Spouse,,,Medical,3
+2026,NJ,35152,SERFF,1,01-13-2026,,35152NJ0010003,21,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,35152,SERFF,1,01-13-2026,,35152NJ0010003,21,"Age on effective date","Not Applicable",No,"Brother or Sister",,,Dental,3
+2026,NJ,35152,SERFF,1,01-13-2026,,35152NJ0020004,21,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,35152,SERFF,1,01-13-2026,,35152NJ0020004,21,"Age on effective date","Not Applicable",No,"Brother or Sister",,,Dental,3
+2026,NJ,35152,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,Child,,,Dental,3
+2026,NJ,35152,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Dental,3
+2026,NJ,35152,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,"Grandson or Granddaughter",,,Dental,3
+2026,NJ,35152,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,Spouse,,,Dental,3
+2026,NJ,35152,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Dental,3
+2026,NJ,35152,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Dental,3
+2026,NJ,35152,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,35152,SERFF,1,01-13-2026,,35152NJ0010004,21,"Age on effective date","Not Applicable",No,"Brother or Sister",,,Dental,3
+2026,NJ,35152,SERFF,1,01-13-2026,,35152NJ0010004,21,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,35152,SERFF,1,01-13-2026,,35152NJ0020003,21,"Age on effective date","Not Applicable",No,"Brother or Sister",,,Dental,3
+2026,NJ,35152,SERFF,1,01-13-2026,,35152NJ0020003,21,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,37777NJ012,,30,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,37777NJ012,,30,"Age on effective date","Not Applicable",No,"Life Partner",,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,37777NJ012,,30,"Age on effective date","Not Applicable",No,"Foster Child",,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,37777NJ012,,30,"Age on effective date","Not Applicable",No,Ward,,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,37777NJ012,,30,"Age on effective date","Not Applicable",No,Child,,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,37777NJ012,,30,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,37777NJ012,,30,"Age on effective date","Not Applicable",No,Spouse,,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,37777NJ013,,30,"Age on effective date","Not Applicable",No,"Life Partner",,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,37777NJ013,,30,"Age on effective date","Not Applicable",No,Spouse,,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,37777NJ013,,30,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,37777NJ013,,30,"Age on effective date","Not Applicable",No,"Foster Child",,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,37777NJ013,,30,"Age on effective date","Not Applicable",No,Ward,,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,37777NJ013,,30,"Age on effective date","Not Applicable",No,Child,,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,37777NJ013,,30,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,37777NJ013,,30,"Age on effective date","Not Applicable",No,"Foster Child",,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,37777NJ013,,30,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,37777NJ013,,30,"Age on effective date","Not Applicable",No,Spouse,,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,37777NJ013,,30,"Age on effective date","Not Applicable",No,"Life Partner",,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,37777NJ013,,30,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,37777NJ013,,30,"Age on effective date","Not Applicable",No,Child,,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,37777NJ013,,30,"Age on effective date","Not Applicable",No,Ward,,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,37777NJ012,,30,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,37777NJ012,,30,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,37777NJ012,,30,"Age on effective date","Not Applicable",No,"Life Partner",,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,37777NJ012,,30,"Age on effective date","Not Applicable",No,Child,,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,37777NJ012,,30,"Age on effective date","Not Applicable",No,Ward,,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,37777NJ012,,30,"Age on effective date","Not Applicable",No,"Foster Child",,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,37777NJ012,,30,"Age on effective date","Not Applicable",No,Spouse,,,Dental,3
+2026,NJ,37777,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,Spouse,,,Medical,3
+2026,NJ,37777,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,Child,,,Medical,3
+2026,NJ,37777,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,Ward,,,Medical,3
+2026,NJ,37777,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Medical,3
+2026,NJ,37777,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Medical,3
+2026,NJ,37777,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",Yes,Self,,,Medical,3
+2026,NJ,37777,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Medical,3
+2026,NJ,37777,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Medical,3
+2026,NJ,37777,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Medical,3
+2026,NJ,37777,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",Yes,Self,,,Medical,3
+2026,NJ,37777,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,Child,,,Medical,3
+2026,NJ,37777,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,Ward,,,Medical,3
+2026,NJ,37777,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,Spouse,,,Medical,3
+2026,NJ,37777,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Medical,3
+2026,NJ,48608,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,48608,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,Child,,,Dental,3
+2026,NJ,48608,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,Spouse,,,Dental,3
+2026,NJ,48608,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Dental,3
+2026,NJ,48608,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Dental,3
+2026,NJ,48608,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,Ward,,,Dental,3
+2026,NJ,48608,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300003,25,"Age on effective date","Not Applicable",No,Child,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300003,25,"Age on effective date","Not Applicable",Yes,Self,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300003,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300003,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300003,25,"Age on effective date","Not Applicable",No,Spouse,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300003,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300003,25,"Age on effective date","Not Applicable",No,Ward,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310001,18,"Age on effective date","Not Applicable",No,Child,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310001,18,"Age on effective date","Not Applicable",No,"Foster Child",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310001,18,"Age on effective date","Not Applicable",No,Spouse,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310001,18,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310001,18,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310001,18,"Age on effective date","Not Applicable",No,"Life Partner",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330003,25,"Age on effective date","Not Applicable",No,Spouse,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330003,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330003,25,"Age on effective date","Not Applicable",No,Ward,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330003,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330003,25,"Age on effective date","Not Applicable",No,Child,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330003,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330003,25,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2290002,25,"Age on effective date","Not Applicable",Yes,Self,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2290002,25,"Age on effective date","Not Applicable",No,Ward,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2290002,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2290002,25,"Age on effective date","Not Applicable",No,Spouse,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2290002,25,"Age on effective date","Not Applicable",No,Child,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2290002,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2290002,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300004,25,"Age on effective date","Not Applicable",No,Ward,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300004,25,"Age on effective date","Not Applicable",No,Child,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300004,25,"Age on effective date","Not Applicable",Yes,Self,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300004,25,"Age on effective date","Not Applicable",No,Spouse,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300004,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300004,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300004,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310004,25,"Age on effective date","Not Applicable",No,Child,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310004,25,"Age on effective date","Not Applicable",No,Spouse,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310004,25,"Age on effective date","Not Applicable",No,Ward,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310004,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310004,25,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310004,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310004,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310001,18,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310001,18,"Age on effective date","Not Applicable",No,Spouse,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310001,18,"Age on effective date","Not Applicable",No,"Foster Child",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310001,18,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310001,18,"Age on effective date","Not Applicable",No,Child,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310001,18,"Age on effective date","Not Applicable",No,"Life Partner",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350002,25,"Age on effective date","Not Applicable",Yes,Self,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350002,25,"Age on effective date","Not Applicable",No,Ward,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350002,25,"Age on effective date","Not Applicable",No,Child,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350002,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350002,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350002,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350002,25,"Age on effective date","Not Applicable",No,Spouse,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300001,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300001,25,"Age on effective date","Not Applicable",No,Spouse,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300001,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300001,25,"Age on effective date","Not Applicable",No,Ward,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300001,25,"Age on effective date","Not Applicable",Yes,Self,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300001,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300001,25,"Age on effective date","Not Applicable",No,Child,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350002,25,"Age on effective date","Not Applicable",Yes,Self,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350002,25,"Age on effective date","Not Applicable",No,Spouse,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350002,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350002,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350002,25,"Age on effective date","Not Applicable",No,Ward,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350002,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350002,25,"Age on effective date","Not Applicable",No,Child,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310004,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310004,25,"Age on effective date","Not Applicable",No,Child,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310004,25,"Age on effective date","Not Applicable",No,Spouse,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310004,25,"Age on effective date","Not Applicable",No,Ward,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310004,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310004,25,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310004,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,Spouse,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,Ward,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,Child,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",Yes,Self,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300001,25,"Age on effective date","Not Applicable",No,Ward,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300001,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300001,25,"Age on effective date","Not Applicable",No,Child,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300001,25,"Age on effective date","Not Applicable",Yes,Self,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300001,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300001,25,"Age on effective date","Not Applicable",No,Spouse,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300001,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350003,25,"Age on effective date","Not Applicable",No,Child,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350003,25,"Age on effective date","Not Applicable",Yes,Self,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350003,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350003,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350003,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350003,25,"Age on effective date","Not Applicable",No,Spouse,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350003,25,"Age on effective date","Not Applicable",No,Ward,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330004,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330004,25,"Age on effective date","Not Applicable",No,Child,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330004,25,"Age on effective date","Not Applicable",No,Ward,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330004,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330004,25,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330004,25,"Age on effective date","Not Applicable",No,Spouse,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330004,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330001,18,"Age on effective date","Not Applicable",No,"Foster Child",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330001,18,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330001,18,"Age on effective date","Not Applicable",No,Child,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330001,18,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330001,18,"Age on effective date","Not Applicable",No,Spouse,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330001,18,"Age on effective date","Not Applicable",No,"Life Partner",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300004,25,"Age on effective date","Not Applicable",No,Child,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300004,25,"Age on effective date","Not Applicable",Yes,Self,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300004,25,"Age on effective date","Not Applicable",No,Ward,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300004,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300004,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300004,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300004,25,"Age on effective date","Not Applicable",No,Spouse,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330003,25,"Age on effective date","Not Applicable",No,Child,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330003,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330003,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330003,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330003,25,"Age on effective date","Not Applicable",No,Spouse,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330003,25,"Age on effective date","Not Applicable",No,Ward,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330003,25,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350004,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350004,25,"Age on effective date","Not Applicable",Yes,Self,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350004,25,"Age on effective date","Not Applicable",No,Child,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350004,25,"Age on effective date","Not Applicable",No,Spouse,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350004,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350004,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350004,25,"Age on effective date","Not Applicable",No,Ward,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310003,25,"Age on effective date","Not Applicable",No,Child,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310003,25,"Age on effective date","Not Applicable",No,Spouse,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310003,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310003,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310003,25,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310003,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310003,25,"Age on effective date","Not Applicable",No,Ward,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350005,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350005,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350005,25,"Age on effective date","Not Applicable",No,Spouse,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350005,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350005,25,"Age on effective date","Not Applicable",No,Child,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350005,25,"Age on effective date","Not Applicable",No,Ward,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350005,25,"Age on effective date","Not Applicable",Yes,Self,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350004,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350004,25,"Age on effective date","Not Applicable",No,Spouse,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350004,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350004,25,"Age on effective date","Not Applicable",Yes,Self,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350004,25,"Age on effective date","Not Applicable",No,Ward,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350004,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350004,25,"Age on effective date","Not Applicable",No,Child,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350001,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350001,25,"Age on effective date","Not Applicable",Yes,Self,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350001,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350001,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350001,25,"Age on effective date","Not Applicable",No,Ward,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350001,25,"Age on effective date","Not Applicable",No,Child,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350001,25,"Age on effective date","Not Applicable",No,Spouse,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350001,25,"Age on effective date","Not Applicable",No,Spouse,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350001,25,"Age on effective date","Not Applicable",No,Ward,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350001,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350001,25,"Age on effective date","Not Applicable",No,Child,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350001,25,"Age on effective date","Not Applicable",Yes,Self,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350001,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350001,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330004,25,"Age on effective date","Not Applicable",No,Child,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330004,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330004,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330004,25,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330004,25,"Age on effective date","Not Applicable",No,Spouse,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330004,25,"Age on effective date","Not Applicable",No,Ward,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330004,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300007,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300007,25,"Age on effective date","Not Applicable",No,Child,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300007,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300007,25,"Age on effective date","Not Applicable",Yes,Self,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300007,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300007,25,"Age on effective date","Not Applicable",No,Spouse,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300007,25,"Age on effective date","Not Applicable",No,Ward,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310003,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310003,25,"Age on effective date","Not Applicable",No,Child,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310003,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310003,25,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310003,25,"Age on effective date","Not Applicable",No,Ward,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310003,25,"Age on effective date","Not Applicable",No,Spouse,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2310003,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330001,18,"Age on effective date","Not Applicable",No,Spouse,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330001,18,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330001,18,"Age on effective date","Not Applicable",No,"Life Partner",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330001,18,"Age on effective date","Not Applicable",No,Child,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330001,18,"Age on effective date","Not Applicable",No,"Foster Child",,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2330001,18,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300007,25,"Age on effective date","Not Applicable",No,Ward,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300007,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300007,25,"Age on effective date","Not Applicable",No,Child,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300007,25,"Age on effective date","Not Applicable",Yes,Self,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300007,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300007,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300007,25,"Age on effective date","Not Applicable",No,Spouse,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350005,25,"Age on effective date","Not Applicable",Yes,Self,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350005,25,"Age on effective date","Not Applicable",No,Ward,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350005,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350005,25,"Age on effective date","Not Applicable",No,Child,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350005,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350005,25,"Age on effective date","Not Applicable",No,Spouse,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350005,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,Spouse,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,Child,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",Yes,Self,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,Ward,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300003,25,"Age on effective date","Not Applicable",No,Child,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300003,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300003,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300003,25,"Age on effective date","Not Applicable",No,Ward,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300003,25,"Age on effective date","Not Applicable",Yes,Self,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300003,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2300003,25,"Age on effective date","Not Applicable",No,Spouse,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2290002,25,"Age on effective date","Not Applicable",No,Spouse,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2290002,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2290002,25,"Age on effective date","Not Applicable",No,Ward,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2290002,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2290002,25,"Age on effective date","Not Applicable",Yes,Self,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2290002,25,"Age on effective date","Not Applicable",No,Child,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2290002,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350003,25,"Age on effective date","Not Applicable",No,Child,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350003,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350003,25,"Age on effective date","Not Applicable",No,Spouse,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350003,25,"Age on effective date","Not Applicable",No,"Life Partner",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350003,25,"Age on effective date","Not Applicable",Yes,Self,,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350003,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Medical,3
+2026,NJ,91661,SERFF,1,01-13-2026,,91661NJ2350003,25,"Age on effective date","Not Applicable",No,Ward,,,Medical,3
+2026,NJ,91762,SERFF,1,01-13-2026,,91762NJ0130015,18,"Age on effective date","Not Applicable",No,"Brother or Sister",,,Dental,3
+2026,NJ,91762,SERFF,1,01-13-2026,,91762NJ0130015,18,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,91762,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",Yes,"Life Partner",,,Medical,3
+2026,NJ,91762,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,Child,,,Medical,3
+2026,NJ,91762,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Medical,3
+2026,NJ,91762,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Medical,3
+2026,NJ,91762,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,Ward,,,Medical,3
+2026,NJ,91762,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",No,Spouse,,,Medical,3
+2026,NJ,91762,SERFF,1,01-13-2026,,,25,"Age on effective date","Not Applicable",Yes,Self,,,Medical,3
+2026,NJ,91762,SERFF,1,01-13-2026,91762NJ012,,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Dental,3
+2026,NJ,91762,SERFF,1,01-13-2026,91762NJ012,,25,"Age on effective date","Not Applicable",No,Child,,,Dental,3
+2026,NJ,91762,SERFF,1,01-13-2026,91762NJ012,,25,"Age on effective date","Not Applicable",No,Ward,,,Dental,3
+2026,NJ,91762,SERFF,1,01-13-2026,91762NJ012,,25,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,91762,SERFF,1,01-13-2026,91762NJ012,,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Dental,3
+2026,NJ,91762,SERFF,1,01-13-2026,91762NJ012,,25,"Age on effective date","Not Applicable",Yes,"Life Partner",,,Dental,3
+2026,NJ,91762,SERFF,1,01-13-2026,91762NJ012,,25,"Age on effective date","Not Applicable",No,Spouse,,,Dental,3
+2026,NJ,91762,SERFF,1,01-13-2026,,91762NJ0120004,18,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,91762,SERFF,1,01-13-2026,,91762NJ0120004,18,"Age on effective date","Not Applicable",No,"Brother or Sister",,,Dental,3
+2026,NJ,91762,SERFF,1,01-13-2026,91762NJ013,,25,"Age on effective date","Not Applicable",Yes,"Life Partner",,,Dental,3
+2026,NJ,91762,SERFF,1,01-13-2026,91762NJ013,,25,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,91762,SERFF,1,01-13-2026,91762NJ013,,25,"Age on effective date","Not Applicable",No,Child,,,Dental,3
+2026,NJ,91762,SERFF,1,01-13-2026,91762NJ013,,25,"Age on effective date","Not Applicable",No,Spouse,,,Dental,3
+2026,NJ,91762,SERFF,1,01-13-2026,91762NJ013,,25,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Dental,3
+2026,NJ,91762,SERFF,1,01-13-2026,91762NJ013,,25,"Age on effective date","Not Applicable",No,"Foster Child",,,Dental,3
+2026,NJ,91762,SERFF,1,01-13-2026,91762NJ013,,25,"Age on effective date","Not Applicable",No,Ward,,,Dental,3
+2026,NJ,91762,SERFF,1,01-13-2026,,91762NJ0130020,18,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,91762,SERFF,1,01-13-2026,,91762NJ0130020,18,"Age on effective date","Not Applicable",No,"Brother or Sister",,,Dental,3
+2026,NJ,93627,SERFF,1,01-13-2026,,,18,"Age on effective date","Not Applicable",No,Child,,,Dental,3
+2026,NJ,93627,SERFF,1,01-13-2026,,,18,"Age on effective date","Not Applicable",No,"Foster Child",,,Dental,3
+2026,NJ,93627,SERFF,1,01-13-2026,,,18,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,93627,SERFF,1,01-13-2026,,,18,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Dental,3
+2026,NJ,93627,SERFF,1,01-13-2026,,,18,"Age on effective date","Not Applicable",No,"Life Partner",,,Dental,3
+2026,NJ,93627,SERFF,1,01-13-2026,,,18,"Age on effective date","Not Applicable",No,Spouse,,,Dental,3
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0130017,,"Age on effective date",,No,"Brother or Sister",,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0130017,,"Age on effective date",,No,Ward,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0130017,,"Age on effective date",,No,Child,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0130017,,"Age on effective date",,Yes,Self,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0130017,,"Age on effective date",,No,"Foster Child",,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0130018,,"Age on effective date",,No,"Foster Child",,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0130018,,"Age on effective date",,No,"Brother or Sister",,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0130018,,"Age on effective date",,Yes,Self,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0130018,,"Age on effective date",,No,Ward,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0130018,,"Age on effective date",,No,Child,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0140014,,"Age on effective date",,No,"Foster Child",,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0140014,,"Age on effective date",,No,Child,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0140014,,"Age on effective date",,No,"Brother or Sister",,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0140014,,"Age on effective date",,No,Ward,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0140014,,"Age on effective date",,Yes,Self,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0140015,,"Age on effective date",,No,"Foster Child",,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0140015,,"Age on effective date",,No,"Brother or Sister",,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0140015,,"Age on effective date",,No,Ward,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0140015,,"Age on effective date",,No,Child,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0140015,,"Age on effective date",,Yes,Self,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0120021,,"Age on effective date",,Yes,Self,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0120021,,"Age on effective date",,No,Ward,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0120021,,"Age on effective date",,No,"Brother or Sister",,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0120021,,"Age on effective date",,No,Child,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0120021,,"Age on effective date",,No,"Foster Child",,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,,26,"Age on effective date","Not Applicable",No,Ward,,,Dental,3
+2026,NJ,99708,SERFF,1,01-13-2026,,,26,"Age on effective date","Not Applicable",No,"Foster Child",,,Dental,3
+2026,NJ,99708,SERFF,1,01-13-2026,,,26,"Age on effective date","Not Applicable",Yes,"Life Partner",,,Dental,3
+2026,NJ,99708,SERFF,1,01-13-2026,,,26,"Age on effective date","Not Applicable",Yes,Spouse,,,Dental,3
+2026,NJ,99708,SERFF,1,01-13-2026,,,26,"Age on effective date","Not Applicable",Yes,Self,,,Dental,3
+2026,NJ,99708,SERFF,1,01-13-2026,,,26,"Age on effective date","Not Applicable",No,Child,,,Dental,3
+2026,NJ,99708,SERFF,1,01-13-2026,,,26,"Age on effective date","Not Applicable",No,"Stepson or Stepdaughter",,,Dental,3
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0140013,,"Age on effective date",,No,"Brother or Sister",,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0140013,,"Age on effective date",,No,"Foster Child",,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0140013,,"Age on effective date",,No,Child,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0140013,,"Age on effective date",,No,Ward,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0140013,,"Age on effective date",,Yes,Self,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0140016,,"Age on effective date",,Yes,Self,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0140016,,"Age on effective date",,No,"Foster Child",,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0140016,,"Age on effective date",,No,"Brother or Sister",,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0140016,,"Age on effective date",,No,Ward,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0140016,,"Age on effective date",,No,Child,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0120020,,"Age on effective date",,No,Child,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0120020,,"Age on effective date",,No,"Brother or Sister",,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0120020,,"Age on effective date",,Yes,Self,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0120020,,"Age on effective date",,No,Ward,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0120020,,"Age on effective date",,No,"Foster Child",,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0130023,,"Age on effective date",,No,"Foster Child",,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0130023,,"Age on effective date",,No,"Brother or Sister",,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0130023,,"Age on effective date",,Yes,Self,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0130023,,"Age on effective date",,No,Ward,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0130023,,"Age on effective date",,No,Child,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0130022,,"Age on effective date",,No,Child,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0130022,,"Age on effective date",,No,"Brother or Sister",,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0130022,,"Age on effective date",,No,"Foster Child",,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0130022,,"Age on effective date",,Yes,Self,,,Dental,
+2026,NJ,99708,SERFF,1,01-13-2026,,99708NJ0130022,,"Age on effective date",,No,Ward,,,Dental,
