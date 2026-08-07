@@ -187,6 +187,16 @@ export interface Household {
    * accounts for copays, limits and exclusions that the simulation cannot see.
    */
   expectedScenario?: CoverageScenario;
+  /**
+   * Months of coverage remaining in the plan year, 1 to 12.
+   *
+   * A special enrolment period starts coverage part way through the year. The
+   * premium is then paid for fewer months, and the household has fewer months
+   * of care, but the deductible and out of pocket maximum do not shrink to
+   * match. That changes which plan is cheapest, so it is modelled rather than
+   * assumed to be a full year.
+   */
+  monthsOfCoverage?: number;
 }
 
 export interface CostBreakdown {

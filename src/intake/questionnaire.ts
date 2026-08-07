@@ -145,6 +145,67 @@ export const QUESTIONNAIRE: Section[] = [
         rationale:
           "Forks the whole form. Renewals anchor on the current plan; 16 plans were discontinued for 2026, so some renewals are forced moves.",
       },
+      {
+        id: "life_changes",
+        kind: "multichoice",
+        label: "Has anything changed for your household lately, or is anything about to?",
+        help: "Tick anything that applies. Several of these let you sign up outside the usual window, and several change how much help you can get.",
+        options: [
+          { value: "lost_coverage", label: "Someone lost health coverage, or is about to" },
+          { value: "job_change", label: "Someone lost a job or changed jobs" },
+          { value: "married", label: "Got married" },
+          { value: "divorced", label: "Got divorced or legally separated" },
+          { value: "baby", label: "Had a baby, adopted, or took in a foster child" },
+          { value: "moved", label: "Moved to a new address" },
+          { value: "aged_off", label: "Someone turned 26 and came off a parent's plan" },
+          { value: "death", label: "Someone in the household died" },
+          { value: "income_change", label: "Income went up or down a lot" },
+          { value: "status_change", label: "Became a citizen, or got lawful immigration status" },
+          { value: "released", label: "Someone was released from incarceration" },
+          { value: "none", label: "Nothing has changed" },
+        ],
+        required: true,
+        routing: "flag",
+        rationale:
+          "Outside open enrolment a qualifying life event is the only way to enrol at all, and the window is usually 60 days. Marriage and divorce also change the tax household, which changes both the credit and the cost sharing tier, and a job loss makes last year's income the wrong number to quote on.",
+      },
+      {
+        id: "coverage_start",
+        kind: "choice",
+        label: "When do you need the coverage to start?",
+        options: [
+          { value: "asap", label: "As soon as it can" },
+          { value: "january", label: "1 January, with the new plan year" },
+          { value: "unsure", label: "I am not sure yet" },
+        ],
+        required: true,
+        routing: "intake",
+        rationale:
+          "Starting part way through the year changes which plan wins, not just the totals. Premium is only paid for the remaining months, but the deductible and out of pocket maximum stay at their full annual amounts, so a high deductible plan is much worse with four months left than with twelve.",
+      },
+      {
+        id: "life_change_when",
+        kind: "choice",
+        label: "When did that happen?",
+        help: "If more than one thing changed, answer for the most recent.",
+        options: [
+          { value: "upcoming", label: "It has not happened yet, but it will soon" },
+          { value: "within60", label: "In the last 60 days" },
+          { value: "over60", label: "More than 60 days ago" },
+        ],
+        required: true,
+        allowUnsure: true,
+        showIf: {
+          question: "life_changes",
+          equals: [
+            "lost_coverage", "job_change", "married", "divorced", "baby", "moved",
+            "aged_off", "death", "income_change", "status_change", "released",
+          ],
+        },
+        routing: "flag",
+        rationale:
+          "Special enrolment periods generally run 60 days from the event, and losing coverage can be claimed 60 days ahead of it. Past that window the client waits for open enrolment, so the date decides whether there is anything to sell today.",
+      },
     ],
   },
 

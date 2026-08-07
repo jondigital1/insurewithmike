@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Turns raw intake answers into the household the engine takes.
  *
  * Deliberately forgiving. A half finished form should still produce a usable
@@ -109,7 +109,22 @@ export interface Conversion {
   unsure: string[];
 }
 
-export function toHousehold(answers: Answers): Conversion {
+/**
+ * Months of coverage left in the plan year.
+ *
+ * Coverage generally starts on the first of the month after enrolment, so
+ * someone signing up in August is buying four months, not twelve. The premium
+ * and the amount of care both scale with that; the deductible and out of
+ * pocket maximum do not.
+ */
+export function monthsOfCoverageFrom(answers: Answers, today = new Date()): number {
+  if (answers.coverage_start === "january") return 12;
+  const startMonthIndex = today.getMonth() + 1; // first of next month, 0 indexed
+  const remaining = 12 - startMonthIndex;
+  return Math.max(1, Math.min(12, remaining));
+}
+
+export function toHousehold(answers: Answers, today = new Date()): Conversion {
   const flags: string[] = [];
   const unsure = Object.keys(answers)
     .filter((k) => k.endsWith("_unsure") && answers[k] === true)
@@ -197,6 +212,89 @@ export function toHousehold(answers: Answers): Conversion {
     flags.push("Losing existing coverage, which opens a special enrolment period.");
   }
 
+  // Life events. Outside open enrolment one of these is the only route to
+  // coverage at all, and the window is short, so this is stated first and
+  // plainly rather than left for the agent to infer.
+  const events = list(answers.life_changes).filter((v) => v !== "none");
+  if (events.length) {
+    const LABELS: Record<string, string> = {
+      lost_coverage: "lost coverage",
+      job_change: "job loss or change",
+      married: "marriage",
+      divorced: "divorce or legal separation",
+      baby: "birth, adoption or foster placement",
+      moved: "change of address",
+      aged_off: "aged off a parent's plan at 26",
+      death: "death in the household",
+      income_change: "significant income change",
+      status_change: "new citizenship or immigration status",
+      released: "release from incarceration",
+    };
+    const named = events.map((e) => LABELS[e] ?? e).join(", ");
+    const when = answers.life_change_when;
+
+    if (when === "over60") {
+      flags.push(
+        `Life event reported (${named}) but more than 60 days ago. The special enrolment window has probably closed, so check before promising coverage can start now.`,
+      );
+    } else if (when === "within60" || when === "upcoming") {
+      flags.push(
+        `Life event reported (${named}), ${when === "upcoming" ? "not yet happened" : "within the last 60 days"}. This is what opens a special enrolment period, so confirm the date and the proof required.`,
+      );
+    } else {
+      flags.push(
+        `Life event reported (${named}) with no date given. The date decides whether they can enrol at all outside open enrolment.`,
+      );
+    }
+
+    if (events.includes("married") || events.includes("divorced")) {
+      flags.push(
+        "Marriage or divorce changes the tax household, which moves both the premium tax credit and the cost sharing tier. The income and household answers here may already be out of date.",
+      );
+    }
+    if (events.includes("job_change") || events.includes("income_change")) {
+      flags.push(
+        "Income has changed, so last year's figure is the wrong basis. The projected income on this form is what the credit is calculated on and what gets reconciled at tax time.",
+      );
+    }
+    if (events.includes("baby")) {
+      flags.push(
+        "New child in the household. Coverage can usually be backdated to the date of birth or placement.",
+      );
+    }
+    if (events.includes("moved")) {
+      flags.push(
+        "Change of address. Confirm the county, since it decides which carriers can sell to them even though it does not change the price.",
+      );
+    }
+    if (events.includes("lost_coverage")) {
+      flags.push(
+        "Check how the coverage ended. Losing it counts as a qualifying event, but voluntarily dropping a plan, or losing it for non payment, does not. Clients rarely distinguish the two when they describe it.",
+      );
+    }
+  }
+
+  const months = monthsOfCoverageFrom(answers, today);
+  if (months < 12) {
+    flags.push(
+      `Coverage starts with ${months} month${months === 1 ? "" : "s"} left in the plan year. Premium and expected care are scaled to that, but the deductible and out of pocket maximum are not, because they reset annually whoever joins and whenever. High deductible plans are a worse deal on a short year than the annual figures suggest.`,
+    );
+  }
+  if (answers.coverage_start === "unsure") {
+    flags.push(
+      "Start date not decided. Figures assume the earliest possible start; a January start changes which plan wins, not just the totals.",
+    );
+  }
+
+  // Married filing separately generally forfeits the credit outright. There is
+  // a narrow exception for domestic abuse and spousal abandonment, and someone
+  // who has just separated is exactly who might qualify for it.
+  if (answers.filing_jointly === "no" && events.includes("divorced")) {
+    flags.push(
+      "Separating and not filing jointly. That normally forfeits the premium tax credit entirely, but there is an exception for domestic abuse and spousal abandonment which is worth raising carefully.",
+    );
+  }
+
   const household: Household = {
     county: countyFromSlug(answers.county),
     annualIncome: num(answers.expected_income),
@@ -208,7 +306,9 @@ export function toHousehold(answers: Answers): Conversion {
     perceivedAnnualSpend: num(answers.perceived_spend) || undefined,
     hardshipExemption: false,
     expectedScenario: scenarioFrom(answers),
+    monthsOfCoverage: months,
   };
 
   return { household, flags, unsure };
 }
+

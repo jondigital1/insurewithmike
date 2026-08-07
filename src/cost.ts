@@ -150,7 +150,15 @@ export function evaluateCost(
   if (listMonthly === null) return null;
 
   const isFamily = household.members.length > 1;
-  const allowed = estimatedAllowedCharges(household);
+
+  // Coverage starting part way through the year scales the premium and the
+  // amount of care, but not the deductible or the out of pocket maximum, which
+  // reset annually regardless of when someone joins. Ignoring this makes high
+  // deductible plans look better than they are for anyone enrolling mid year.
+  const months = Math.max(1, Math.min(12, household.monthsOfCoverage ?? 12));
+  const yearFraction = months / 12;
+
+  const allowed = estimatedAllowedCharges(household) * yearFraction;
   const sharing = applyCostSharing(plan, allowed, isFamily);
 
   // When the client's year matches one of the standardised coverage examples,
@@ -164,9 +172,9 @@ export function evaluateCost(
   const outOfPocket = filed ? filed.total : sharing.outOfPocket;
   const outOfPocketSource: "filed" | "simulated" = filed ? "filed" : "simulated";
 
-  const annualPremiumListed = listMonthly * 12;
+  const annualPremiumListed = listMonthly * months;
   const afterFederal = subsidy
-    ? netAnnualPremium(plan, annualPremiumListed, subsidy)
+    ? netAnnualPremium(plan, annualPremiumListed, subsidy, months)
     : annualPremiumListed;
   const federalSubsidyApplied = annualPremiumListed - afterFederal;
 
@@ -174,7 +182,7 @@ export function evaluateCost(
   // which is what DOBI states, so it comes off afterwards. It cannot take the
   // premium below zero.
   const state = njHealthPlanSavings(household, plan.metalLevel, household.members.length);
-  const stateSubsidyApplied = Math.min(afterFederal, state.annualAmount);
+  const stateSubsidyApplied = Math.min(afterFederal, state.annualAmount * yearFraction);
   const annualPremiumNet = Math.max(0, afterFederal - stateSubsidyApplied);
   const annualPremiumQuoted =
     quotedMonthlyPremium === null ? null : quotedMonthlyPremium * 12;
@@ -202,4 +210,6 @@ export function evaluateCost(
     worstCaseAnnualTotal: effectivePremium + moop,
   };
 }
+
+
 

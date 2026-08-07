@@ -644,8 +644,11 @@ const html = `<title>Ask Mike, client intake</title>
       document.querySelectorAll("[data-showif-q]").forEach((el) => {
         const q = el.getAttribute("data-showif-q");
         const wanted = (el.getAttribute("data-showif-v") || "").split("|");
-        const checked = document.querySelector('input[name="' + q + '"]:checked');
-        el.hidden = !(checked && wanted.includes(checked.value));
+        // Any selected value can satisfy the condition. Reading only the first
+        // checked box is wrong for a multi-select, where a client can tick both
+        // "got married" and something else.
+        const checked = [...document.querySelectorAll('input[name="' + q + '"]:checked')];
+        el.hidden = !checked.some((c) => wanted.includes(c.value));
       });
     }
     updateProgress();

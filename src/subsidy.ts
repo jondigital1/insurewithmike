@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Premium subsidy calculation for the 2026 coverage year.
  *
  * IMPORTANT CONTEXT: the enhanced premium tax credits created by the American
@@ -164,9 +164,14 @@ export function netAnnualPremium(
   plan: Plan,
   listAnnualPremium: number,
   subsidy: SubsidyResult,
+  monthsOfCoverage = 12,
 ): number {
   if (plan.metalLevel === "Catastrophic") return listAnnualPremium;
-  return Math.max(0, listAnnualPremium - subsidy.federalAnnualSubsidy);
+  // The credit is paid monthly, so a part year of coverage receives a part
+  // year of credit. Subtracting a full year against a part year premium would
+  // hand the client free coverage that does not exist.
+  const credit = subsidy.federalAnnualSubsidy * (Math.max(1, Math.min(12, monthsOfCoverage)) / 12);
+  return Math.max(0, listAnnualPremium - credit);
 }
 
 /** Income ceiling for the New Jersey state subsidy, as a percentage of the FPL. */
@@ -249,3 +254,4 @@ export function njHealthPlanSavings(
         : `New Jersey Health Plan Savings estimated at the published average of $${pmpm.toFixed(2)} per person per month, stacked on the federal credit. The state does not publish the schedule, so treat this as the right order of magnitude rather than the exact entitlement.`,
   };
 }
+
