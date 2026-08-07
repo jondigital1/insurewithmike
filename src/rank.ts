@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Eligibility filtering and the good / better / best shortlist.
  *
  * The spread runs cheapest price to richest coverage, which is how the agent
@@ -8,7 +8,7 @@
 
 import { fplPercentage } from "./assumptions.ts";
 import { evaluateCost } from "./cost.ts";
-import { issuerCounties } from "./puf.ts";
+import { issuerCounties } from "./dataset.ts";
 import type { SubsidyResult } from "./subsidy.ts";
 import type {
   CsrVariant,
@@ -260,3 +260,4 @@ function balanceScore(e: PlanEvaluation): number {
   const gap = e.cost.worstCaseAnnualTotal - e.cost.estimatedAnnualTotal;
   return e.cost.estimatedAnnualTotal + gap * 0.25;
 }
+

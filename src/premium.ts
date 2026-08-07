@@ -1,10 +1,10 @@
-/**
+﻿/**
  * List premium calculation, kept separate from the cost model so that the
  * subsidy calculation can price the benchmark plan without a circular import.
  */
 
 import { MAX_RATED_CHILDREN, CHILD_RATING_AGE_CEILING } from "./assumptions.ts";
-import { rateForAge } from "./puf.ts";
+import { rateForAge } from "./dataset.ts";
 import type { Household, Plan, PlanDataset } from "./types.ts";
 
 /**
@@ -37,3 +37,4 @@ export function monthlyListPremium(
   }
   return total;
 }
+

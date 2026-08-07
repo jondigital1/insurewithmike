@@ -13,7 +13,7 @@
 
 import { fplPercentage } from "./assumptions.ts";
 import { monthlyListPremium } from "./premium.ts";
-import { issuerCounties } from "./puf.ts";
+import { issuerCounties } from "./dataset.ts";
 import type { Household, Plan, PlanDataset } from "./types.ts";
 
 interface PercentageBand {

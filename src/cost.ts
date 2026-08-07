@@ -121,6 +121,17 @@ export function evaluateCost(
   const allowed = estimatedAllowedCharges(household);
   const sharing = applyCostSharing(plan, allowed, isFamily);
 
+  // When the client's year matches one of the standardised coverage examples,
+  // prefer the issuer's own filed figure over our simulation. The filing has
+  // already accounted for copays, limits and exclusions, none of which the
+  // simulation can see, and testing against all 102 non tribal variants showed
+  // the simulation misranks exactly the plans that meter care by copay.
+  const filed = household.expectedScenario
+    ? plan.coverageExamples[household.expectedScenario]
+    : null;
+  const outOfPocket = filed ? filed.total : sharing.outOfPocket;
+  const outOfPocketSource: "filed" | "simulated" = filed ? "filed" : "simulated";
+
   const annualPremiumListed = listMonthly * 12;
   const annualPremiumNet = subsidy
     ? netAnnualPremium(plan, annualPremiumListed, subsidy)
@@ -143,9 +154,10 @@ export function evaluateCost(
     estimatedAllowedCharges: allowed,
     deductibleApplied: sharing.deductibleApplied,
     coinsuranceApplied: sharing.coinsuranceApplied,
-    estimatedOutOfPocket: sharing.outOfPocket,
+    estimatedOutOfPocket: outOfPocket,
+    outOfPocketSource,
     reachesMoop: sharing.reachesMoop,
-    estimatedAnnualTotal: effectivePremium + sharing.outOfPocket,
+    estimatedAnnualTotal: effectivePremium + outOfPocket,
     worstCaseAnnualTotal: effectivePremium + moop,
   };
 }

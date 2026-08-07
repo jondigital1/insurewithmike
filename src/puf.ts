@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Loader for the CMS State-Based Exchange QHP Public Use Files, New Jersey.
  *
  * The files arrive as CSV exported from SERFF filings. Column names contain
@@ -11,6 +11,7 @@ import { join } from "node:path";
 import { parse } from "csv-parse/sync";
 import type {
   BenefitRow,
+  CoverageExample,
   CsrVariant,
   MetalLevel,
   Plan,
@@ -108,6 +109,32 @@ function preferTotal(
   return parser(row[totalKey]) ?? parser(row[medicalKey]);
 }
 
+/**
+ * Reads one standardised coverage example. Returns null only when the issuer
+ * filed nothing at all, which in the 2026 New Jersey data never happens.
+ */
+function coverageExample(
+  row: Row,
+  dedKey: string,
+  copayKey: string,
+  coinsKey: string,
+  limitKey: string,
+): CoverageExample | null {
+  const deductible = money(row[dedKey]);
+  const copayment = money(row[copayKey]);
+  const coinsurance = money(row[coinsKey]);
+  const limits = money(row[limitKey]);
+  if (deductible === null && copayment === null && coinsurance === null) return null;
+  const parts = [deductible ?? 0, copayment ?? 0, coinsurance ?? 0, limits ?? 0];
+  return {
+    deductible: parts[0]!,
+    copayment: parts[1]!,
+    coinsurance: parts[2]!,
+    limits: parts[3]!,
+    total: parts.reduce((a, b) => a + b, 0),
+  };
+}
+
 function loadPlans(dir: string): Plan[] {
   return readCsv(dir, "NJPlans")
     .filter((r) => r["DENTAL ONLY PLAN"] === "No")
@@ -160,6 +187,32 @@ function loadPlans(dir: string): Plan[] {
           "MEHB INN TIER 1 FAMILY MOOP",
           familyPerGroup,
         ),
+
+        coverageExamples: {
+          havingABaby: coverageExample(
+            r,
+            "SBC HAVING A BABY DEDUCTIBLE",
+            "SBC HAVING A BABY COPAYMENT",
+            "SBC HAVING A BABY COINSURANCE",
+            "SBC HAVING A BABY LIMIT",
+          ),
+          // The double space in the diabetes copayment header is a typo in the
+          // filed data. Reproduced rather than corrected.
+          managingDiabetes: coverageExample(
+            r,
+            "SBC HAVING DIABETES DEDUCTIBLE",
+            "SBC HAVING  DIABETES COPAYMENT",
+            "SBC HAVING DIABETES COINSURANCE",
+            "SBC HAVING DIABETES LIMIT",
+          ),
+          simpleFracture: coverageExample(
+            r,
+            "SBC HAVING SIMPLE FRACTURE DEDUCTIBLE",
+            "SBC HAVING SIMPLE FRACTURE COPAYMENT",
+            "SBC HAVING SIMPLE FRACTURE COINSURANCE",
+            "SBC HAVING SIMPLE FRACTURE LIMIT",
+          ),
+        },
 
         hasSecondNetworkTier: yesNo(r["MULTIPLE NETWORK TIERS"]),
         deductibleIndividualTier2: preferTotal(
@@ -252,39 +305,5 @@ export function loadPlanDataset(dataDir: string, planYear: number): PlanDataset 
   };
 }
 
-/**
- * Resolves a member age to the filed rate for a plan. Age bands in the file
- * are a mixture of single years ("27"), a banded floor ("0-14") and a banded
- * ceiling ("64 and over").
- */
-export function rateForAge(
-  rates: RateRow[],
-  age: number,
-  tobaccoUser: boolean,
-): number | null {
-  const exact = rates.find((r) => Number(r.age) === age);
-  const banded =
-    exact ??
-    rates.find((r) => {
-      const range = r.age.match(/^(\d+)\s*-\s*(\d+)$/);
-      if (range) return age >= Number(range[1]) && age <= Number(range[2]);
-      const ceiling = r.age.match(/^(\d+)\s*and\s*over$/i);
-      if (ceiling) return age >= Number(ceiling[1]);
-      const floor = r.age.match(/^(\d+)\s*and\s*under$/i);
-      if (floor) return age <= Number(floor[1]);
-      return false;
-    });
-  if (!banded) return null;
-  return tobaccoUser
-    ? (banded.individualTobaccoRate ?? banded.individualRate)
-    : banded.individualRate;
-}
+export { rateForAge, issuerCounties } from "./dataset.ts";
 
-/** Counties where an issuer sells, used to gate plan availability. */
-export function issuerCounties(dataset: PlanDataset, issuerId: string): Set<string> {
-  const counties = new Set<string>();
-  for (const area of dataset.serviceAreas) {
-    if (area.issuerId === issuerId && area.countyName) counties.add(area.countyName);
-  }
-  return counties;
-}

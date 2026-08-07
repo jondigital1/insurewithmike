@@ -1,0 +1,347 @@
+/**
+ * Builds the agent facing recommendation page, plus the plan data bundle and
+ * the engine bundle it runs on.
+ *
+ * There is no login and no server yet, so the client form hands the answers
+ * over through localStorage and opens this page in its own window. That is a
+ * testing arrangement, not the shape of the finished product, and the page
+ * says so.
+ *
+ * The page is built to be printed. Mike puts paper in front of clients, so the
+ * print stylesheet is a first class output rather than an afterthought.
+ *
+ * Usage: npx tsx scripts/build-agent.ts <outdir>
+ */
+
+import { mkdirSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { build } from "esbuild";
+import { loadPlanDataset } from "../src/puf.ts";
+import { TOKENS, FONT_LINKS, FAVICON, lockup, markSmall } from "../src/web/identity.ts";
+
+const outDir = process.argv[2] ?? "web";
+mkdirSync(outDir, { recursive: true });
+
+// ------------------------------------------------------------ plan bundle
+
+const dataset = loadPlanDataset("data/nj-sbe-puf-2026", 2026);
+
+// Benefits are dropped: 12,156 rows that the ranking never reads. Everything
+// else the engine touches goes in.
+const bundle = {
+  planYear: dataset.planYear,
+  plans: dataset.plans,
+  rates: Object.fromEntries(dataset.rates),
+  serviceAreas: dataset.serviceAreas,
+};
+
+const planJson = JSON.stringify(bundle);
+writeFileSync(join(outDir, "plans.json"), planJson, "utf8");
+console.log(
+  `plans.json      ${(planJson.length / 1024).toFixed(0)} KB   ${dataset.plans.length} variants, ${dataset.rates.size} rate tables`,
+);
+
+// ----------------------------------------------------------- engine bundle
+
+await build({
+  entryPoints: ["src/browser/entry.ts"],
+  bundle: true,
+  format: "iife",
+  target: "es2020",
+  minify: true,
+  outfile: join(outDir, "engine.js"),
+  logLevel: "warning",
+});
+console.log("engine.js       bundled from the same modules Node runs");
+
+// -------------------------------------------------------------- the page
+
+const html = `<title>Ask Mike, recommendation</title>
+<meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content="#FCFBF8" />
+<link rel="icon" href="${FAVICON}" />
+${FONT_LINKS}
+
+<style>
+${TOKENS}
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0; background: var(--am-paper); color: var(--am-ink);
+    font-family: var(--sans); font-size: 16px; line-height: 1.6;
+    font-variant-numeric: tabular-nums; -webkit-text-size-adjust: 100%;
+  }
+  p, h1, h2, h3 { text-wrap: pretty; }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 20; background: var(--am-white);
+    border-bottom: 1px solid var(--am-line);
+    padding: 12px clamp(16px, 4vw, 32px);
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  }
+  .lockup { display: inline-flex; align-items: center; gap: 0.34em; margin-right: auto; }
+  .lockup .word {
+    font-family: var(--display); font-weight: 400; font-size: 26px;
+    line-height: 1; letter-spacing: -0.015em; color: var(--am-ink);
+  }
+  .forwhom { font-size: 14px; color: var(--am-muted); }
+
+  .btn {
+    font: inherit; font-size: 15px; font-weight: 600; border-radius: var(--r-control);
+    padding: 11px 20px; min-height: 44px; cursor: pointer; border: none;
+    transition: background-color 150ms ease-out, border-color 150ms ease-out;
+  }
+  .btn:focus-visible { outline: none; box-shadow: 0 0 0 4px var(--am-blue-100); }
+  .btn.primary { background: var(--am-blue-600); color: #fff; }
+  .btn.primary:hover { background: var(--am-blue-700); }
+  .btn.secondary { background: var(--am-white); color: var(--am-blue-700); border: 1.5px solid #C6DDEE; }
+  .btn.secondary:hover { border-color: var(--am-blue-600); background: var(--am-blue-50); }
+
+  .notice {
+    background: var(--am-blue-50); border-bottom: 1px solid var(--am-line);
+    color: var(--am-ink-soft); font-size: 14px; line-height: 1.55;
+    padding: 12px clamp(16px, 4vw, 32px);
+  }
+  .notice b { color: var(--am-ink); font-weight: 600; }
+
+  main { max-width: 860px; margin: 0 auto; padding: 40px clamp(16px, 4vw, 24px) 72px; }
+
+  h1 {
+    font-family: var(--display); font-weight: 400; font-size: clamp(30px, 6vw, 42px);
+    line-height: 1.06; letter-spacing: -0.02em; margin: 0 0 8px;
+  }
+  .sub { color: var(--am-ink-soft); margin: 0 0 32px; font-size: 17px; }
+
+  .card {
+    background: var(--am-white); border: 1px solid var(--am-line);
+    border-radius: var(--r-card); box-shadow: 0 1px 2px rgba(20,48,74,.04);
+    padding: 24px 26px; margin-bottom: 20px;
+  }
+  h2 {
+    font-family: var(--display); font-weight: 400; font-size: 28px;
+    line-height: 1.1; margin: 0 0 16px;
+  }
+  .eyebrow {
+    font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--am-muted); margin: 0 0 8px;
+  }
+
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 18px 24px; }
+  .fact dt { font-size: 13px; color: var(--am-muted); margin-bottom: 2px; }
+  .fact dd { margin: 0; font-size: 19px; font-weight: 500; }
+  .fact dd small { font-size: 13px; font-weight: 400; color: var(--am-ink-soft); display: block; }
+
+  .flags { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .flags li {
+    background: var(--am-amber-100); color: var(--am-amber-text);
+    border-radius: var(--r-control); padding: 13px 16px; font-size: 14px; line-height: 1.55;
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .flags li svg { flex: none; margin-top: 1px; }
+
+  .pick { border-left: 4px solid var(--am-blue-600); }
+  .pick.good { border-left-color: var(--am-green); }
+  .pick.better { border-left-color: var(--am-blue-600); }
+  .pick.best { border-left-color: var(--am-amber-500); }
+  .pick .tier {
+    font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--am-muted); margin: 0 0 6px;
+  }
+  .pick h3 { margin: 0 0 4px; font-size: 21px; line-height: 1.3; font-weight: 500; }
+  .pick .meta { color: var(--am-muted); font-size: 14px; margin: 0 0 12px; }
+  .pick .why { color: var(--am-ink-soft); font-size: 15px; margin: 0 0 16px; }
+
+  .figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 14px; }
+  .fig { background: var(--am-paper); border-radius: var(--r-control); padding: 12px 14px; }
+  .fig .k { font-size: 12px; color: var(--am-muted); }
+  .fig .v { font-size: 20px; font-weight: 500; }
+  .fig.lead .v { color: var(--am-blue-700); }
+
+  .notes { list-style: none; margin: 14px 0 0; padding: 0; font-size: 13px; color: var(--am-ink-soft); }
+  .notes li { padding: 3px 0 3px 14px; position: relative; }
+  .notes li::before { content: ""; position: absolute; left: 0; top: 12px; width: 5px; height: 5px; border-radius: 50%; background: var(--am-blue-300); }
+
+  .scroll { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 14px; }
+  th {
+    text-align: left; font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--am-muted); font-weight: 600; padding: 8px 10px;
+    border-bottom: 1.5px solid var(--am-line); white-space: nowrap;
+  }
+  td { padding: 8px 10px; border-bottom: 1px solid var(--am-line-soft); }
+  td.n { text-align: right; white-space: nowrap; }
+  tbody tr:nth-child(even) td { background: var(--am-paper); }
+
+  .empty { text-align: center; padding: 64px 24px; color: var(--am-ink-soft); }
+  .empty h1 { font-size: 30px; }
+
+  footer.colophon {
+    max-width: 860px; margin: 0 auto; padding: 0 clamp(16px,4vw,24px) 56px;
+    color: var(--am-muted); font-size: 13px; line-height: 1.55;
+  }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+  /* ------------------------------------------------------------- print
+     Mike puts paper in front of clients. This is the deliverable, not a
+     fallback: chrome off, borders kept, nothing split across a page break. */
+  @page { margin: 14mm; }
+  @media print {
+    body { background: #fff; font-size: 11pt; }
+    .topbar { position: static; border-bottom: 1px solid #ccc; padding: 0 0 8pt; }
+    .topbar .btn, .notice { display: none; }
+    main { max-width: none; padding: 12pt 0 0; }
+    .card { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; page-break-inside: avoid; margin-bottom: 10pt; padding: 12pt 14pt; }
+    h1 { font-size: 22pt; }
+    h2 { font-size: 15pt; }
+    .pick h3 { font-size: 13pt; }
+    .fig { background: #f6f6f4; }
+    .scroll { overflow: visible; }
+    table { min-width: 0; font-size: 9pt; }
+    .printfoot { display: block !important; margin-top: 10pt; font-size: 8pt; color: #666; }
+  }
+  .printfoot { display: none; }
+</style>
+
+<div class="notice" role="status">
+  <b>Testing arrangement.</b> There is no agent login yet, so this page reads the client's answers straight from this browser. In the finished product it lives behind a login and the client never reaches it.
+</div>
+
+<div class="topbar">
+  ${lockup(32)}
+  <span class="forwhom" id="forwhom"></span>
+  <button class="btn secondary" type="button" id="reload">Reload answers</button>
+  <button class="btn primary" type="button" id="print">Print</button>
+</div>
+
+<main id="out"></main>
+
+<footer class="colophon" id="colophon"></footer>
+
+<script src="engine.js"></script>
+<script>
+(function () {
+  const out = document.getElementById("out");
+  const usd = (n) => Number(n).toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+  const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const AMBER_MARK = ${JSON.stringify(markSmall(17, "#C67E32"))};
+
+  function render(result, submittedAt) {
+    document.getElementById("forwhom").textContent =
+      "Submitted " + new Date(submittedAt).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" });
+
+    const h = result.household;
+    const picks = result.shortlist;
+
+    let html = "";
+    html += '<h1>Recommendation</h1>';
+    html += '<p class="sub">' + result.eligibleCount + ' of ' + result.evaluatedCount +
+      ' plan variants are available to this household. ' + picks.length + ' are worth putting in front of them.</p>';
+
+    // ---- the client
+    html += '<section class="card"><p class="eyebrow">The household</p><dl class="facts">';
+    const facts = [
+      ["County", h.county || "not given"],
+      ["Household size", h.householdSize],
+      ["Projected income", usd(h.annualIncome)],
+      ["Federal poverty level", result.fplPercentage.toFixed(0) + "%", "of " + usd(result.federalPovertyLevel)],
+      ["Cost sharing tier", result.silverVariant === "standard" ? "Standard silver" : result.silverVariant.replace("csr", "") + "% silver"],
+      ["Federal credit", usd(result.subsidy.federalAnnualSubsidy) + "/yr"],
+    ];
+    for (const [k, v, small] of facts) {
+      html += '<div class="fact"><dt>' + esc(k) + '</dt><dd>' + esc(v) + (small ? '<small>' + esc(small) + '</small>' : '') + '</dd></div>';
+    }
+    html += '</dl>';
+    if (h.preferredHealthSystems.length) {
+      html += '<p style="margin:18px 0 0;font-size:14px;color:var(--am-ink-soft)">Wants to keep: <strong>' +
+        esc(h.preferredHealthSystems.join(", ")) + '</strong></p>';
+    }
+    html += '</section>';
+
+    // ---- things Mike must check
+    if (result.flags.length || result.unsure.length) {
+      html += '<section class="card"><p class="eyebrow">Before you quote</p><ul class="flags">';
+      for (const f of result.flags) html += '<li>' + AMBER_MARK + '<span>' + esc(f) + '</span></li>';
+      if (result.unsure.length) {
+        html += '<li>' + AMBER_MARK + '<span>The client marked these as unsure: <strong>' +
+          esc(result.unsure.join(", ")) + '</strong>. Confirm in the meeting.</span></li>';
+      }
+      html += '</ul></section>';
+    }
+
+    // ---- the shortlist
+    const TIER_LABEL = { good: "Good, lowest cost", better: "Better, balanced", best: "Best, most protection" };
+    for (const p of picks) {
+      const e = p.evaluation, c = e.cost, plan = e.plan;
+      html += '<section class="card pick ' + p.tier + '">';
+      html += '<p class="tier">' + esc(TIER_LABEL[p.tier] || p.tier) + '</p>';
+      html += '<h3>' + esc(plan.marketingName) + '</h3>';
+      html += '<p class="meta">' + esc(plan.issuerName) + ' &middot; ' + esc(plan.metalLevel) + ' &middot; ' + esc(plan.planType) + '</p>';
+      html += '<p class="why">' + esc(p.rationale) + '</p>';
+      html += '<div class="figures">';
+      html += '<div class="fig lead"><div class="k">Expected for the year</div><div class="v">' + usd(c.estimatedAnnualTotal) + '</div></div>';
+      html += '<div class="fig"><div class="k">Premium after credit</div><div class="v">' + usd(c.annualPremiumNet / 12) + '/mo</div></div>';
+      html += '<div class="fig"><div class="k">Expected out of pocket</div><div class="v">' + usd(c.estimatedOutOfPocket) + '</div></div>';
+      html += '<div class="fig"><div class="k">If the year goes badly</div><div class="v">' + usd(c.worstCaseAnnualTotal) + '</div></div>';
+      html += '</div>';
+      html += '<ul class="notes">';
+      html += '<li>Deductible ' + (plan.deductibleFamily === null ? "not filed" : usd(h.householdSize > 1 ? plan.deductibleFamily : plan.deductibleIndividual)) +
+        ', out of pocket max ' + (plan.moopFamily === null ? "not filed" : usd(h.householdSize > 1 ? plan.moopFamily : plan.moopIndividual)) +
+        (plan.coinsurance === null ? "" : ', coinsurance ' + Math.round(plan.coinsurance * 100) + '%') + '</li>';
+      html += '<li>Out of pocket figure is ' + (c.outOfPocketSource === "filed"
+        ? "the issuer's own filed coverage example for this client's situation"
+        : "estimated from the deductible and coinsurance, because the filings carry no copay amounts") + '</li>';
+      for (const n of e.notes) html += '<li>' + esc(n) + '</li>';
+      html += '</ul></section>';
+    }
+
+    // ---- everything else
+    html += '<section class="card"><h2>Every plan available to them</h2><div class="scroll"><table>';
+    html += '<thead><tr><th>Carrier</th><th>Plan</th><th>Metal</th><th class="n">Premium/mo</th><th class="n">Out of pocket</th><th class="n">Expected total</th><th class="n">Worst case</th></tr></thead><tbody>';
+    for (const e of result.allEligible) {
+      html += '<tr><td>' + esc(e.plan.issuerName.split(" ")[0]) + '</td><td>' + esc(e.plan.marketingName) + '</td><td>' + esc(e.plan.metalLevel) + '</td>' +
+        '<td class="n">' + usd(e.cost.annualPremiumNet / 12) + '</td>' +
+        '<td class="n">' + usd(e.cost.estimatedOutOfPocket) + '</td>' +
+        '<td class="n">' + usd(e.cost.estimatedAnnualTotal) + '</td>' +
+        '<td class="n">' + usd(e.cost.worstCaseAnnualTotal) + '</td></tr>';
+    }
+    html += '</tbody></table></div>';
+    if (result.excluded.length) {
+      html += '<p style="margin:16px 0 0;font-size:13px;color:var(--am-muted)">Excluded: ' +
+        result.excluded.map(([r, n]) => esc(r) + " (" + n + ")").join("; ") + '</p>';
+    }
+    html += '</section>';
+
+    html += '<div class="printfoot">Prepared by Ask Mike from the client\\'s own answers. Reviewed and presented by a licensed agent, who owns the recommendation.</div>';
+
+    out.innerHTML = html;
+    document.getElementById("colophon").textContent =
+      "Plan year " + ${dataset.planYear} + ", New Jersey individual marketplace. Figures use the list premium less the federal credit; the New Jersey state subsidy is not yet modelled, so the agent's quoted premium will be lower.";
+  }
+
+  function load() {
+    const raw = localStorage.getItem("askmike:submission");
+    if (!raw) {
+      out.innerHTML = '<div class="empty"><h1>Nothing submitted yet</h1><p>Fill in the client form and press <strong>Send to my agent</strong>. This page will then show the recommendation.</p><p><a href="index.html">Open the client form</a></p></div>';
+      return;
+    }
+    const parsed = JSON.parse(raw);
+    fetch("plans.json")
+      .then((r) => r.json())
+      .then((plans) => render(window.AskMike.recommend(parsed.answers, plans), parsed.submittedAt))
+      .catch((err) => {
+        out.innerHTML = '<div class="empty"><h1>Could not produce a recommendation</h1><p>' + esc(err && err.message ? err.message : err) + '</p></div>';
+      });
+  }
+
+  document.getElementById("print").addEventListener("click", () => window.print());
+  document.getElementById("reload").addEventListener("click", load);
+  window.addEventListener("storage", (e) => { if (e.key === "askmike:submission") load(); });
+  load();
+})();
+</script>
+`;
+
+writeFileSync(join(outDir, "agent.html"), html, "utf8");
+console.log(`agent.html      ${(html.length / 1024).toFixed(1)} KB`);

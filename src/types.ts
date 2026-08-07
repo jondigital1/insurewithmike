@@ -59,6 +59,26 @@ export interface Plan {
   hasSecondNetworkTier: boolean;
   deductibleIndividualTier2: number | null;
   moopIndividualTier2: number | null;
+
+  /**
+   * The three standardised coverage examples every issuer must file, giving
+   * the member's actual dollar share broken into components. These are the
+   * only filed cost sharing outcomes we have, and the only ground truth
+   * available for testing the cost model.
+   */
+  coverageExamples: Record<CoverageScenario, CoverageExample | null>;
+}
+
+/** CMS standardised scenarios, identical in service mix across every plan. */
+export type CoverageScenario = "havingABaby" | "managingDiabetes" | "simpleFracture";
+
+export interface CoverageExample {
+  deductible: number;
+  copayment: number;
+  coinsurance: number;
+  limits: number;
+  /** What the member pays in total for the scenario. */
+  total: number;
 }
 
 export interface RateRow {
@@ -144,6 +164,14 @@ export interface Household {
    * aged 30 or over.
    */
   hardshipExemption?: boolean;
+  /**
+   * Set when the client's year closely resembles one of the standardised
+   * coverage examples, from the intake answers on ongoing conditions and
+   * planned care. When present the engine uses the filed member cost for that
+   * scenario instead of simulating cost sharing, because the filing already
+   * accounts for copays, limits and exclusions that the simulation cannot see.
+   */
+  expectedScenario?: CoverageScenario;
 }
 
 export interface CostBreakdown {
@@ -163,6 +191,13 @@ export interface CostBreakdown {
   coinsuranceApplied: number;
   /** Estimated out of pocket cost for care, after the maximum is applied. */
   estimatedOutOfPocket: number;
+  /**
+   * Where the out of pocket figure came from. "filed" means it is the issuer's
+   * own filed coverage example for a scenario matching this client, which
+   * already accounts for copays, limits and exclusions. "simulated" means it
+   * was computed from the deductible and coinsurance, which cannot see copays.
+   */
+  outOfPocketSource: "filed" | "simulated";
   /** True when estimated spending reaches the out of pocket maximum. */
   reachesMoop: boolean;
   /** Premium plus out of pocket. Uses the quoted premium when available. */

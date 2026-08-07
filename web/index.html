@@ -1,918 +1,859 @@
 <title>Ask Mike, client intake</title>
 <meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content="#FCFBF8" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Crect%20width%3D%2248%22%20height%3D%2248%22%20rx%3D%2210%22%20fill%3D%22%23FCFBF8%22%2F%3E%3Cpath%20d%3D%22M5%2016.5a11.5%2011.5%200%200%201%2011.5-11.5h15A11.5%2011.5%200%200%201%2043%2016.5v8A11.5%2011.5%200%200%201%2031.5%2036h-8l-9%207v-7.3A11.5%2011.5%200%200%201%205%2024.5z%22%20fill%3D%22%230F7CC0%22%2F%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%2220.5%22%20r%3D%226%22%20fill%3D%22%23F2A65A%22%2F%3E%3C%2Fsvg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
 
 <style>
   :root {
-    --paper: #FBFCFD;
-    --card: #FFFFFF;
-    --ink: #141C26;
-    --ink-2: #4C5967;
-    --ink-3: #74818F;
-    --rule: #DCE3EA;
-    --rule-2: #EDF1F5;
-    --accent: #1B4D8F;
-    --accent-soft: #E8EFF8;
-    --amber: #8A6320;
-    --amber-soft: #FBF2E0;
-    --green: #2C6B4A;
-    --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-    --mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --paper: #0E1319; --card: #151C24; --ink: #E6EBF0; --ink-2: #A6B2BE;
-      --ink-3: #7B8794; --rule: #29333D; --rule-2: #1E262E; --accent: #7FB0EA;
-      --accent-soft: #1A2634; --amber: #D9AE62; --amber-soft: #2A2417; --green: #74C79A;
-    }
-  }
-  :root[data-theme="dark"] {
-    --paper: #0E1319; --card: #151C24; --ink: #E6EBF0; --ink-2: #A6B2BE;
-    --ink-3: #7B8794; --rule: #29333D; --rule-2: #1E262E; --accent: #7FB0EA;
-    --accent-soft: #1A2634; --amber: #D9AE62; --amber-soft: #2A2417; --green: #74C79A;
-  }
-  :root[data-theme="light"] {
-    --paper: #FBFCFD; --card: #FFFFFF; --ink: #141C26; --ink-2: #4C5967;
-    --ink-3: #74818F; --rule: #DCE3EA; --rule-2: #EDF1F5; --accent: #1B4D8F;
-    --accent-soft: #E8EFF8; --amber: #8A6320; --amber-soft: #FBF2E0; --green: #2C6B4A;
+    --am-ink:        #14304A;
+    --am-ink-soft:   #4A6076;
+    --am-muted:      #7C8FA3;
+
+    --am-blue-800:   #083F66;
+    --am-blue-700:   #0B5E96;
+    --am-blue-600:   #0F7CC0;
+    --am-blue-300:   #7FBCE4;
+    --am-blue-100:   #E3F0F9;
+    --am-blue-50:    #F2F8FC;
+
+    --am-amber-600:  #C67E32;
+    --am-amber-500:  #E8973F;
+    --am-amber-400:  #F2A65A;
+    --am-amber-100:  #FBEEDD;
+    --am-amber-text: #8A5A1E;
+
+    --am-green:      #2E8B72;
+    --am-green-100:  #E4F1EC;
+    --am-alert:      #B4472E;
+    --am-alert-100:  #F8E9E5;
+
+    --am-paper:      #FCFBF8;
+    --am-white:      #FFFFFF;
+    --am-line:       #E0E8EF;
+    --am-line-soft:  #F0F4F8;
+
+    --display: "Instrument Serif", Georgia, serif;
+    --sans: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --measure: 620px;
+    --r-control: 12px;
+    --r-card: 18px;
+    --r-panel: 24px;
   }
 
   * { box-sizing: border-box; }
+
   body {
-    margin: 0; background: var(--paper); color: var(--ink);
-    font-family: var(--sans); font-size: 1.0625rem; line-height: 1.55;
+    margin: 0;
+    background: var(--am-paper);
+    color: var(--am-ink);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.65;
     -webkit-text-size-adjust: 100%;
+    font-variant-numeric: tabular-nums;
   }
+
+  p, h1, h2 { text-wrap: pretty; }
+
+  /* ---------------------------------------------------------------- header */
+
+  .topbar {
+    position: sticky; top: 0; z-index: 20;
+    background: var(--am-white);
+    border-bottom: 1px solid var(--am-line);
+    padding: 12px clamp(16px, 4vw, 32px);
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  }
+
+  .lockup { display: inline-flex; align-items: center; gap: 0.34em; margin-right: auto; }
+  .lockup .word {
+    font-family: var(--display); font-weight: 400; font-size: 26px;
+    line-height: 1; letter-spacing: -0.015em; color: var(--am-ink);
+  }
+
+  .progress { display: flex; align-items: center; gap: 12px; }
+  .progress .track {
+    width: 130px; height: 6px; border-radius: 3px;
+    background: var(--am-blue-100); overflow: hidden;
+  }
+  .progress .fill {
+    height: 100%; width: 0%; background: var(--am-blue-600);
+    transition: width 150ms ease-out;
+  }
+  .progress .count { font-size: 14px; line-height: 1.4; color: var(--am-muted); }
+
+  .viewtoggle { display: flex; gap: 8px; }
+  .viewtoggle .btn { padding: 8px 14px; font-size: 14px; min-height: 36px; }
+
+  /* ------------------------------------------------------------- the notice */
 
   .notice {
-    background: var(--amber-soft); color: var(--ink);
-    border-bottom: 1px solid var(--amber);
-    padding: 0.6rem clamp(1rem, 4vw, 2rem);
-    font-size: 0.85rem; line-height: 1.45;
+    background: var(--am-blue-50);
+    border-bottom: 1px solid var(--am-line);
+    color: var(--am-ink-soft);
+    font-size: 14px; line-height: 1.55;
+    padding: 12px clamp(16px, 4vw, 32px);
   }
-  .notice b { color: var(--amber); }
+  .notice b { color: var(--am-ink); font-weight: 600; }
 
-  .bar {
-    position: sticky; top: 0; z-index: 10;
-    background: var(--card); border-bottom: 1px solid var(--rule);
-    padding: 0.7rem clamp(1rem, 4vw, 2rem);
-    display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1rem;
-  }
-  .bar .who { font-weight: 650; font-size: 0.95rem; margin-right: auto; }
-  .bar .who span { color: var(--ink-3); font-weight: 400; }
+  /* ----------------------------------------------------------------- shell */
 
-  .toggle { display: flex; border: 1px solid var(--rule); border-radius: 3px; overflow: hidden; }
-  .toggle button {
-    font: inherit; font-size: 0.8rem; padding: 0.35rem 0.8rem; border: 0;
-    background: transparent; color: var(--ink-2); cursor: pointer;
-  }
-  .toggle button[aria-pressed="true"] { background: var(--accent); color: #fff; }
-  .toggle button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  main { max-width: var(--measure); margin: 0 auto; padding: 56px clamp(16px, 4vw, 24px) 64px; }
 
-  main { max-width: 40rem; margin: 0 auto; padding: clamp(1.2rem, 5vw, 2.5rem) clamp(1rem, 4vw, 2rem) 5rem; }
+  .hero { margin-bottom: 40px; }
+  .hero h1 {
+    font-family: var(--display); font-weight: 400;
+    font-size: clamp(34px, 7vw, 46px); line-height: 1.06;
+    letter-spacing: -0.02em; margin: 0 0 16px; color: var(--am-ink);
+  }
+  .hero p { margin: 0 0 12px; color: var(--am-ink-soft); }
 
-  .intro { margin-bottom: 2.5rem; padding-bottom: 2rem; border-bottom: 2px solid var(--accent); }
-  .intro h1 { font-size: clamp(1.6rem, 5vw, 2.2rem); line-height: 1.15; margin: 0 0 0.6rem; letter-spacing: -0.02em; text-wrap: balance; }
-  .intro p { color: var(--ink-2); margin: 0 0 0.7rem; font-size: 0.98rem; }
-  .privacy {
-    background: var(--accent-soft); border-left: 3px solid var(--accent);
-    padding: 0.75rem 0.9rem; font-size: 0.9rem; color: var(--ink-2); margin-top: 1rem;
+  .helpful {
+    background: var(--am-amber-100); color: var(--am-amber-text);
+    border-radius: var(--r-control); padding: 15px 17px;
+    font-size: 14px; line-height: 1.55; margin-top: 20px;
+    display: flex; gap: 10px; align-items: flex-start;
   }
-  .privacy b { color: var(--ink); }
+  .helpful b { color: var(--am-amber-text); font-weight: 600; }
+  .helpful svg { flex: none; margin-top: 1px; }
 
-  .sect { margin-bottom: 3rem; }
-  .sechead { margin-bottom: 1.4rem; }
-  .secnum {
-    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.12em;
-    text-transform: uppercase; color: var(--accent); margin-bottom: 0.3rem;
-  }
-  .sechead h2 { font-size: 1.35rem; margin: 0 0 0.35rem; letter-spacing: -0.01em; }
-  .halfmark {
-    display: inline-block; font-family: var(--mono); font-size: 0.62rem;
-    letter-spacing: 0.09em; text-transform: uppercase; padding: 0.14em 0.45em;
-    border: 1px solid currentColor; border-radius: 2px;
-  }
-  .halfmark.eligibility { color: var(--ink-3); }
-  .halfmark.fit { color: var(--green); }
-  .blurb { color: var(--ink-2); font-size: 0.94rem; margin: 0.6rem 0 0; }
+  /* ------------------------------------------------------------------ card */
 
-  .qs { display: flex; flex-direction: column; gap: 1.1rem; }
-  .q {
-    display: grid; grid-template-columns: 2rem 1fr; gap: 0.8rem;
-    background: var(--card); border: 1px solid var(--rule);
-    padding: 1rem 1.1rem;
+  .step { margin-bottom: 24px; }
+  .card {
+    background: var(--am-white);
+    border: 1px solid var(--am-line);
+    border-radius: var(--r-card);
+    box-shadow: 0 1px 2px rgba(20, 48, 74, 0.04);
+    padding: clamp(20px, 5vw, 32px);
   }
+
+  .stephead { margin-bottom: 28px; }
+  .eyebrow {
+    font-size: 12px; line-height: 1; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--am-muted); margin: 0 0 10px;
+  }
+  .stephead h2 {
+    font-family: var(--display); font-weight: 400;
+    font-size: clamp(26px, 5vw, 34px); line-height: 1.1;
+    margin: 0; color: var(--am-ink); letter-spacing: -0.01em;
+  }
+  .blurb { margin: 12px 0 0; color: var(--am-ink-soft); font-size: 16px; line-height: 1.6; }
+
+  .qs { display: flex; flex-direction: column; gap: 32px; }
+
+  .q { display: flex; flex-direction: column; gap: 10px; }
   .q[hidden] { display: none; }
-  .qnum { font-family: var(--mono); font-size: 0.72rem; color: var(--ink-3); padding-top: 0.3rem; }
-  .qbody { display: flex; flex-direction: column; gap: 0.55rem; min-width: 0; }
-  .qlabel { font-weight: 600; font-size: 1rem; line-height: 1.35; }
-  .qhelp { margin: 0; font-size: 0.88rem; color: var(--ink-2); }
+
+  .qlabel { font-size: 21px; line-height: 1.35; font-weight: 500; color: var(--am-ink); }
+  .qhelp { margin: -2px 0 2px; font-size: 14px; line-height: 1.55; color: var(--am-ink-soft); }
+
+  /* ---------------------------------------------------------------- fields */
 
   .field {
-    font: inherit; font-size: 1rem; width: 100%;
-    padding: 0.55rem 0.65rem; border: 1px solid var(--rule);
-    background: var(--paper); color: var(--ink); border-radius: 2px;
+    font: inherit; font-size: 17px; width: 100%;
+    padding: 13px 16px;
+    border: 1.5px solid var(--am-line);
+    border-radius: var(--r-control);
+    background: var(--am-white); color: var(--am-ink);
+    min-height: 48px;
+    transition: border-color 150ms ease-out, box-shadow 150ms ease-out;
   }
-  .field:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
-  .field.short { max-width: 9rem; }
-  .field.code { max-width: 9rem; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.15em; }
-  textarea.field { resize: vertical; }
-  .withunit { display: flex; align-items: center; gap: 0.45rem; }
-  .unit { color: var(--ink-3); font-size: 0.9rem; }
-
-  .options { display: flex; flex-direction: column; gap: 0.35rem; }
-  .opt {
-    display: flex; align-items: flex-start; gap: 0.55rem;
-    padding: 0.5rem 0.6rem; border: 1px solid var(--rule);
-    border-radius: 2px; cursor: pointer; font-size: 0.95rem; background: var(--paper);
+  .field:hover { border-color: #C6DDEE; }
+  .field:focus-visible {
+    outline: none;
+    border-color: var(--am-blue-600);
+    box-shadow: 0 0 0 4px var(--am-blue-100);
   }
-  .opt:hover { border-color: var(--accent); }
-  .opt input { margin: 0.25rem 0 0; flex: none; accent-color: var(--accent); }
-  .opt:focus-within { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .field.short { max-width: 180px; }
+  .field.code { max-width: 180px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 500; }
+  textarea.field { resize: vertical; line-height: 1.6; }
 
-  .unsure { display: flex; align-items: center; gap: 0.45rem; font-size: 0.88rem; color: var(--ink-2); cursor: pointer; }
-  .unsure input { accent-color: var(--amber); }
+  .withunit { display: flex; align-items: center; gap: 10px; }
+  .unit { color: var(--am-muted); font-size: 16px; }
 
-  .repeater { display: flex; flex-direction: column; gap: 0.4rem; align-items: flex-start; }
-  .addmore {
-    font: inherit; font-size: 0.85rem; background: transparent; color: var(--accent);
-    border: 1px dashed var(--rule); padding: 0.35rem 0.7rem; cursor: pointer; border-radius: 2px;
+  /* --------------------------------------------------------------- choices */
+
+  .choices { display: flex; flex-direction: column; gap: 10px; }
+
+  .choice {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 16px 18px; min-height: 44px;
+    border: 1.5px solid var(--am-line);
+    border-radius: var(--r-control);
+    background: var(--am-white);
+    cursor: pointer;
+    transition: border-color 150ms ease-out, background-color 150ms ease-out;
   }
-  .addmore:hover { border-color: var(--accent); }
+  .choice:hover { border-color: #C6DDEE; background: var(--am-paper); }
+  .choice input { position: absolute; opacity: 0; width: 0; height: 0; }
 
-  /* review layer, hidden in client view */
-  .review { display: none; border-top: 1px dashed var(--rule); padding-top: 0.6rem; margin-top: 0.2rem; }
-  body.reviewing .review { display: block; }
-  body.reviewing .q[hidden] { display: grid; opacity: 0.72; }
-  .tags { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+  .choice .dot {
+    flex: none; width: 20px; height: 20px; margin-top: 2px;
+    border: 1.5px solid var(--am-muted); border-radius: 50%;
+    background: var(--am-white);
+    transition: border-color 150ms ease-out, box-shadow 150ms ease-out;
+  }
+  .choice.multi .dot { border-radius: 6px; }
+
+  .choice .ctext { font-size: 16px; line-height: 1.5; color: var(--am-ink); }
+
+  /* Selection is driven by an explicit class rather than :has(input:checked).
+     Some engines report :has() as supported but do not re-evaluate it when the
+     checked state changes, and older Safari and Chrome lack it entirely. This
+     is the most used control in the product, so it does not get to depend on
+     a selector that might not repaint. */
+  .choice.is-selected { border-color: var(--am-blue-600); background: var(--am-blue-50); }
+  .choice.is-selected .dot {
+    border-color: var(--am-blue-600);
+    box-shadow: inset 0 0 0 6px var(--am-blue-600);
+  }
+  .choice.is-focus {
+    border-color: var(--am-blue-600);
+    box-shadow: 0 0 0 4px var(--am-blue-100);
+  }
+
+  /* "I am not sure" must look like a legitimate answer, because it is one. */
+  .unsure {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-size: 14px; color: var(--am-ink-soft); cursor: pointer;
+    padding: 6px 2px; align-self: flex-start;
+  }
+  .unsure input { accent-color: var(--am-blue-600); width: 16px; height: 16px; }
+
+  .repeater { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+
+  /* --------------------------------------------------------------- buttons */
+
+  .btn {
+    font: inherit; font-size: 16px; font-weight: 600;
+    border-radius: var(--r-control);
+    padding: 14px 26px; min-height: 48px;
+    cursor: pointer; border: none;
+    transition: background-color 150ms ease-out, border-color 150ms ease-out, color 150ms ease-out;
+  }
+  .btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px var(--am-blue-100);
+    border-color: var(--am-blue-600);
+  }
+  .btn.primary { background: var(--am-blue-600); color: #fff; }
+  .btn.primary:hover { background: var(--am-blue-700); }
+  .btn.secondary {
+    background: var(--am-white); color: var(--am-blue-700);
+    border: 1.5px solid #C6DDEE;
+  }
+  .btn.secondary:hover { border-color: var(--am-blue-600); background: var(--am-blue-50); }
+  .btn.secondary[aria-pressed="true"] { background: var(--am-blue-600); color: #fff; border-color: var(--am-blue-600); }
+  .btn.quiet { background: transparent; color: var(--am-ink-soft); padding: 12px 8px; min-height: 44px; }
+  .btn.quiet:hover { color: var(--am-ink); }
+
+  .stepfoot {
+    margin-top: 28px; padding-top: 20px;
+    border-top: 1px solid var(--am-line-soft);
+    display: flex; justify-content: flex-end;
+  }
+
+  /* ------------------------------------------------------- why we ask */
+
+  .why {
+    background: var(--am-amber-100);
+    border-radius: var(--r-control);
+    padding: 15px 17px;
+    align-self: flex-start; max-width: 100%;
+  }
+  .why summary {
+    display: flex; align-items: center; gap: 9px;
+    cursor: pointer; list-style: none;
+    font-size: 14px; font-weight: 600; color: var(--am-amber-text);
+    min-height: 24px;
+  }
+  .why summary::-webkit-details-marker { display: none; }
+  .why summary:focus-visible { outline: 2px solid var(--am-amber-600); outline-offset: 3px; border-radius: 4px; }
+  .why p {
+    margin: 10px 0 0; font-size: 14px; line-height: 1.55;
+    color: var(--am-amber-text);
+  }
+
+  /* ------------------------------------------------- review layer */
+
+  .meta { display: none; }
+  body.reviewing .meta { display: block; }
+  body.reviewing .q[hidden] { display: flex; opacity: 0.6; }
+
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
   .tag {
-    font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.06em;
-    text-transform: uppercase; padding: 0.14em 0.4em; border: 1px solid currentColor;
-    border-radius: 2px; color: var(--ink-3);
+    font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+    font-weight: 600; padding: 3px 8px; border-radius: 6px;
+    background: var(--am-line-soft); color: var(--am-muted);
   }
-  .tag.route-intake { color: var(--accent); }
-  .tag.route-flag { color: var(--amber); }
-  .tag.route-application { color: var(--ink-3); }
-  .tag.cond { color: var(--green); }
-  .why { margin: 0.45rem 0 0; font-size: 0.84rem; color: var(--ink-2); }
-  .why b { color: var(--ink); }
+  .tag.cond { background: var(--am-green-100); color: var(--am-green); }
+  .tag.route-intake { background: var(--am-blue-100); color: var(--am-blue-700); }
+  .tag.route-flag { background: var(--am-amber-100); color: var(--am-amber-text); }
+
+  /* ------------------------------------------------------------------ end */
 
   .end {
-    margin-top: 2.5rem; padding: 1.4rem; background: var(--card);
-    border: 1px solid var(--rule); text-align: center;
+    background: var(--am-white); border: 1px solid var(--am-line);
+    border-radius: var(--r-panel); padding: 32px; text-align: center;
+    margin-top: 8px;
   }
-  .end h2 { margin: 0 0 0.5rem; font-size: 1.2rem; }
-  .end p { margin: 0 0 1rem; color: var(--ink-2); font-size: 0.94rem; }
-  .submit {
-    font: inherit; font-weight: 600; font-size: 1rem; background: var(--accent);
-    color: #fff; border: 0; padding: 0.7rem 1.6rem; border-radius: 3px; cursor: pointer;
+  .end h2 {
+    font-family: var(--display); font-weight: 400; font-size: 30px;
+    line-height: 1.1; margin: 0 0 10px; color: var(--am-ink);
   }
-  .submit:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .end p { margin: 0 0 24px; color: var(--am-ink-soft); font-size: 16px; }
+  .end .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
-  footer {
-    max-width: 40rem; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2rem) 3rem;
-    color: var(--ink-3); font-size: 0.82rem;
+  footer.colophon {
+    max-width: var(--measure); margin: 0 auto;
+    padding: 0 clamp(16px, 4vw, 24px) 56px;
+    color: var(--am-muted); font-size: 14px; line-height: 1.55;
   }
 
-  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+  }
 </style>
 
 <div class="notice" role="status">
   <b>Draft for review.</b> This is not the live form yet, so it is not connected to anything. The finished version sends your answers straight to your agent before you meet.
 </div>
 
-<div class="bar">
-  <div class="who">Ask Mike <span>&middot; client intake, draft one</span></div>
-  <div class="toggle" role="group" aria-label="View">
-    <button type="button" id="v-client" aria-pressed="true">Client view</button>
-    <button type="button" id="v-review" aria-pressed="false">Review view</button>
+<div class="topbar">
+  <span class="lockup"><svg class="mark" width="32" height="32" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M6 17a11 11 0 0 1 11-11h14a11 11 0 0 1 11 11v7a11 11 0 0 1-11 11h-8l-9 6.5V35A11 11 0 0 1 6 24z" fill="#0F7CC0"/><circle cx="24" cy="20.5" r="5.5" fill="#F2A65A"/></svg><span class="word">Ask Mike</span></span>
+  <div class="progress">
+    <div class="track"><div class="fill" id="progress-fill"></div></div>
+    <span class="count" id="progress-count">Step 1 of 10</span>
+  </div>
+  <div class="viewtoggle" role="group" aria-label="View">
+    <button type="button" class="btn secondary" id="v-client" aria-pressed="true">Client view</button>
+    <button type="button" class="btn secondary" id="v-review" aria-pressed="false">Review view</button>
   </div>
 </div>
 
 <main>
-  <div class="intro">
+  <div class="hero">
     <h1>Before we meet, tell us about your year</h1>
     <p>This takes about ten minutes. Your agent uses it to work out which plans are worth your time, so the meeting can be about the decision rather than the paperwork.</p>
     <p>Rough answers are fine. Where you are not sure, say so rather than guessing, and your agent will pick it up.</p>
-    <div class="privacy"><b>Worth having to hand:</b> your insurance card if you have one, and the bottles for anything you take regularly. Neither is essential, but they make a few of the questions much quicker to answer.</div>
+    <div class="helpful"><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span><b>Worth having to hand:</b> your insurance card if you have one, and the bottles for anything you take regularly. Neither is essential, but they make a few of the questions much quicker to answer.</span></div>
   </div>
 
-  <section class="sect" data-half="eligibility">
-    <header class="sechead">
-      <div class="secnum">Step 1</div>
-      <h2>Getting started</h2>
-      <span class="halfmark eligibility">Eligibility and price</span>
-      <p class="blurb">Your agent gave you a code when they sent you here. It links your answers back to your file.</p>
-    </header>
-    <div class="qs"><div class="q" data-q="client_code">
-    <div class="qnum">1</div>
-    <div class="qbody">
-      <label class="qlabel" id="client_code-label" for="client_code">Enter the code your agent gave you</label>
-      <p class="qhelp">Six characters, letters and numbers. Not case sensitive.</p>
-      <input class="field code" type="text" id="client_code" name="client_code" placeholder="K7M4QX" maxlength="6" autocomplete="off" />
-      
-      <div class="review">
-        <div class="tags"><span class="tag route route-intake">intake</span></div>
-        <p class="why"><b>Why we ask:</b> Randomly generated per agency. Opens a blank form and locks on submission, so a leaked code exposes nothing.</p>
-      </div>
-    </div>
+  <section class="step" data-step="1">
+    <div class="card">
+      <header class="stephead">
+        <p class="eyebrow">Step 1 of 10</p>
+        <h2>Getting started</h2>
+        <p class="blurb">Your agent gave you a code when they sent you here. It links your answers back to your file.</p>
+      </header>
+      <div class="qs"><div class="q" data-q="client_code">
+    <label class="qlabel" id="client_code-label" for="client_code">Enter the code your agent gave you</label>
+    <p class="qhelp">Six characters, letters and numbers. Not case sensitive.</p>
+    <input class="field code" type="text" id="client_code" name="client_code" placeholder="K7M4QX" maxlength="6" autocomplete="off" spellcheck="false" />
+    
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Randomly generated per agency. Opens a blank form and locks on submission, so a leaked code exposes nothing.</p></details>
+    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="coverage_situation">
-    <div class="qnum">2</div>
-    <div class="qbody">
-      <label class="qlabel" id="coverage_situation-label" for="coverage_situation">Which of these sounds like you?</label>
-      
-      <div class="options" role="radiogroup" aria-labelledby="coverage_situation-label"><label class="opt"><input type="radio" name="coverage_situation" value="renewing" data-controls="coverage_situation" /><span>I have a health plan now and I am looking at next year</span></label><label class="opt"><input type="radio" name="coverage_situation" value="new" data-controls="coverage_situation" /><span>I do not have a health plan and I need one</span></label><label class="opt"><input type="radio" name="coverage_situation" value="losing" data-controls="coverage_situation" /><span>I am about to lose the coverage I have</span></label></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag route route-intake">intake</span></div>
-        <p class="why"><b>Why we ask:</b> Forks the whole form. Renewals anchor on the current plan; 16 plans were discontinued for 2026, so some renewals are forced moves.</p>
-      </div>
-    </div>
+    <label class="qlabel" id="coverage_situation-label" for="coverage_situation">Which of these sounds like you?</label>
+    
+    <div class="choices" role="radiogroup" aria-labelledby="coverage_situation-label"><label class="choice"><input type="radio" name="coverage_situation" value="renewing" /><span class="dot"></span><span class="ctext">I have a health plan now and I am looking at next year</span></label><label class="choice"><input type="radio" name="coverage_situation" value="new" /><span class="dot"></span><span class="ctext">I do not have a health plan and I need one</span></label><label class="choice"><input type="radio" name="coverage_situation" value="losing" /><span class="dot"></span><span class="ctext">I am about to lose the coverage I have</span></label></div>
+    
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Forks the whole form. Renewals anchor on the current plan; 16 plans were discontinued for 2026, so some renewals are forced moves.</p></details>
+    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div></div>
-  </section><section class="sect" data-half="eligibility">
-    <header class="sechead">
-      <div class="secnum">Step 2</div>
-      <h2>Who needs covering</h2>
-      <span class="halfmark eligibility">Eligibility and price</span>
-      <p class="blurb">Include everyone on your tax return, even people who already have insurance. The number of people in your household affects the help you can get, so leaving someone out can cost you money.</p>
-    </header>
-    <div class="qs"><div class="q" data-q="household_size">
-    <div class="qnum">3</div>
-    <div class="qbody">
-      <label class="qlabel" id="household_size-label" for="household_size">How many people are on your federal tax return, including you?</label>
-      
-      <div class="withunit"><input class="field short" type="number" id="household_size" name="household_size" min="0" /><span class="unit">people</span></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag route route-intake">intake</span></div>
-        <p class="why"><b>Why we ask:</b> Sets the federal poverty level, which drives both the subsidy and the silver cost sharing tier.</p>
-      </div>
+      <footer class="stepfoot">
+        <button class="btn quiet" type="button">Save and finish later</button>
+      </footer>
     </div>
+  </section><section class="step" data-step="2">
+    <div class="card">
+      <header class="stephead">
+        <p class="eyebrow">Step 2 of 10</p>
+        <h2>Who needs covering</h2>
+        <p class="blurb">Include everyone on your tax return, even people who already have insurance. The number of people in your household affects the help you can get, so leaving someone out can cost you money.</p>
+      </header>
+      <div class="qs"><div class="q" data-q="household_size">
+    <label class="qlabel" id="household_size-label" for="household_size">How many people are on your federal tax return, including you?</label>
+    
+    <div class="withunit"><input class="field short" type="number" id="household_size" name="household_size" min="0" /><span class="unit">people</span></div>
+    
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Sets the federal poverty level, which drives both the subsidy and the silver cost sharing tier.</p></details>
+    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="person_age">
-    <div class="qnum">4</div>
-    <div class="qbody">
-      <label class="qlabel" id="person_age-label" for="person_age">Age on 1 January</label>
-      
-      <div class="withunit"><input class="field short" type="number" id="person_age" name="person_age" min="0" /><span class="unit">years</span></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag person">asked per person</span><span class="tag route route-intake">intake</span></div>
-        <p class="why"><b>Why we ask:</b> Age is the only personal characteristic that changes the premium in New Jersey. We ask for age rather than date of birth on purpose.</p>
-      </div>
-    </div>
+    <label class="qlabel" id="person_age-label" for="person_age">Age on 1 January</label>
+    
+    <div class="withunit"><input class="field short" type="number" id="person_age" name="person_age" min="0" /><span class="unit">years</span></div>
+    
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Age is the only personal characteristic that changes the premium in New Jersey. We ask for age rather than date of birth on purpose.</p></details>
+    <div class="meta"><div class="tags"><span class="tag">asked per person</span><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="person_relationship">
-    <div class="qnum">5</div>
-    <div class="qbody">
-      <label class="qlabel" id="person_relationship-label" for="person_relationship">Relationship to you</label>
-      
-      <div class="options" role="radiogroup" aria-labelledby="person_relationship-label"><label class="opt"><input type="radio" name="person_relationship" value="self" data-controls="person_relationship" /><span>This is me</span></label><label class="opt"><input type="radio" name="person_relationship" value="spouse" data-controls="person_relationship" /><span>Spouse</span></label><label class="opt"><input type="radio" name="person_relationship" value="child" data-controls="person_relationship" /><span>Child</span></label><label class="opt"><input type="radio" name="person_relationship" value="other" data-controls="person_relationship" /><span>Other dependent</span></label></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag person">asked per person</span><span class="tag route route-intake">intake</span></div>
-        
-      </div>
-    </div>
+    <label class="qlabel" id="person_relationship-label" for="person_relationship">Relationship to you</label>
+    
+    <div class="choices" role="radiogroup" aria-labelledby="person_relationship-label"><label class="choice"><input type="radio" name="person_relationship" value="self" /><span class="dot"></span><span class="ctext">This is me</span></label><label class="choice"><input type="radio" name="person_relationship" value="spouse" /><span class="dot"></span><span class="ctext">Spouse</span></label><label class="choice"><input type="radio" name="person_relationship" value="child" /><span class="dot"></span><span class="ctext">Child</span></label><label class="choice"><input type="radio" name="person_relationship" value="other" /><span class="dot"></span><span class="ctext">Other dependent</span></label></div>
+    
+    
+    <div class="meta"><div class="tags"><span class="tag">asked per person</span><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="person_needs_coverage">
-    <div class="qnum">6</div>
-    <div class="qbody">
-      <label class="qlabel" id="person_needs_coverage-label" for="person_needs_coverage">Does this person need coverage on the new plan?</label>
-      <p class="qhelp">Answer no for anyone who already has Medicare, military coverage or their own plan.</p>
-      <div class="options" role="radiogroup" aria-labelledby="person_needs_coverage-label">
-        <label class="opt"><input type="radio" name="person_needs_coverage" value="yes" data-controls="person_needs_coverage" /><span>Yes</span></label>
-        <label class="opt"><input type="radio" name="person_needs_coverage" value="no" data-controls="person_needs_coverage" /><span>No</span></label>
+    <label class="qlabel" id="person_needs_coverage-label" for="person_needs_coverage">Does this person need coverage on the new plan?</label>
+    <p class="qhelp">Answer no for anyone who already has Medicare, military coverage or their own plan.</p>
+    <div class="choices" role="radiogroup" aria-labelledby="person_needs_coverage-label">
+        <label class="choice"><input type="radio" name="person_needs_coverage" value="yes" /><span class="dot"></span><span class="ctext">Yes</span></label>
+        <label class="choice"><input type="radio" name="person_needs_coverage" value="no" /><span class="dot"></span><span class="ctext">No</span></label>
       </div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag person">asked per person</span><span class="tag route route-intake">intake</span></div>
-        <p class="why"><b>Why we ask:</b> Counted for the poverty level either way, but only priced if they are enrolling.</p>
-      </div>
-    </div>
+    
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Counted for the poverty level either way, but only priced if they are enrolling.</p></details>
+    <div class="meta"><div class="tags"><span class="tag">asked per person</span><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="pregnancy">
-    <div class="qnum">7</div>
-    <div class="qbody">
-      <label class="qlabel" id="pregnancy-label" for="pregnancy">Is anyone in the household pregnant?</label>
-      
-      <div class="options" role="radiogroup" aria-labelledby="pregnancy-label">
-        <label class="opt"><input type="radio" name="pregnancy" value="yes" data-controls="pregnancy" /><span>Yes</span></label>
-        <label class="opt"><input type="radio" name="pregnancy" value="no" data-controls="pregnancy" /><span>No</span></label>
+    <label class="qlabel" id="pregnancy-label" for="pregnancy">Is anyone in the household pregnant?</label>
+    
+    <div class="choices" role="radiogroup" aria-labelledby="pregnancy-label">
+        <label class="choice"><input type="radio" name="pregnancy" value="yes" /><span class="dot"></span><span class="ctext">Yes</span></label>
+        <label class="choice"><input type="radio" name="pregnancy" value="no" /><span class="dot"></span><span class="ctext">No</span></label>
       </div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag route route-intake">intake</span></div>
-        <p class="why"><b>Why we ask:</b> Two reasons. It changes eligibility, and a birth is the largest predictable cost event in any plan year. The filings carry a standard maternity cost example for every plan.</p>
-      </div>
-    </div>
+    
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Two reasons. It changes eligibility, and a birth is the largest predictable cost event in any plan year. The filings carry a standard maternity cost example for every plan.</p></details>
+    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="pregnancy_due" data-showif-q="pregnancy" data-showif-v="yes" hidden>
-    <div class="qnum">8</div>
-    <div class="qbody">
-      <label class="qlabel" id="pregnancy_due-label" for="pregnancy_due">Roughly when is the baby due?</label>
-      
-      <div class="options" role="radiogroup" aria-labelledby="pregnancy_due-label"><label class="opt"><input type="radio" name="pregnancy_due" value="q1" data-controls="pregnancy_due" /><span>January to March</span></label><label class="opt"><input type="radio" name="pregnancy_due" value="q2" data-controls="pregnancy_due" /><span>April to June</span></label><label class="opt"><input type="radio" name="pregnancy_due" value="q3" data-controls="pregnancy_due" /><span>July to September</span></label><label class="opt"><input type="radio" name="pregnancy_due" value="q4" data-controls="pregnancy_due" /><span>October to December</span></label></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag cond">only if pregnancy is yes</span><span class="tag route route-intake">intake</span></div>
-        
-      </div>
-    </div>
+    <label class="qlabel" id="pregnancy_due-label" for="pregnancy_due">Roughly when is the baby due?</label>
+    
+    <div class="choices" role="radiogroup" aria-labelledby="pregnancy_due-label"><label class="choice"><input type="radio" name="pregnancy_due" value="q1" /><span class="dot"></span><span class="ctext">January to March</span></label><label class="choice"><input type="radio" name="pregnancy_due" value="q2" /><span class="dot"></span><span class="ctext">April to June</span></label><label class="choice"><input type="radio" name="pregnancy_due" value="q3" /><span class="dot"></span><span class="ctext">July to September</span></label><label class="choice"><input type="radio" name="pregnancy_due" value="q4" /><span class="dot"></span><span class="ctext">October to December</span></label></div>
+    
+    
+    <div class="meta"><div class="tags"><span class="tag cond">only if pregnancy is yes</span><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="tribal_member">
-    <div class="qnum">9</div>
-    <div class="qbody">
-      <label class="qlabel" id="tribal_member-label" for="tribal_member">Is anyone in the household a member of a federally recognised tribe?</label>
-      <p class="qhelp">This can qualify you for plans with no cost sharing at all, so it is worth answering carefully.</p>
-      <div class="options" role="radiogroup" aria-labelledby="tribal_member-label">
-        <label class="opt"><input type="radio" name="tribal_member" value="yes" data-controls="tribal_member" /><span>Yes</span></label>
-        <label class="opt"><input type="radio" name="tribal_member" value="no" data-controls="tribal_member" /><span>No</span></label>
+    <label class="qlabel" id="tribal_member-label" for="tribal_member">Is anyone in the household a member of a federally recognised tribe?</label>
+    <p class="qhelp">This can qualify you for plans with no cost sharing at all, so it is worth answering carefully.</p>
+    <div class="choices" role="radiogroup" aria-labelledby="tribal_member-label">
+        <label class="choice"><input type="radio" name="tribal_member" value="yes" /><span class="dot"></span><span class="ctext">Yes</span></label>
+        <label class="choice"><input type="radio" name="tribal_member" value="no" /><span class="dot"></span><span class="ctext">No</span></label>
       </div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag route route-intake">intake</span></div>
-        <p class="why"><b>Why we ask:</b> Unlocks the zero and limited cost sharing variants. The engine currently excludes 74 of 176 plan variants on this basis alone.</p>
-      </div>
-    </div>
+    
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Unlocks the zero and limited cost sharing variants. The engine currently excludes 74 of 176 plan variants on this basis alone.</p></details>
+    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="foster_care">
-    <div class="qnum">10</div>
-    <div class="qbody">
-      <label class="qlabel" id="foster_care-label" for="foster_care">Was anyone in the household in foster care at age 18 or older?</label>
-      <p class="qhelp">If so, they may qualify for free coverage until they turn 26.</p>
-      <div class="options" role="radiogroup" aria-labelledby="foster_care-label">
-        <label class="opt"><input type="radio" name="foster_care" value="yes" data-controls="foster_care" /><span>Yes</span></label>
-        <label class="opt"><input type="radio" name="foster_care" value="no" data-controls="foster_care" /><span>No</span></label>
+    <label class="qlabel" id="foster_care-label" for="foster_care">Was anyone in the household in foster care at age 18 or older?</label>
+    <p class="qhelp">If so, they may qualify for free coverage until they turn 26.</p>
+    <div class="choices" role="radiogroup" aria-labelledby="foster_care-label">
+        <label class="choice"><input type="radio" name="foster_care" value="yes" /><span class="dot"></span><span class="ctext">Yes</span></label>
+        <label class="choice"><input type="radio" name="foster_care" value="no" /><span class="dot"></span><span class="ctext">No</span></label>
       </div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag route route-flag">flag</span></div>
-        <p class="why"><b>Why we ask:</b> Easy to miss, and the answer is free coverage. Flags for the agent rather than feeding the maths.</p>
-      </div>
-    </div>
+    
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Easy to miss, and the answer is free coverage. Flags for the agent rather than feeding the maths.</p></details>
+    <div class="meta"><div class="tags"><span class="tag route-flag">flag</span></div></div>
   </div></div>
-  </section><section class="sect" data-half="eligibility">
-    <header class="sechead">
-      <div class="secnum">Step 3</div>
-      <h2>Where you live</h2>
-      <span class="halfmark eligibility">Eligibility and price</span>
-      
-    </header>
-    <div class="qs"><div class="q" data-q="county">
-    <div class="qnum">11</div>
-    <div class="qbody">
-      <label class="qlabel" id="county-label" for="county">Which county do you live in?</label>
-      <p class="qhelp">New Jersey charges the same premium statewide, so this only affects which insurers can sell to you.</p>
-      <div class="options" role="radiogroup" aria-labelledby="county-label"><label class="opt"><input type="radio" name="county" value="atlantic" data-controls="county" /><span>Atlantic County</span></label><label class="opt"><input type="radio" name="county" value="bergen" data-controls="county" /><span>Bergen County</span></label><label class="opt"><input type="radio" name="county" value="burlington" data-controls="county" /><span>Burlington County</span></label><label class="opt"><input type="radio" name="county" value="camden" data-controls="county" /><span>Camden County</span></label><label class="opt"><input type="radio" name="county" value="cape-may" data-controls="county" /><span>Cape May County</span></label><label class="opt"><input type="radio" name="county" value="cumberland" data-controls="county" /><span>Cumberland County</span></label><label class="opt"><input type="radio" name="county" value="essex" data-controls="county" /><span>Essex County</span></label><label class="opt"><input type="radio" name="county" value="gloucester" data-controls="county" /><span>Gloucester County</span></label><label class="opt"><input type="radio" name="county" value="hudson" data-controls="county" /><span>Hudson County</span></label><label class="opt"><input type="radio" name="county" value="hunterdon" data-controls="county" /><span>Hunterdon County</span></label><label class="opt"><input type="radio" name="county" value="mercer" data-controls="county" /><span>Mercer County</span></label><label class="opt"><input type="radio" name="county" value="middlesex" data-controls="county" /><span>Middlesex County</span></label><label class="opt"><input type="radio" name="county" value="monmouth" data-controls="county" /><span>Monmouth County</span></label><label class="opt"><input type="radio" name="county" value="morris" data-controls="county" /><span>Morris County</span></label><label class="opt"><input type="radio" name="county" value="ocean" data-controls="county" /><span>Ocean County</span></label><label class="opt"><input type="radio" name="county" value="passaic" data-controls="county" /><span>Passaic County</span></label><label class="opt"><input type="radio" name="county" value="salem" data-controls="county" /><span>Salem County</span></label><label class="opt"><input type="radio" name="county" value="somerset" data-controls="county" /><span>Somerset County</span></label><label class="opt"><input type="radio" name="county" value="sussex" data-controls="county" /><span>Sussex County</span></label><label class="opt"><input type="radio" name="county" value="union" data-controls="county" /><span>Union County</span></label><label class="opt"><input type="radio" name="county" value="warren" data-controls="county" /><span>Warren County</span></label></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag route route-intake">intake</span></div>
-        <p class="why"><b>Why we ask:</b> Not a pricing input. New Jersey uses a single rating area. But Ambetter sells in only 17 of 21 counties, so it gates availability.</p>
-      </div>
+      <footer class="stepfoot">
+        <button class="btn quiet" type="button">Save and finish later</button>
+      </footer>
     </div>
+  </section><section class="step" data-step="3">
+    <div class="card">
+      <header class="stephead">
+        <p class="eyebrow">Step 3 of 10</p>
+        <h2>Where you live</h2>
+        
+      </header>
+      <div class="qs"><div class="q" data-q="county">
+    <label class="qlabel" id="county-label" for="county">Which county do you live in?</label>
+    <p class="qhelp">New Jersey charges the same premium statewide, so this only affects which insurers can sell to you.</p>
+    <div class="choices" role="radiogroup" aria-labelledby="county-label"><label class="choice"><input type="radio" name="county" value="atlantic" /><span class="dot"></span><span class="ctext">Atlantic County</span></label><label class="choice"><input type="radio" name="county" value="bergen" /><span class="dot"></span><span class="ctext">Bergen County</span></label><label class="choice"><input type="radio" name="county" value="burlington" /><span class="dot"></span><span class="ctext">Burlington County</span></label><label class="choice"><input type="radio" name="county" value="camden" /><span class="dot"></span><span class="ctext">Camden County</span></label><label class="choice"><input type="radio" name="county" value="cape-may" /><span class="dot"></span><span class="ctext">Cape May County</span></label><label class="choice"><input type="radio" name="county" value="cumberland" /><span class="dot"></span><span class="ctext">Cumberland County</span></label><label class="choice"><input type="radio" name="county" value="essex" /><span class="dot"></span><span class="ctext">Essex County</span></label><label class="choice"><input type="radio" name="county" value="gloucester" /><span class="dot"></span><span class="ctext">Gloucester County</span></label><label class="choice"><input type="radio" name="county" value="hudson" /><span class="dot"></span><span class="ctext">Hudson County</span></label><label class="choice"><input type="radio" name="county" value="hunterdon" /><span class="dot"></span><span class="ctext">Hunterdon County</span></label><label class="choice"><input type="radio" name="county" value="mercer" /><span class="dot"></span><span class="ctext">Mercer County</span></label><label class="choice"><input type="radio" name="county" value="middlesex" /><span class="dot"></span><span class="ctext">Middlesex County</span></label><label class="choice"><input type="radio" name="county" value="monmouth" /><span class="dot"></span><span class="ctext">Monmouth County</span></label><label class="choice"><input type="radio" name="county" value="morris" /><span class="dot"></span><span class="ctext">Morris County</span></label><label class="choice"><input type="radio" name="county" value="ocean" /><span class="dot"></span><span class="ctext">Ocean County</span></label><label class="choice"><input type="radio" name="county" value="passaic" /><span class="dot"></span><span class="ctext">Passaic County</span></label><label class="choice"><input type="radio" name="county" value="salem" /><span class="dot"></span><span class="ctext">Salem County</span></label><label class="choice"><input type="radio" name="county" value="somerset" /><span class="dot"></span><span class="ctext">Somerset County</span></label><label class="choice"><input type="radio" name="county" value="sussex" /><span class="dot"></span><span class="ctext">Sussex County</span></label><label class="choice"><input type="radio" name="county" value="union" /><span class="dot"></span><span class="ctext">Union County</span></label><label class="choice"><input type="radio" name="county" value="warren" /><span class="dot"></span><span class="ctext">Warren County</span></label></div>
+    
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Not a pricing input. New Jersey uses a single rating area. But Ambetter sells in only 17 of 21 counties, so it gates availability.</p></details>
+    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div></div>
-  </section><section class="sect" data-half="eligibility">
-    <header class="sechead">
-      <div class="secnum">Step 4</div>
-      <h2>Income</h2>
-      <span class="halfmark eligibility">Eligibility and price</span>
-      <p class="blurb">This decides how much help you get paying for coverage, and it is the single biggest factor in what you will actually pay. We do not ask where you work.</p>
-    </header>
-    <div class="qs"><div class="q" data-q="will_file_taxes">
-    <div class="qnum">12</div>
-    <div class="qbody">
-      <label class="qlabel" id="will_file_taxes-label" for="will_file_taxes">Do you plan to file a federal tax return for next year?</label>
-      <p class="qhelp">You can still get coverage if you do not, but the help paying for it requires a return.</p>
-      <div class="options" role="radiogroup" aria-labelledby="will_file_taxes-label">
-        <label class="opt"><input type="radio" name="will_file_taxes" value="yes" data-controls="will_file_taxes" /><span>Yes</span></label>
-        <label class="opt"><input type="radio" name="will_file_taxes" value="no" data-controls="will_file_taxes" /><span>No</span></label>
-      </div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag route route-intake">intake</span></div>
-        <p class="why"><b>Why we ask:</b> No return, no premium tax credit. A hard gate rather than a preference.</p>
-      </div>
+      <footer class="stepfoot">
+        <button class="btn quiet" type="button">Save and finish later</button>
+      </footer>
     </div>
+  </section><section class="step" data-step="4">
+    <div class="card">
+      <header class="stephead">
+        <p class="eyebrow">Step 4 of 10</p>
+        <h2>Income</h2>
+        <p class="blurb">This decides how much help you get paying for coverage, and it is the single biggest factor in what you will actually pay. We do not ask where you work.</p>
+      </header>
+      <div class="qs"><div class="q" data-q="will_file_taxes">
+    <label class="qlabel" id="will_file_taxes-label" for="will_file_taxes">Do you plan to file a federal tax return for next year?</label>
+    <p class="qhelp">You can still get coverage if you do not, but the help paying for it requires a return.</p>
+    <div class="choices" role="radiogroup" aria-labelledby="will_file_taxes-label">
+        <label class="choice"><input type="radio" name="will_file_taxes" value="yes" /><span class="dot"></span><span class="ctext">Yes</span></label>
+        <label class="choice"><input type="radio" name="will_file_taxes" value="no" /><span class="dot"></span><span class="ctext">No</span></label>
+      </div>
+    
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>No return, no premium tax credit. A hard gate rather than a preference.</p></details>
+    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="filing_jointly" data-showif-q="will_file_taxes" data-showif-v="yes" hidden>
-    <div class="qnum">13</div>
-    <div class="qbody">
-      <label class="qlabel" id="filing_jointly-label" for="filing_jointly">Will you file jointly with your spouse?</label>
-      
-      <div class="options" role="radiogroup" aria-labelledby="filing_jointly-label">
-        <label class="opt"><input type="radio" name="filing_jointly" value="yes" data-controls="filing_jointly" /><span>Yes</span></label>
-        <label class="opt"><input type="radio" name="filing_jointly" value="no" data-controls="filing_jointly" /><span>No</span></label>
+    <label class="qlabel" id="filing_jointly-label" for="filing_jointly">Will you file jointly with your spouse?</label>
+    
+    <div class="choices" role="radiogroup" aria-labelledby="filing_jointly-label">
+        <label class="choice"><input type="radio" name="filing_jointly" value="yes" /><span class="dot"></span><span class="ctext">Yes</span></label>
+        <label class="choice"><input type="radio" name="filing_jointly" value="no" /><span class="dot"></span><span class="ctext">No</span></label>
       </div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag cond">only if will file taxes is yes</span><span class="tag route route-intake">intake</span></div>
-        <p class="why"><b>Why we ask:</b> Married filing separately generally forfeits the credit entirely.</p>
-      </div>
-    </div>
+    
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Married filing separately generally forfeits the credit entirely.</p></details>
+    <div class="meta"><div class="tags"><span class="tag cond">only if will file taxes is yes</span><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="employment_status">
-    <div class="qnum">14</div>
-    <div class="qbody">
-      <label class="qlabel" id="employment_status-label" for="employment_status">How do you earn money?</label>
-      
-      <div class="options" role="radiogroup" aria-labelledby="employment_status-label"><label class="opt"><input type="radio" name="employment_status" value="employed" data-controls="employment_status" /><span>I work for an employer</span></label><label class="opt"><input type="radio" name="employment_status" value="self" data-controls="employment_status" /><span>I am self employed or run my own business</span></label><label class="opt"><input type="radio" name="employment_status" value="both" data-controls="employment_status" /><span>Both</span></label><label class="opt"><input type="radio" name="employment_status" value="retired" data-controls="employment_status" /><span>I am retired</span></label><label class="opt"><input type="radio" name="employment_status" value="none" data-controls="employment_status" /><span>I am not working right now</span></label></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag person">asked per person</span><span class="tag route route-intake">intake</span></div>
-        
-      </div>
-    </div>
+    <label class="qlabel" id="employment_status-label" for="employment_status">How do you earn money?</label>
+    
+    <div class="choices" role="radiogroup" aria-labelledby="employment_status-label"><label class="choice"><input type="radio" name="employment_status" value="employed" /><span class="dot"></span><span class="ctext">I work for an employer</span></label><label class="choice"><input type="radio" name="employment_status" value="self" /><span class="dot"></span><span class="ctext">I am self employed or run my own business</span></label><label class="choice"><input type="radio" name="employment_status" value="both" /><span class="dot"></span><span class="ctext">Both</span></label><label class="choice"><input type="radio" name="employment_status" value="retired" /><span class="dot"></span><span class="ctext">I am retired</span></label><label class="choice"><input type="radio" name="employment_status" value="none" /><span class="dot"></span><span class="ctext">I am not working right now</span></label></div>
+    
+    
+    <div class="meta"><div class="tags"><span class="tag">asked per person</span><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="wages" data-showif-q="employment_status" data-showif-v="employed|both" hidden>
-    <div class="qnum">15</div>
-    <div class="qbody">
-      <label class="qlabel" id="wages-label" for="wages">Wages before tax</label>
-      
-      <div class="withunit"><span class="unit lead">$</span><input class="field short" type="number" id="wages" name="wages" min="0" step="1" /></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag person">asked per person</span><span class="tag cond">only if employment status is employed or both</span><span class="tag route route-intake">intake</span></div>
-        
-      </div>
-    </div>
+    <label class="qlabel" id="wages-label" for="wages">Wages before tax</label>
+    
+    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="wages" name="wages" min="0" step="1" /></div>
+    
+    
+    <div class="meta"><div class="tags"><span class="tag">asked per person</span><span class="tag cond">only if employment status is employed or both</span><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="wages_frequency" data-showif-q="employment_status" data-showif-v="employed|both" hidden>
-    <div class="qnum">16</div>
-    <div class="qbody">
-      <label class="qlabel" id="wages_frequency-label" for="wages_frequency">How often?</label>
-      
-      <div class="options" role="radiogroup" aria-labelledby="wages_frequency-label"><label class="opt"><input type="radio" name="wages_frequency" value="hourly" data-controls="wages_frequency" /><span>Per hour</span></label><label class="opt"><input type="radio" name="wages_frequency" value="weekly" data-controls="wages_frequency" /><span>Per week</span></label><label class="opt"><input type="radio" name="wages_frequency" value="biweekly" data-controls="wages_frequency" /><span>Every 2 weeks</span></label><label class="opt"><input type="radio" name="wages_frequency" value="semimonthly" data-controls="wages_frequency" /><span>Twice a month</span></label><label class="opt"><input type="radio" name="wages_frequency" value="monthly" data-controls="wages_frequency" /><span>Per month</span></label><label class="opt"><input type="radio" name="wages_frequency" value="yearly" data-controls="wages_frequency" /><span>Per year</span></label></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag person">asked per person</span><span class="tag cond">only if employment status is employed or both</span><span class="tag route route-intake">intake</span></div>
-        
-      </div>
-    </div>
+    <label class="qlabel" id="wages_frequency-label" for="wages_frequency">How often?</label>
+    
+    <div class="choices" role="radiogroup" aria-labelledby="wages_frequency-label"><label class="choice"><input type="radio" name="wages_frequency" value="hourly" /><span class="dot"></span><span class="ctext">Per hour</span></label><label class="choice"><input type="radio" name="wages_frequency" value="weekly" /><span class="dot"></span><span class="ctext">Per week</span></label><label class="choice"><input type="radio" name="wages_frequency" value="biweekly" /><span class="dot"></span><span class="ctext">Every 2 weeks</span></label><label class="choice"><input type="radio" name="wages_frequency" value="semimonthly" /><span class="dot"></span><span class="ctext">Twice a month</span></label><label class="choice"><input type="radio" name="wages_frequency" value="monthly" /><span class="dot"></span><span class="ctext">Per month</span></label><label class="choice"><input type="radio" name="wages_frequency" value="yearly" /><span class="dot"></span><span class="ctext">Per year</span></label></div>
+    
+    
+    <div class="meta"><div class="tags"><span class="tag">asked per person</span><span class="tag cond">only if employment status is employed or both</span><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="self_employment_net" data-showif-q="employment_status" data-showif-v="self|both" hidden>
-    <div class="qnum">17</div>
-    <div class="qbody">
-      <label class="qlabel" id="self_employment_net-label" for="self_employment_net">Net business income per month, after expenses</label>
-      <p class="qhelp">What is left once you have paid business expenses, not what came in.</p>
-      <div class="withunit"><span class="unit lead">$</span><input class="field short" type="number" id="self_employment_net" name="self_employment_net" min="0" step="1" /></div>
-      <label class="unsure"><input type="checkbox" name="self_employment_net_unsure" /><span>I am not sure</span></label>
-      <div class="review">
-        <div class="tags"><span class="tag person">asked per person</span><span class="tag cond">only if employment status is self or both</span><span class="tag route route-intake">intake</span></div>
-        
-      </div>
-    </div>
+    <label class="qlabel" id="self_employment_net-label" for="self_employment_net">Net business income per month, after expenses</label>
+    <p class="qhelp">What is left once you have paid business expenses, not what came in.</p>
+    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="self_employment_net" name="self_employment_net" min="0" step="1" /></div>
+    <label class="unsure"><input type="checkbox" name="self_employment_net_unsure" /><span>I am not sure</span></label>
+    
+    <div class="meta"><div class="tags"><span class="tag">asked per person</span><span class="tag cond">only if employment status is self or both</span><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="other_income">
-    <div class="qnum">18</div>
-    <div class="qbody">
-      <label class="qlabel" id="other_income-label" for="other_income">Does anyone receive any of these?</label>
-      <p class="qhelp">Do not include child support, veterans payments or Supplemental Security Income. Those do not count.</p>
-      <div class="options"><label class="opt"><input type="checkbox" name="other_income" value="social_security" /><span>Social Security</span></label><label class="opt"><input type="checkbox" name="other_income" value="pension" /><span>Pension</span></label><label class="opt"><input type="checkbox" name="other_income" value="retirement" /><span>Withdrawals from retirement accounts</span></label><label class="opt"><input type="checkbox" name="other_income" value="unemployment" /><span>Unemployment</span></label><label class="opt"><input type="checkbox" name="other_income" value="rental" /><span>Rental or royalty income</span></label><label class="opt"><input type="checkbox" name="other_income" value="alimony_received" /><span>Alimony, from a divorce finalised before 2019</span></label><label class="opt"><input type="checkbox" name="other_income" value="farming" /><span>Farming or fishing income</span></label><label class="opt"><input type="checkbox" name="other_income" value="other" /><span>Something else</span></label><label class="opt"><input type="checkbox" name="other_income" value="none" /><span>None of these</span></label></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag route route-intake">intake</span></div>
-        <p class="why"><b>Why we ask:</b> All of it counts toward modified adjusted gross income, which is what the subsidy is calculated on.</p>
-      </div>
-    </div>
+    <label class="qlabel" id="other_income-label" for="other_income">Does anyone receive any of these?</label>
+    <p class="qhelp">Do not include child support, veterans payments or Supplemental Security Income. Those do not count.</p>
+    <div class="choices"><label class="choice multi"><input type="checkbox" name="other_income" value="social_security" /><span class="dot"></span><span class="ctext">Social Security</span></label><label class="choice multi"><input type="checkbox" name="other_income" value="pension" /><span class="dot"></span><span class="ctext">Pension</span></label><label class="choice multi"><input type="checkbox" name="other_income" value="retirement" /><span class="dot"></span><span class="ctext">Withdrawals from retirement accounts</span></label><label class="choice multi"><input type="checkbox" name="other_income" value="unemployment" /><span class="dot"></span><span class="ctext">Unemployment</span></label><label class="choice multi"><input type="checkbox" name="other_income" value="rental" /><span class="dot"></span><span class="ctext">Rental or royalty income</span></label><label class="choice multi"><input type="checkbox" name="other_income" value="alimony_received" /><span class="dot"></span><span class="ctext">Alimony, from a divorce finalised before 2019</span></label><label class="choice multi"><input type="checkbox" name="other_income" value="farming" /><span class="dot"></span><span class="ctext">Farming or fishing income</span></label><label class="choice multi"><input type="checkbox" name="other_income" value="other" /><span class="dot"></span><span class="ctext">Something else</span></label><label class="choice multi"><input type="checkbox" name="other_income" value="none" /><span class="dot"></span><span class="ctext">None of these</span></label></div>
+    
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>All of it counts toward modified adjusted gross income, which is what the subsidy is calculated on.</p></details>
+    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="deductions">
-    <div class="qnum">19</div>
-    <div class="qbody">
-      <label class="qlabel" id="deductions-label" for="deductions">Do you pay any of these?</label>
-      <p class="qhelp">These lower the income we count, which usually increases the help you get. Worth checking.</p>
-      <div class="options"><label class="opt"><input type="checkbox" name="deductions" value="student_loan_interest" /><span>Student loan interest</span></label><label class="opt"><input type="checkbox" name="deductions" value="alimony_paid" /><span>Alimony, from a divorce finalised before 2019</span></label><label class="opt"><input type="checkbox" name="deductions" value="hsa" /><span>Contributions to a health savings account</span></label><label class="opt"><input type="checkbox" name="deductions" value="ira" /><span>Contributions to a traditional IRA</span></label><label class="opt"><input type="checkbox" name="deductions" value="none" /><span>None of these</span></label></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag route route-intake">intake</span></div>
-        <p class="why"><b>Why we ask:</b> Routinely forgotten, and they move the subsidy in the client's favour.</p>
-      </div>
-    </div>
+    <label class="qlabel" id="deductions-label" for="deductions">Do you pay any of these?</label>
+    <p class="qhelp">These lower the income we count, which usually increases the help you get. Worth checking.</p>
+    <div class="choices"><label class="choice multi"><input type="checkbox" name="deductions" value="student_loan_interest" /><span class="dot"></span><span class="ctext">Student loan interest</span></label><label class="choice multi"><input type="checkbox" name="deductions" value="alimony_paid" /><span class="dot"></span><span class="ctext">Alimony, from a divorce finalised before 2019</span></label><label class="choice multi"><input type="checkbox" name="deductions" value="hsa" /><span class="dot"></span><span class="ctext">Contributions to a health savings account</span></label><label class="choice multi"><input type="checkbox" name="deductions" value="ira" /><span class="dot"></span><span class="ctext">Contributions to a traditional IRA</span></label><label class="choice multi"><input type="checkbox" name="deductions" value="none" /><span class="dot"></span><span class="ctext">None of these</span></label></div>
+    
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Routinely forgotten, and they move the subsidy in the client's favour.</p></details>
+    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="expected_income">
-    <div class="qnum">20</div>
-    <div class="qbody">
-      <label class="qlabel" id="expected_income-label" for="expected_income">Your best estimate of total household income for next year</label>
-      <p class="qhelp">Before tax, everyone combined. An estimate is fine, but try to be realistic rather than optimistic.</p>
-      <div class="withunit"><span class="unit lead">$</span><input class="field short" type="number" id="expected_income" name="expected_income" min="0" step="1" /></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag route route-intake">intake</span></div>
-        <p class="why"><b>Why we ask:</b> The subsidy is computed on projected income, not last year's. Getting this wrong is reconciled at tax time.</p>
-      </div>
-    </div>
+    <label class="qlabel" id="expected_income-label" for="expected_income">Your best estimate of total household income for next year</label>
+    <p class="qhelp">Before tax, everyone combined. An estimate is fine, but try to be realistic rather than optimistic.</p>
+    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="expected_income" name="expected_income" min="0" step="1" /></div>
+    
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>The subsidy is computed on projected income, not last year's. Getting this wrong is reconciled at tax time.</p></details>
+    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="income_stability">
-    <div class="qnum">21</div>
-    <div class="qbody">
-      <label class="qlabel" id="income_stability-label" for="income_stability">How steady is that income?</label>
-      
-      <div class="options" role="radiogroup" aria-labelledby="income_stability-label"><label class="opt"><input type="radio" name="income_stability" value="steady" data-controls="income_stability" /><span>Steady, I know roughly what I will earn</span></label><label class="opt"><input type="radio" name="income_stability" value="varies" data-controls="income_stability" /><span>It varies a fair bit month to month</span></label><label class="opt"><input type="radio" name="income_stability" value="unpredictable" data-controls="income_stability" /><span>Honestly, I have no idea</span></label></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag route route-flag">flag</span></div>
-        <p class="why"><b>Why we ask:</b> The 400 percent cliff is back for 2026. Someone projecting 395 percent who lands at 405 repays the entire credit. Volatility near the line needs a conversation, not a calculation.</p>
-      </div>
-    </div>
+    <label class="qlabel" id="income_stability-label" for="income_stability">How steady is that income?</label>
+    
+    <div class="choices" role="radiogroup" aria-labelledby="income_stability-label"><label class="choice"><input type="radio" name="income_stability" value="steady" /><span class="dot"></span><span class="ctext">Steady, I know roughly what I will earn</span></label><label class="choice"><input type="radio" name="income_stability" value="varies" /><span class="dot"></span><span class="ctext">It varies a fair bit month to month</span></label><label class="choice"><input type="radio" name="income_stability" value="unpredictable" /><span class="dot"></span><span class="ctext">Honestly, I have no idea</span></label></div>
+    
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>The 400 percent cliff is back for 2026. Someone projecting 395 percent who lands at 405 repays the entire credit. Volatility near the line needs a conversation, not a calculation.</p></details>
+    <div class="meta"><div class="tags"><span class="tag route-flag">flag</span></div></div>
   </div></div>
-  </section><section class="sect" data-half="eligibility">
-    <header class="sechead">
-      <div class="secnum">Step 5</div>
-      <h2>What you have now</h2>
-      <span class="halfmark eligibility">Eligibility and price</span>
-      
-    </header>
-    <div class="qs"><div class="q" data-q="current_insurer" data-showif-q="coverage_situation" data-showif-v="renewing|losing" hidden>
-    <div class="qnum">22</div>
-    <div class="qbody">
-      <label class="qlabel" id="current_insurer-label" for="current_insurer">Who is your health plan with right now?</label>
-      
-      <div class="options" role="radiogroup" aria-labelledby="current_insurer-label"><label class="opt"><input type="radio" name="current_insurer" value="horizon" data-controls="current_insurer" /><span>Horizon Blue Cross Blue Shield</span></label><label class="opt"><input type="radio" name="current_insurer" value="amerihealth" data-controls="current_insurer" /><span>AmeriHealth</span></label><label class="opt"><input type="radio" name="current_insurer" value="oscar" data-controls="current_insurer" /><span>Oscar</span></label><label class="opt"><input type="radio" name="current_insurer" value="unitedhealthcare" data-controls="current_insurer" /><span>UnitedHealthcare or Oxford</span></label><label class="opt"><input type="radio" name="current_insurer" value="ambetter" data-controls="current_insurer" /><span>Ambetter or WellCare</span></label><label class="opt"><input type="radio" name="current_insurer" value="aetna" data-controls="current_insurer" /><span>Aetna</span></label><label class="opt"><input type="radio" name="current_insurer" value="other" data-controls="current_insurer" /><span>Someone else</span></label></div>
-      <label class="unsure"><input type="checkbox" name="current_insurer_unsure" /><span>I am not sure</span></label>
-      <div class="review">
-        <div class="tags"><span class="tag cond">only if coverage situation is renewing or losing</span><span class="tag route route-intake">intake</span></div>
-        <p class="why"><b>Why we ask:</b> Sets the renewal baseline. Aetna is listed because it left the market for 2026, and anyone answering Aetna is a forced move.</p>
-      </div>
+      <footer class="stepfoot">
+        <button class="btn quiet" type="button">Save and finish later</button>
+      </footer>
     </div>
+  </section><section class="step" data-step="5">
+    <div class="card">
+      <header class="stephead">
+        <p class="eyebrow">Step 5 of 10</p>
+        <h2>What you have now</h2>
+        
+      </header>
+      <div class="qs"><div class="q" data-q="current_insurer" data-showif-q="coverage_situation" data-showif-v="renewing|losing" hidden>
+    <label class="qlabel" id="current_insurer-label" for="current_insurer">Who is your health plan with right now?</label>
+    
+    <div class="choices" role="radiogroup" aria-labelledby="current_insurer-label"><label class="choice"><input type="radio" name="current_insurer" value="horizon" /><span class="dot"></span><span class="ctext">Horizon Blue Cross Blue Shield</span></label><label class="choice"><input type="radio" name="current_insurer" value="amerihealth" /><span class="dot"></span><span class="ctext">AmeriHealth</span></label><label class="choice"><input type="radio" name="current_insurer" value="oscar" /><span class="dot"></span><span class="ctext">Oscar</span></label><label class="choice"><input type="radio" name="current_insurer" value="unitedhealthcare" /><span class="dot"></span><span class="ctext">UnitedHealthcare or Oxford</span></label><label class="choice"><input type="radio" name="current_insurer" value="ambetter" /><span class="dot"></span><span class="ctext">Ambetter or WellCare</span></label><label class="choice"><input type="radio" name="current_insurer" value="aetna" /><span class="dot"></span><span class="ctext">Aetna</span></label><label class="choice"><input type="radio" name="current_insurer" value="other" /><span class="dot"></span><span class="ctext">Someone else</span></label></div>
+    <label class="unsure"><input type="checkbox" name="current_insurer_unsure" /><span>I am not sure</span></label>
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Sets the renewal baseline. Aetna is listed because it left the market for 2026, and anyone answering Aetna is a forced move.</p></details>
+    <div class="meta"><div class="tags"><span class="tag cond">only if coverage situation is renewing or losing</span><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="current_plan_name" data-showif-q="coverage_situation" data-showif-v="renewing|losing" hidden>
-    <div class="qnum">23</div>
-    <div class="qbody">
-      <label class="qlabel" id="current_plan_name-label" for="current_plan_name">What is the plan called?</label>
-      <p class="qhelp">It is printed on your insurance card. Something like OMNIA Silver or Bronze Classic.</p>
-      <input class="field" type="text" id="current_plan_name" name="current_plan_name" />
-      <label class="unsure"><input type="checkbox" name="current_plan_name_unsure" /><span>I am not sure</span></label>
-      <div class="review">
-        <div class="tags"><span class="tag optional">optional</span><span class="tag cond">only if coverage situation is renewing or losing</span><span class="tag route route-intake">intake</span></div>
-        <p class="why"><b>Why we ask:</b> Match on carrier and name, not just identifier. Horizon retired OMNIA Silver and filed a new plan under the same name, so identifier matching alone gets this wrong.</p>
-      </div>
-    </div>
+    <label class="qlabel" id="current_plan_name-label" for="current_plan_name">What is the plan called?</label>
+    <p class="qhelp">It is printed on your insurance card. Something like OMNIA Silver or Bronze Classic.</p>
+    <input class="field" type="text" id="current_plan_name" name="current_plan_name" />
+    <label class="unsure"><input type="checkbox" name="current_plan_name_unsure" /><span>I am not sure</span></label>
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Match on carrier and name, not just identifier. Horizon retired OMNIA Silver and filed a new plan under the same name, so identifier matching alone gets this wrong.</p></details>
+    <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag cond">only if coverage situation is renewing or losing</span><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="current_premium" data-showif-q="coverage_situation" data-showif-v="renewing|losing" hidden>
-    <div class="qnum">24</div>
-    <div class="qbody">
-      <label class="qlabel" id="current_premium-label" for="current_premium">What do you pay each month for it?</label>
-      <p class="qhelp">The amount that actually leaves your account, after any help you already receive.</p>
-      <div class="withunit"><span class="unit lead">$</span><input class="field short" type="number" id="current_premium" name="current_premium" min="0" step="1" /></div>
-      <label class="unsure"><input type="checkbox" name="current_premium_unsure" /><span>I am not sure</span></label>
-      <div class="review">
-        <div class="tags"><span class="tag optional">optional</span><span class="tag cond">only if coverage situation is renewing or losing</span><span class="tag route route-intake">intake</span></div>
-        <p class="why"><b>Why we ask:</b> The anchor the client will judge every option against.</p>
-      </div>
-    </div>
+    <label class="qlabel" id="current_premium-label" for="current_premium">What do you pay each month for it?</label>
+    <p class="qhelp">The amount that actually leaves your account, after any help you already receive.</p>
+    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="current_premium" name="current_premium" min="0" step="1" /></div>
+    <label class="unsure"><input type="checkbox" name="current_premium_unsure" /><span>I am not sure</span></label>
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>The anchor the client will judge every option against.</p></details>
+    <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag cond">only if coverage situation is renewing or losing</span><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="employer_offer">
-    <div class="qnum">25</div>
-    <div class="qbody">
-      <label class="qlabel" id="employer_offer-label" for="employer_offer">Is health insurance available to anyone in your household through a job, including your spouse's or a parent's job?</label>
-      <p class="qhelp">Answer yes even if you turned it down because it was too expensive.</p>
-      <div class="options" role="radiogroup" aria-labelledby="employer_offer-label">
-        <label class="opt"><input type="radio" name="employer_offer" value="yes" data-controls="employer_offer" /><span>Yes</span></label>
-        <label class="opt"><input type="radio" name="employer_offer" value="no" data-controls="employer_offer" /><span>No</span></label>
+    <label class="qlabel" id="employer_offer-label" for="employer_offer">Is health insurance available to anyone in your household through a job, including your spouse's or a parent's job?</label>
+    <p class="qhelp">Answer yes even if you turned it down because it was too expensive.</p>
+    <div class="choices" role="radiogroup" aria-labelledby="employer_offer-label">
+        <label class="choice"><input type="radio" name="employer_offer" value="yes" /><span class="dot"></span><span class="ctext">Yes</span></label>
+        <label class="choice"><input type="radio" name="employer_offer" value="no" /><span class="dot"></span><span class="ctext">No</span></label>
       </div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag route route-flag">flag</span></div>
-        <p class="why"><b>Why we ask:</b> The most dangerous question on the form. An affordable employer offer that meets the minimum value standard bars the household from the premium tax credit entirely. On a sample family that credit was $12,228 a year. One screening question, not the full employer branch.</p>
-      </div>
-    </div>
+    
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>The most dangerous question on the form. An affordable employer offer that meets the minimum value standard bars the household from the premium tax credit entirely. On a sample family that credit was $12,228 a year. One screening question, not the full employer branch.</p></details>
+    <div class="meta"><div class="tags"><span class="tag route-flag">flag</span></div></div>
   </div><div class="q" data-q="employer_offer_cost" data-showif-q="employer_offer" data-showif-v="yes" hidden>
-    <div class="qnum">26</div>
-    <div class="qbody">
-      <label class="qlabel" id="employer_offer_cost-label" for="employer_offer_cost">Roughly what would it cost per month to cover just that one employee?</label>
-      <p class="qhelp">Not the family rate. Just the employee on their own. Your agent will confirm the details.</p>
-      <div class="withunit"><span class="unit lead">$</span><input class="field short" type="number" id="employer_offer_cost" name="employer_offer_cost" min="0" step="1" /></div>
-      <label class="unsure"><input type="checkbox" name="employer_offer_cost_unsure" /><span>I am not sure</span></label>
-      <div class="review">
-        <div class="tags"><span class="tag optional">optional</span><span class="tag cond">only if employer offer is yes</span><span class="tag route route-flag">flag</span></div>
-        <p class="why"><b>Why we ask:</b> The affordability test runs on the employee only rate, which surprises almost everybody.</p>
-      </div>
-    </div>
+    <label class="qlabel" id="employer_offer_cost-label" for="employer_offer_cost">Roughly what would it cost per month to cover just that one employee?</label>
+    <p class="qhelp">Not the family rate. Just the employee on their own. Your agent will confirm the details.</p>
+    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="employer_offer_cost" name="employer_offer_cost" min="0" step="1" /></div>
+    <label class="unsure"><input type="checkbox" name="employer_offer_cost_unsure" /><span>I am not sure</span></label>
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>The affordability test runs on the employee only rate, which surprises almost everybody.</p></details>
+    <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag cond">only if employer offer is yes</span><span class="tag route-flag">flag</span></div></div>
   </div></div>
-  </section><section class="sect" data-half="fit">
-    <header class="sechead">
-      <div class="secnum">Step 6</div>
-      <h2>Your doctors and hospitals</h2>
-      <span class="halfmark fit">Which plan fits</span>
-      <p class="blurb">This is the part that usually decides which plan is right. Every plan sold in New Jersey has its own network, and a plan that looks cheaper is a bad deal if it drops your doctor.</p>
-    </header>
-    <div class="qs"><div class="q" data-q="health_system">
-    <div class="qnum">27</div>
-    <div class="qbody">
-      <label class="qlabel" id="health_system-label" for="health_system">Which hospitals or health systems does your family use?</label>
-      
-      <div class="options"><label class="opt"><input type="checkbox" name="health_system" value="penn" /><span>Penn Medicine</span></label><label class="opt"><input type="checkbox" name="health_system" value="jefferson" /><span>Jefferson Health</span></label><label class="opt"><input type="checkbox" name="health_system" value="inspira" /><span>Inspira Health</span></label><label class="opt"><input type="checkbox" name="health_system" value="cooper" /><span>Cooper University Health Care</span></label><label class="opt"><input type="checkbox" name="health_system" value="virtua" /><span>Virtua Health</span></label><label class="opt"><input type="checkbox" name="health_system" value="atlanticare" /><span>AtlantiCare</span></label><label class="opt"><input type="checkbox" name="health_system" value="rwjbarnabas" /><span>RWJBarnabas Health</span></label><label class="opt"><input type="checkbox" name="health_system" value="hackensack" /><span>Hackensack Meridian Health</span></label><label class="opt"><input type="checkbox" name="health_system" value="other" /><span>Somewhere else</span></label><label class="opt"><input type="checkbox" name="health_system" value="none" /><span>We do not really have one</span></label></div>
-      <label class="unsure"><input type="checkbox" name="health_system_unsure" /><span>I am not sure</span></label>
-      <div class="review">
-        <div class="tags"><span class="tag route route-intake">intake</span></div>
-        <p class="why"><b>Why we ask:</b> Some plans put a whole system in a worse tier rather than excluding it. On Horizon OMNIA Gold, a tier 2 hospital nearly quadruples the deductible.</p>
-      </div>
+      <footer class="stepfoot">
+        <button class="btn quiet" type="button">Save and finish later</button>
+      </footer>
     </div>
+  </section><section class="step" data-step="6">
+    <div class="card">
+      <header class="stephead">
+        <p class="eyebrow">Step 6 of 10</p>
+        <h2>Your doctors and hospitals</h2>
+        <p class="blurb">This is the part that usually decides which plan is right. Every plan sold in New Jersey has its own network, and a plan that looks cheaper is a bad deal if it drops your doctor.</p>
+      </header>
+      <div class="qs"><div class="q" data-q="health_system">
+    <label class="qlabel" id="health_system-label" for="health_system">Which hospitals or health systems does your family use?</label>
+    
+    <div class="choices"><label class="choice multi"><input type="checkbox" name="health_system" value="penn" /><span class="dot"></span><span class="ctext">Penn Medicine</span></label><label class="choice multi"><input type="checkbox" name="health_system" value="jefferson" /><span class="dot"></span><span class="ctext">Jefferson Health</span></label><label class="choice multi"><input type="checkbox" name="health_system" value="inspira" /><span class="dot"></span><span class="ctext">Inspira Health</span></label><label class="choice multi"><input type="checkbox" name="health_system" value="cooper" /><span class="dot"></span><span class="ctext">Cooper University Health Care</span></label><label class="choice multi"><input type="checkbox" name="health_system" value="virtua" /><span class="dot"></span><span class="ctext">Virtua Health</span></label><label class="choice multi"><input type="checkbox" name="health_system" value="atlanticare" /><span class="dot"></span><span class="ctext">AtlantiCare</span></label><label class="choice multi"><input type="checkbox" name="health_system" value="rwjbarnabas" /><span class="dot"></span><span class="ctext">RWJBarnabas Health</span></label><label class="choice multi"><input type="checkbox" name="health_system" value="hackensack" /><span class="dot"></span><span class="ctext">Hackensack Meridian Health</span></label><label class="choice multi"><input type="checkbox" name="health_system" value="other" /><span class="dot"></span><span class="ctext">Somewhere else</span></label><label class="choice multi"><input type="checkbox" name="health_system" value="none" /><span class="dot"></span><span class="ctext">We do not really have one</span></label></div>
+    <label class="unsure"><input type="checkbox" name="health_system_unsure" /><span>I am not sure</span></label>
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Some plans put a whole system in a worse tier rather than excluding it. On Horizon OMNIA Gold, a tier 2 hospital nearly quadruples the deductible.</p></details>
+    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="primary_care_doctor">
-    <div class="qnum">28</div>
-    <div class="qbody">
-      <label class="qlabel" id="primary_care_doctor-label" for="primary_care_doctor">Name of the doctor you see most</label>
-      <p class="qhelp">First and last name is enough. Leave blank if you do not have one you want to keep.</p>
-      <input class="field" type="text" id="primary_care_doctor" name="primary_care_doctor" />
-      
-      <div class="review">
-        <div class="tags"><span class="tag optional">optional</span><span class="tag route route-intake">intake</span></div>
-        
-      </div>
-    </div>
+    <label class="qlabel" id="primary_care_doctor-label" for="primary_care_doctor">Name of the doctor you see most</label>
+    <p class="qhelp">First and last name is enough. Leave blank if you do not have one you want to keep.</p>
+    <input class="field" type="text" id="primary_care_doctor" name="primary_care_doctor" />
+    
+    
+    <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="specialists">
-    <div class="qnum">29</div>
-    <div class="qbody">
-      <label class="qlabel" id="specialists-label" for="specialists">Any specialists you want to keep seeing?</label>
-      <p class="qhelp">Name and what they treat. Add as many as you need.</p>
-      <div class="repeater"><input class="field" type="text" name="specialists_1" /><input class="field" type="text" name="specialists_2" /><button class="addmore" type="button">Add another</button></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag optional">optional</span><span class="tag route route-intake">intake</span></div>
-        
-      </div>
-    </div>
+    <label class="qlabel" id="specialists-label" for="specialists">Any specialists you want to keep seeing?</label>
+    <p class="qhelp">Name and what they treat. Add as many as you need.</p>
+    <div class="repeater"><input class="field" type="text" name="specialists_1" aria-label="Any specialists you want to keep seeing?, first entry" /><input class="field" type="text" name="specialists_2" aria-label="Any specialists you want to keep seeing?, second entry" /><button class="btn quiet addmore" type="button">Add another</button></div>
+    
+    
+    <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="network_priority">
-    <div class="qnum">30</div>
-    <div class="qbody">
-      <label class="qlabel" id="network_priority-label" for="network_priority">How important is keeping these doctors?</label>
-      
-      <div class="options" role="radiogroup" aria-labelledby="network_priority-label"><label class="opt"><input type="radio" name="network_priority" value="must" data-controls="network_priority" /><span>Very. I do not want to change doctors</span></label><label class="opt"><input type="radio" name="network_priority" value="prefer" data-controls="network_priority" /><span>I would rather keep them, but I would listen</span></label><label class="opt"><input type="radio" name="network_priority" value="flexible" data-controls="network_priority" /><span>I would change doctors to save real money</span></label><label class="opt"><input type="radio" name="network_priority" value="none" data-controls="network_priority" /><span>No strong feelings</span></label></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag route route-intake">intake</span></div>
-        <p class="why"><b>Why we ask:</b> Turns network from a hard filter into a weighting. Without it the engine cannot tell whether to exclude a plan or merely note the trade off.</p>
-      </div>
-    </div>
+    <label class="qlabel" id="network_priority-label" for="network_priority">How important is keeping these doctors?</label>
+    
+    <div class="choices" role="radiogroup" aria-labelledby="network_priority-label"><label class="choice"><input type="radio" name="network_priority" value="must" /><span class="dot"></span><span class="ctext">Very. I do not want to change doctors</span></label><label class="choice"><input type="radio" name="network_priority" value="prefer" /><span class="dot"></span><span class="ctext">I would rather keep them, but I would listen</span></label><label class="choice"><input type="radio" name="network_priority" value="flexible" /><span class="dot"></span><span class="ctext">I would change doctors to save real money</span></label><label class="choice"><input type="radio" name="network_priority" value="none" /><span class="dot"></span><span class="ctext">No strong feelings</span></label></div>
+    
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Turns network from a hard filter into a weighting. Without it the engine cannot tell whether to exclude a plan or merely note the trade off.</p></details>
+    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="network_price" data-showif-q="network_priority" data-showif-v="flexible|prefer" hidden>
-    <div class="qnum">31</div>
-    <div class="qbody">
-      <label class="qlabel" id="network_price-label" for="network_price">How much would you need to save in a year to make changing worth it?</label>
-      
-      <div class="withunit"><span class="unit lead">$</span><input class="field short" type="number" id="network_price" name="network_price" min="0" step="1" /></div>
-      <label class="unsure"><input type="checkbox" name="network_price_unsure" /><span>I am not sure</span></label>
-      <div class="review">
-        <div class="tags"><span class="tag optional">optional</span><span class="tag cond">only if network priority is flexible or prefer</span><span class="tag route route-intake">intake</span></div>
-        
-      </div>
-    </div>
+    <label class="qlabel" id="network_price-label" for="network_price">How much would you need to save in a year to make changing worth it?</label>
+    
+    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="network_price" name="network_price" min="0" step="1" /></div>
+    <label class="unsure"><input type="checkbox" name="network_price_unsure" /><span>I am not sure</span></label>
+    
+    <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag cond">only if network priority is flexible or prefer</span><span class="tag route-intake">intake</span></div></div>
   </div></div>
-  </section><section class="sect" data-half="fit">
-    <header class="sechead">
-      <div class="secnum">Step 7</div>
-      <h2>Prescriptions</h2>
-      <span class="halfmark fit">Which plan fits</span>
-      <p class="blurb">Plans cover different drugs at different prices, so this can change the answer completely.</p>
-    </header>
-    <div class="qs"><div class="q" data-q="takes_medication">
-    <div class="qnum">32</div>
-    <div class="qbody">
-      <label class="qlabel" id="takes_medication-label" for="takes_medication">Does anyone take prescription medication regularly?</label>
-      <p class="qhelp">Regularly means most months, not a one off course of antibiotics.</p>
-      <div class="options" role="radiogroup" aria-labelledby="takes_medication-label">
-        <label class="opt"><input type="radio" name="takes_medication" value="yes" data-controls="takes_medication" /><span>Yes</span></label>
-        <label class="opt"><input type="radio" name="takes_medication" value="no" data-controls="takes_medication" /><span>No</span></label>
-      </div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag route route-intake">intake</span></div>
-        
-      </div>
+      <footer class="stepfoot">
+        <button class="btn quiet" type="button">Save and finish later</button>
+      </footer>
     </div>
+  </section><section class="step" data-step="7">
+    <div class="card">
+      <header class="stephead">
+        <p class="eyebrow">Step 7 of 10</p>
+        <h2>Prescriptions</h2>
+        <p class="blurb">Plans cover different drugs at different prices, so this can change the answer completely.</p>
+      </header>
+      <div class="qs"><div class="q" data-q="takes_medication">
+    <label class="qlabel" id="takes_medication-label" for="takes_medication">Does anyone take prescription medication regularly?</label>
+    <p class="qhelp">Regularly means most months, not a one off course of antibiotics.</p>
+    <div class="choices" role="radiogroup" aria-labelledby="takes_medication-label">
+        <label class="choice"><input type="radio" name="takes_medication" value="yes" /><span class="dot"></span><span class="ctext">Yes</span></label>
+        <label class="choice"><input type="radio" name="takes_medication" value="no" /><span class="dot"></span><span class="ctext">No</span></label>
+      </div>
+    
+    
+    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="medications" data-showif-q="takes_medication" data-showif-v="yes" hidden>
-    <div class="qnum">33</div>
-    <div class="qbody">
-      <label class="qlabel" id="medications-label" for="medications">Which ones?</label>
-      <p class="qhelp">The name and the dose, both printed on the bottle. If you can, go and look rather than guessing.</p>
-      <div class="repeater"><input class="field" type="text" name="medications_1" /><input class="field" type="text" name="medications_2" /><button class="addmore" type="button">Add another</button></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag optional">optional</span><span class="tag cond">only if takes medication is yes</span><span class="tag route route-intake">intake</span></div>
-        <p class="why"><b>Why we ask:</b> The plan data gives us a formulary identifier but no drug list, so this currently produces a flag for the agent rather than an automatic check.</p>
-      </div>
-    </div>
+    <label class="qlabel" id="medications-label" for="medications">Which ones?</label>
+    <p class="qhelp">The name and the dose, both printed on the bottle. If you can, go and look rather than guessing.</p>
+    <div class="repeater"><input class="field" type="text" name="medications_1" aria-label="Which ones?, first entry" /><input class="field" type="text" name="medications_2" aria-label="Which ones?, second entry" /><button class="btn quiet addmore" type="button">Add another</button></div>
+    
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>The plan data gives us a formulary identifier but no drug list, so this currently produces a flag for the agent rather than an automatic check.</p></details>
+    <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag cond">only if takes medication is yes</span><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="specialty_drug" data-showif-q="takes_medication" data-showif-v="yes" hidden>
-    <div class="qnum">34</div>
-    <div class="qbody">
-      <label class="qlabel" id="specialty_drug-label" for="specialty_drug">Is any of it an injection, an infusion, or something the pharmacy has to order in specially?</label>
-      <p class="qhelp">These are usually the most expensive drugs, and plans treat them very differently.</p>
-      <div class="options" role="radiogroup" aria-labelledby="specialty_drug-label">
-        <label class="opt"><input type="radio" name="specialty_drug" value="yes" data-controls="specialty_drug" /><span>Yes</span></label>
-        <label class="opt"><input type="radio" name="specialty_drug" value="no" data-controls="specialty_drug" /><span>No</span></label>
+    <label class="qlabel" id="specialty_drug-label" for="specialty_drug">Is any of it an injection, an infusion, or something the pharmacy has to order in specially?</label>
+    <p class="qhelp">These are usually the most expensive drugs, and plans treat them very differently.</p>
+    <div class="choices" role="radiogroup" aria-labelledby="specialty_drug-label">
+        <label class="choice"><input type="radio" name="specialty_drug" value="yes" /><span class="dot"></span><span class="ctext">Yes</span></label>
+        <label class="choice"><input type="radio" name="specialty_drug" value="no" /><span class="dot"></span><span class="ctext">No</span></label>
       </div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag optional">optional</span><span class="tag cond">only if takes medication is yes</span><span class="tag route route-intake">intake</span></div>
-        <p class="why"><b>Why we ask:</b> Specialty drugs dominate a household's costs when present. Worth its own question.</p>
-      </div>
-    </div>
+    
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Specialty drugs dominate a household's costs when present. Worth its own question.</p></details>
+    <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag cond">only if takes medication is yes</span><span class="tag route-intake">intake</span></div></div>
   </div></div>
-  </section><section class="sect" data-half="fit">
-    <header class="sechead">
-      <div class="secnum">Step 8</div>
-      <h2>Last year</h2>
-      <span class="halfmark fit">Which plan fits</span>
-      <p class="blurb">Rough numbers are genuinely fine. We are working out the shape of your year, not auditing you. Answer for everyone on the plan combined.</p>
-    </header>
-    <div class="qs"><div class="q" data-q="visits_primary">
-    <div class="qnum">35</div>
-    <div class="qbody">
-      <label class="qlabel" id="visits_primary-label" for="visits_primary">Visits to a regular doctor or family doctor</label>
-      
-      <div class="options" role="radiogroup" aria-labelledby="visits_primary-label"><label class="opt"><input type="radio" name="visits_primary" value="0" data-controls="visits_primary" /><span>None</span></label><label class="opt"><input type="radio" name="visits_primary" value="1-2" data-controls="visits_primary" /><span>1 or 2</span></label><label class="opt"><input type="radio" name="visits_primary" value="3-5" data-controls="visits_primary" /><span>3 to 5</span></label><label class="opt"><input type="radio" name="visits_primary" value="6-10" data-controls="visits_primary" /><span>6 to 10</span></label><label class="opt"><input type="radio" name="visits_primary" value="11-20" data-controls="visits_primary" /><span>11 to 20</span></label><label class="opt"><input type="radio" name="visits_primary" value="21+" data-controls="visits_primary" /><span>More than 20</span></label></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag route route-intake">intake</span></div>
-        
-      </div>
+      <footer class="stepfoot">
+        <button class="btn quiet" type="button">Save and finish later</button>
+      </footer>
     </div>
+  </section><section class="step" data-step="8">
+    <div class="card">
+      <header class="stephead">
+        <p class="eyebrow">Step 8 of 10</p>
+        <h2>Last year</h2>
+        <p class="blurb">Rough numbers are genuinely fine. We are working out the shape of your year, not auditing you. Answer for everyone on the plan combined.</p>
+      </header>
+      <div class="qs"><div class="q" data-q="visits_primary">
+    <label class="qlabel" id="visits_primary-label" for="visits_primary">Visits to a regular doctor or family doctor</label>
+    
+    <div class="choices" role="radiogroup" aria-labelledby="visits_primary-label"><label class="choice"><input type="radio" name="visits_primary" value="0" /><span class="dot"></span><span class="ctext">None</span></label><label class="choice"><input type="radio" name="visits_primary" value="1-2" /><span class="dot"></span><span class="ctext">1 or 2</span></label><label class="choice"><input type="radio" name="visits_primary" value="3-5" /><span class="dot"></span><span class="ctext">3 to 5</span></label><label class="choice"><input type="radio" name="visits_primary" value="6-10" /><span class="dot"></span><span class="ctext">6 to 10</span></label><label class="choice"><input type="radio" name="visits_primary" value="11-20" /><span class="dot"></span><span class="ctext">11 to 20</span></label><label class="choice"><input type="radio" name="visits_primary" value="21+" /><span class="dot"></span><span class="ctext">More than 20</span></label></div>
+    
+    
+    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="visits_specialist">
-    <div class="qnum">36</div>
-    <div class="qbody">
-      <label class="qlabel" id="visits_specialist-label" for="visits_specialist">Visits to a specialist</label>
-      <p class="qhelp">Skin, heart, joints, allergies, anything like that.</p>
-      <div class="options" role="radiogroup" aria-labelledby="visits_specialist-label"><label class="opt"><input type="radio" name="visits_specialist" value="0" data-controls="visits_specialist" /><span>None</span></label><label class="opt"><input type="radio" name="visits_specialist" value="1-2" data-controls="visits_specialist" /><span>1 or 2</span></label><label class="opt"><input type="radio" name="visits_specialist" value="3-5" data-controls="visits_specialist" /><span>3 to 5</span></label><label class="opt"><input type="radio" name="visits_specialist" value="6-10" data-controls="visits_specialist" /><span>6 to 10</span></label><label class="opt"><input type="radio" name="visits_specialist" value="11-20" data-controls="visits_specialist" /><span>11 to 20</span></label><label class="opt"><input type="radio" name="visits_specialist" value="21+" data-controls="visits_specialist" /><span>More than 20</span></label></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag route route-intake">intake</span></div>
-        
-      </div>
-    </div>
+    <label class="qlabel" id="visits_specialist-label" for="visits_specialist">Visits to a specialist</label>
+    <p class="qhelp">Skin, heart, joints, allergies, anything like that.</p>
+    <div class="choices" role="radiogroup" aria-labelledby="visits_specialist-label"><label class="choice"><input type="radio" name="visits_specialist" value="0" /><span class="dot"></span><span class="ctext">None</span></label><label class="choice"><input type="radio" name="visits_specialist" value="1-2" /><span class="dot"></span><span class="ctext">1 or 2</span></label><label class="choice"><input type="radio" name="visits_specialist" value="3-5" /><span class="dot"></span><span class="ctext">3 to 5</span></label><label class="choice"><input type="radio" name="visits_specialist" value="6-10" /><span class="dot"></span><span class="ctext">6 to 10</span></label><label class="choice"><input type="radio" name="visits_specialist" value="11-20" /><span class="dot"></span><span class="ctext">11 to 20</span></label><label class="choice"><input type="radio" name="visits_specialist" value="21+" /><span class="dot"></span><span class="ctext">More than 20</span></label></div>
+    
+    
+    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="visits_urgent">
-    <div class="qnum">37</div>
-    <div class="qbody">
-      <label class="qlabel" id="visits_urgent-label" for="visits_urgent">Urgent care or walk in clinic visits</label>
-      
-      <div class="options" role="radiogroup" aria-labelledby="visits_urgent-label"><label class="opt"><input type="radio" name="visits_urgent" value="0" data-controls="visits_urgent" /><span>None</span></label><label class="opt"><input type="radio" name="visits_urgent" value="1" data-controls="visits_urgent" /><span>Once</span></label><label class="opt"><input type="radio" name="visits_urgent" value="2-3" data-controls="visits_urgent" /><span>2 or 3</span></label><label class="opt"><input type="radio" name="visits_urgent" value="4+" data-controls="visits_urgent" /><span>4 or more</span></label></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag route route-intake">intake</span></div>
-        
-      </div>
-    </div>
+    <label class="qlabel" id="visits_urgent-label" for="visits_urgent">Urgent care or walk in clinic visits</label>
+    
+    <div class="choices" role="radiogroup" aria-labelledby="visits_urgent-label"><label class="choice"><input type="radio" name="visits_urgent" value="0" /><span class="dot"></span><span class="ctext">None</span></label><label class="choice"><input type="radio" name="visits_urgent" value="1" /><span class="dot"></span><span class="ctext">Once</span></label><label class="choice"><input type="radio" name="visits_urgent" value="2-3" /><span class="dot"></span><span class="ctext">2 or 3</span></label><label class="choice"><input type="radio" name="visits_urgent" value="4+" /><span class="dot"></span><span class="ctext">4 or more</span></label></div>
+    
+    
+    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="visits_er">
-    <div class="qnum">38</div>
-    <div class="qbody">
-      <label class="qlabel" id="visits_er-label" for="visits_er">Emergency room visits</label>
-      
-      <div class="options" role="radiogroup" aria-labelledby="visits_er-label"><label class="opt"><input type="radio" name="visits_er" value="0" data-controls="visits_er" /><span>None</span></label><label class="opt"><input type="radio" name="visits_er" value="1" data-controls="visits_er" /><span>Once</span></label><label class="opt"><input type="radio" name="visits_er" value="2-3" data-controls="visits_er" /><span>2 or 3</span></label><label class="opt"><input type="radio" name="visits_er" value="4+" data-controls="visits_er" /><span>4 or more</span></label></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag route route-intake">intake</span></div>
-        
-      </div>
-    </div>
+    <label class="qlabel" id="visits_er-label" for="visits_er">Emergency room visits</label>
+    
+    <div class="choices" role="radiogroup" aria-labelledby="visits_er-label"><label class="choice"><input type="radio" name="visits_er" value="0" /><span class="dot"></span><span class="ctext">None</span></label><label class="choice"><input type="radio" name="visits_er" value="1" /><span class="dot"></span><span class="ctext">Once</span></label><label class="choice"><input type="radio" name="visits_er" value="2-3" /><span class="dot"></span><span class="ctext">2 or 3</span></label><label class="choice"><input type="radio" name="visits_er" value="4+" /><span class="dot"></span><span class="ctext">4 or more</span></label></div>
+    
+    
+    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="hospital_stays">
-    <div class="qnum">39</div>
-    <div class="qbody">
-      <label class="qlabel" id="hospital_stays-label" for="hospital_stays">Nights spent in hospital</label>
-      
-      <div class="options" role="radiogroup" aria-labelledby="hospital_stays-label"><label class="opt"><input type="radio" name="hospital_stays" value="0" data-controls="hospital_stays" /><span>None</span></label><label class="opt"><input type="radio" name="hospital_stays" value="1" data-controls="hospital_stays" /><span>Once</span></label><label class="opt"><input type="radio" name="hospital_stays" value="2-3" data-controls="hospital_stays" /><span>2 or 3</span></label><label class="opt"><input type="radio" name="hospital_stays" value="4+" data-controls="hospital_stays" /><span>4 or more</span></label></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag route route-intake">intake</span></div>
-        
-      </div>
-    </div>
+    <label class="qlabel" id="hospital_stays-label" for="hospital_stays">Nights spent in hospital</label>
+    
+    <div class="choices" role="radiogroup" aria-labelledby="hospital_stays-label"><label class="choice"><input type="radio" name="hospital_stays" value="0" /><span class="dot"></span><span class="ctext">None</span></label><label class="choice"><input type="radio" name="hospital_stays" value="1" /><span class="dot"></span><span class="ctext">Once</span></label><label class="choice"><input type="radio" name="hospital_stays" value="2-3" /><span class="dot"></span><span class="ctext">2 or 3</span></label><label class="choice"><input type="radio" name="hospital_stays" value="4+" /><span class="dot"></span><span class="ctext">4 or more</span></label></div>
+    
+    
+    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="surgeries">
-    <div class="qnum">40</div>
-    <div class="qbody">
-      <label class="qlabel" id="surgeries-label" for="surgeries">Operations or procedures that did not need an overnight stay</label>
-      
-      <div class="options" role="radiogroup" aria-labelledby="surgeries-label"><label class="opt"><input type="radio" name="surgeries" value="0" data-controls="surgeries" /><span>None</span></label><label class="opt"><input type="radio" name="surgeries" value="1" data-controls="surgeries" /><span>Once</span></label><label class="opt"><input type="radio" name="surgeries" value="2-3" data-controls="surgeries" /><span>2 or 3</span></label><label class="opt"><input type="radio" name="surgeries" value="4+" data-controls="surgeries" /><span>4 or more</span></label></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag route route-intake">intake</span></div>
-        
-      </div>
-    </div>
+    <label class="qlabel" id="surgeries-label" for="surgeries">Operations or procedures that did not need an overnight stay</label>
+    
+    <div class="choices" role="radiogroup" aria-labelledby="surgeries-label"><label class="choice"><input type="radio" name="surgeries" value="0" /><span class="dot"></span><span class="ctext">None</span></label><label class="choice"><input type="radio" name="surgeries" value="1" /><span class="dot"></span><span class="ctext">Once</span></label><label class="choice"><input type="radio" name="surgeries" value="2-3" /><span class="dot"></span><span class="ctext">2 or 3</span></label><label class="choice"><input type="radio" name="surgeries" value="4+" /><span class="dot"></span><span class="ctext">4 or more</span></label></div>
+    
+    
+    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="imaging">
-    <div class="qnum">41</div>
-    <div class="qbody">
-      <label class="qlabel" id="imaging-label" for="imaging">Scans such as MRI, CT or PET</label>
-      
-      <div class="options" role="radiogroup" aria-labelledby="imaging-label"><label class="opt"><input type="radio" name="imaging" value="0" data-controls="imaging" /><span>None</span></label><label class="opt"><input type="radio" name="imaging" value="1" data-controls="imaging" /><span>Once</span></label><label class="opt"><input type="radio" name="imaging" value="2-3" data-controls="imaging" /><span>2 or 3</span></label><label class="opt"><input type="radio" name="imaging" value="4+" data-controls="imaging" /><span>4 or more</span></label></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag route route-intake">intake</span></div>
-        
-      </div>
-    </div>
+    <label class="qlabel" id="imaging-label" for="imaging">Scans such as MRI, CT or PET</label>
+    
+    <div class="choices" role="radiogroup" aria-labelledby="imaging-label"><label class="choice"><input type="radio" name="imaging" value="0" /><span class="dot"></span><span class="ctext">None</span></label><label class="choice"><input type="radio" name="imaging" value="1" /><span class="dot"></span><span class="ctext">Once</span></label><label class="choice"><input type="radio" name="imaging" value="2-3" /><span class="dot"></span><span class="ctext">2 or 3</span></label><label class="choice"><input type="radio" name="imaging" value="4+" /><span class="dot"></span><span class="ctext">4 or more</span></label></div>
+    
+    
+    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="therapy">
-    <div class="qnum">42</div>
-    <div class="qbody">
-      <label class="qlabel" id="therapy-label" for="therapy">Therapy or counselling sessions</label>
-      
-      <div class="options" role="radiogroup" aria-labelledby="therapy-label"><label class="opt"><input type="radio" name="therapy" value="0" data-controls="therapy" /><span>None</span></label><label class="opt"><input type="radio" name="therapy" value="1-2" data-controls="therapy" /><span>1 or 2</span></label><label class="opt"><input type="radio" name="therapy" value="3-5" data-controls="therapy" /><span>3 to 5</span></label><label class="opt"><input type="radio" name="therapy" value="6-10" data-controls="therapy" /><span>6 to 10</span></label><label class="opt"><input type="radio" name="therapy" value="11-20" data-controls="therapy" /><span>11 to 20</span></label><label class="opt"><input type="radio" name="therapy" value="21+" data-controls="therapy" /><span>More than 20</span></label></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag route route-intake">intake</span></div>
-        
-      </div>
-    </div>
+    <label class="qlabel" id="therapy-label" for="therapy">Therapy or counselling sessions</label>
+    
+    <div class="choices" role="radiogroup" aria-labelledby="therapy-label"><label class="choice"><input type="radio" name="therapy" value="0" /><span class="dot"></span><span class="ctext">None</span></label><label class="choice"><input type="radio" name="therapy" value="1-2" /><span class="dot"></span><span class="ctext">1 or 2</span></label><label class="choice"><input type="radio" name="therapy" value="3-5" /><span class="dot"></span><span class="ctext">3 to 5</span></label><label class="choice"><input type="radio" name="therapy" value="6-10" /><span class="dot"></span><span class="ctext">6 to 10</span></label><label class="choice"><input type="radio" name="therapy" value="11-20" /><span class="dot"></span><span class="ctext">11 to 20</span></label><label class="choice"><input type="radio" name="therapy" value="21+" /><span class="dot"></span><span class="ctext">More than 20</span></label></div>
+    
+    
+    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="physical_therapy">
-    <div class="qnum">43</div>
-    <div class="qbody">
-      <label class="qlabel" id="physical_therapy-label" for="physical_therapy">Physical therapy or chiropractic visits</label>
-      
-      <div class="options" role="radiogroup" aria-labelledby="physical_therapy-label"><label class="opt"><input type="radio" name="physical_therapy" value="0" data-controls="physical_therapy" /><span>None</span></label><label class="opt"><input type="radio" name="physical_therapy" value="1-2" data-controls="physical_therapy" /><span>1 or 2</span></label><label class="opt"><input type="radio" name="physical_therapy" value="3-5" data-controls="physical_therapy" /><span>3 to 5</span></label><label class="opt"><input type="radio" name="physical_therapy" value="6-10" data-controls="physical_therapy" /><span>6 to 10</span></label><label class="opt"><input type="radio" name="physical_therapy" value="11-20" data-controls="physical_therapy" /><span>11 to 20</span></label><label class="opt"><input type="radio" name="physical_therapy" value="21+" data-controls="physical_therapy" /><span>More than 20</span></label></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag route route-intake">intake</span></div>
-        <p class="why"><b>Why we ask:</b> Plans cap these at 30 visits a year, filed explicitly in the benefit data. Anyone in ongoing therapy will hit the ceiling, and that is a real differentiator.</p>
-      </div>
-    </div>
+    <label class="qlabel" id="physical_therapy-label" for="physical_therapy">Physical therapy or chiropractic visits</label>
+    
+    <div class="choices" role="radiogroup" aria-labelledby="physical_therapy-label"><label class="choice"><input type="radio" name="physical_therapy" value="0" /><span class="dot"></span><span class="ctext">None</span></label><label class="choice"><input type="radio" name="physical_therapy" value="1-2" /><span class="dot"></span><span class="ctext">1 or 2</span></label><label class="choice"><input type="radio" name="physical_therapy" value="3-5" /><span class="dot"></span><span class="ctext">3 to 5</span></label><label class="choice"><input type="radio" name="physical_therapy" value="6-10" /><span class="dot"></span><span class="ctext">6 to 10</span></label><label class="choice"><input type="radio" name="physical_therapy" value="11-20" /><span class="dot"></span><span class="ctext">11 to 20</span></label><label class="choice"><input type="radio" name="physical_therapy" value="21+" /><span class="dot"></span><span class="ctext">More than 20</span></label></div>
+    
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Plans cap these at 30 visits a year, filed explicitly in the benefit data. Anyone in ongoing therapy will hit the ceiling, and that is a real differentiator.</p></details>
+    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="perceived_spend">
-    <div class="qnum">44</div>
-    <div class="qbody">
-      <label class="qlabel" id="perceived_spend-label" for="perceived_spend">Roughly what do you think all of that cost you out of pocket?</label>
-      <p class="qhelp">Not counting your monthly premium. Copays, deductibles, prescriptions. A guess is fine, and we will show you what our numbers say.</p>
-      <div class="withunit"><span class="unit lead">$</span><input class="field short" type="number" id="perceived_spend" name="perceived_spend" min="0" step="1" /></div>
-      <label class="unsure"><input type="checkbox" name="perceived_spend_unsure" /><span>I am not sure</span></label>
-      <div class="review">
-        <div class="tags"><span class="tag optional">optional</span><span class="tag route route-intake">intake</span></div>
-        <p class="why"><b>Why we ask:</b> The anchor the client judges everything against. When our computed figure disagrees with their belief, that gap is worth showing rather than hiding, because it usually means they forgot something.</p>
-      </div>
-    </div>
+    <label class="qlabel" id="perceived_spend-label" for="perceived_spend">Roughly what do you think all of that cost you out of pocket?</label>
+    <p class="qhelp">Not counting your monthly premium. Copays, deductibles, prescriptions. A guess is fine, and we will show you what our numbers say.</p>
+    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="perceived_spend" name="perceived_spend" min="0" step="1" /></div>
+    <label class="unsure"><input type="checkbox" name="perceived_spend_unsure" /><span>I am not sure</span></label>
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>The anchor the client judges everything against. When our computed figure disagrees with their belief, that gap is worth showing rather than hiding, because it usually means they forgot something.</p></details>
+    <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag route-intake">intake</span></div></div>
   </div></div>
-  </section><section class="sect" data-half="fit">
-    <header class="sechead">
-      <div class="secnum">Step 9</div>
-      <h2>The year ahead</h2>
-      <span class="halfmark fit">Which plan fits</span>
-      
-    </header>
-    <div class="qs"><div class="q" data-q="ongoing_conditions">
-    <div class="qnum">45</div>
-    <div class="qbody">
-      <label class="qlabel" id="ongoing_conditions-label" for="ongoing_conditions">Is anyone managing an ongoing health condition?</label>
-      <p class="qhelp">Only what affects how often you need care and what it costs. Skip anything you would rather discuss with your agent.</p>
-      <div class="options"><label class="opt"><input type="checkbox" name="ongoing_conditions" value="diabetes" /><span>Diabetes</span></label><label class="opt"><input type="checkbox" name="ongoing_conditions" value="heart" /><span>Heart or blood pressure condition</span></label><label class="opt"><input type="checkbox" name="ongoing_conditions" value="asthma" /><span>Asthma or a breathing condition</span></label><label class="opt"><input type="checkbox" name="ongoing_conditions" value="mental_health" /><span>A mental health condition</span></label><label class="opt"><input type="checkbox" name="ongoing_conditions" value="autoimmune" /><span>An autoimmune condition</span></label><label class="opt"><input type="checkbox" name="ongoing_conditions" value="cancer" /><span>Cancer, now or recently</span></label><label class="opt"><input type="checkbox" name="ongoing_conditions" value="other" /><span>Something else</span></label><label class="opt"><input type="checkbox" name="ongoing_conditions" value="none" /><span>Nothing ongoing</span></label></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag route route-intake">intake</span></div>
-        <p class="why"><b>Why we ask:</b> Every plan files a standard cost example for managing type 2 diabetes. The spread across New Jersey plans runs from $400 to $5,420, and it inverts the premium ranking.</p>
-      </div>
+      <footer class="stepfoot">
+        <button class="btn quiet" type="button">Save and finish later</button>
+      </footer>
     </div>
+  </section><section class="step" data-step="9">
+    <div class="card">
+      <header class="stephead">
+        <p class="eyebrow">Step 9 of 10</p>
+        <h2>The year ahead</h2>
+        
+      </header>
+      <div class="qs"><div class="q" data-q="ongoing_conditions">
+    <label class="qlabel" id="ongoing_conditions-label" for="ongoing_conditions">Is anyone managing an ongoing health condition?</label>
+    <p class="qhelp">Only what affects how often you need care and what it costs. Skip anything you would rather discuss with your agent.</p>
+    <div class="choices"><label class="choice multi"><input type="checkbox" name="ongoing_conditions" value="diabetes" /><span class="dot"></span><span class="ctext">Diabetes</span></label><label class="choice multi"><input type="checkbox" name="ongoing_conditions" value="heart" /><span class="dot"></span><span class="ctext">Heart or blood pressure condition</span></label><label class="choice multi"><input type="checkbox" name="ongoing_conditions" value="asthma" /><span class="dot"></span><span class="ctext">Asthma or a breathing condition</span></label><label class="choice multi"><input type="checkbox" name="ongoing_conditions" value="mental_health" /><span class="dot"></span><span class="ctext">A mental health condition</span></label><label class="choice multi"><input type="checkbox" name="ongoing_conditions" value="autoimmune" /><span class="dot"></span><span class="ctext">An autoimmune condition</span></label><label class="choice multi"><input type="checkbox" name="ongoing_conditions" value="cancer" /><span class="dot"></span><span class="ctext">Cancer, now or recently</span></label><label class="choice multi"><input type="checkbox" name="ongoing_conditions" value="other" /><span class="dot"></span><span class="ctext">Something else</span></label><label class="choice multi"><input type="checkbox" name="ongoing_conditions" value="none" /><span class="dot"></span><span class="ctext">Nothing ongoing</span></label></div>
+    
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Every plan files a standard cost example for managing type 2 diabetes. The spread across New Jersey plans runs from $400 to $5,420, and it inverts the premium ranking.</p></details>
+    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="planned_care">
-    <div class="qnum">46</div>
-    <div class="qbody">
-      <label class="qlabel" id="planned_care-label" for="planned_care">Is anything planned for next year?</label>
-      
-      <div class="options"><label class="opt"><input type="checkbox" name="planned_care" value="surgery" /><span>An operation or procedure</span></label><label class="opt"><input type="checkbox" name="planned_care" value="baby" /><span>Having a baby</span></label><label class="opt"><input type="checkbox" name="planned_care" value="specialist" /><span>Starting with a new specialist</span></label><label class="opt"><input type="checkbox" name="planned_care" value="none" /><span>Nothing planned</span></label></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag route route-intake">intake</span></div>
-        
-      </div>
-    </div>
+    <label class="qlabel" id="planned_care-label" for="planned_care">Is anything planned for next year?</label>
+    
+    <div class="choices"><label class="choice multi"><input type="checkbox" name="planned_care" value="surgery" /><span class="dot"></span><span class="ctext">An operation or procedure</span></label><label class="choice multi"><input type="checkbox" name="planned_care" value="baby" /><span class="dot"></span><span class="ctext">Having a baby</span></label><label class="choice multi"><input type="checkbox" name="planned_care" value="specialist" /><span class="dot"></span><span class="ctext">Starting with a new specialist</span></label><label class="choice multi"><input type="checkbox" name="planned_care" value="none" /><span class="dot"></span><span class="ctext">Nothing planned</span></label></div>
+    
+    
+    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="time_out_of_state">
-    <div class="qnum">47</div>
-    <div class="qbody">
-      <label class="qlabel" id="time_out_of_state-label" for="time_out_of_state">Does anyone spend a lot of time outside New Jersey?</label>
-      <p class="qhelp">This matters more than people expect.</p>
-      <div class="options"><label class="opt"><input type="checkbox" name="time_out_of_state" value="college" /><span>A child at college in another state</span></label><label class="opt"><input type="checkbox" name="time_out_of_state" value="snowbird" /><span>We spend part of the year elsewhere</span></label><label class="opt"><input type="checkbox" name="time_out_of_state" value="travel" /><span>Frequent travel for work</span></label><label class="opt"><input type="checkbox" name="time_out_of_state" value="abroad" /><span>Regular travel outside the country</span></label><label class="opt"><input type="checkbox" name="time_out_of_state" value="none" /><span>No, we are here all year</span></label></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag route route-intake">intake</span></div>
-        <p class="why"><b>Why we ask:</b> Every plan on the New Jersey marketplace is an EPO and none has a national network. Six of 39 carry no out of service area coverage at all, and 31 of 39 cover nothing outside the country.</p>
-      </div>
-    </div>
+    <label class="qlabel" id="time_out_of_state-label" for="time_out_of_state">Does anyone spend a lot of time outside New Jersey?</label>
+    <p class="qhelp">This matters more than people expect.</p>
+    <div class="choices"><label class="choice multi"><input type="checkbox" name="time_out_of_state" value="college" /><span class="dot"></span><span class="ctext">A child at college in another state</span></label><label class="choice multi"><input type="checkbox" name="time_out_of_state" value="snowbird" /><span class="dot"></span><span class="ctext">We spend part of the year elsewhere</span></label><label class="choice multi"><input type="checkbox" name="time_out_of_state" value="travel" /><span class="dot"></span><span class="ctext">Frequent travel for work</span></label><label class="choice multi"><input type="checkbox" name="time_out_of_state" value="abroad" /><span class="dot"></span><span class="ctext">Regular travel outside the country</span></label><label class="choice multi"><input type="checkbox" name="time_out_of_state" value="none" /><span class="dot"></span><span class="ctext">No, we are here all year</span></label></div>
+    
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Every plan on the New Jersey marketplace is an EPO and none has a national network. Six of 39 carry no out of service area coverage at all, and 31 of 39 cover nothing outside the country.</p></details>
+    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div></div>
-  </section><section class="sect" data-half="fit">
-    <header class="sechead">
-      <div class="secnum">Step 10</div>
-      <h2>What matters to you</h2>
-      <span class="halfmark fit">Which plan fits</span>
-      
-    </header>
-    <div class="qs"><div class="q" data-q="risk_appetite">
-    <div class="qnum">48</div>
-    <div class="qbody">
-      <label class="qlabel" id="risk_appetite-label" for="risk_appetite">If you had to pick one:</label>
-      
-      <div class="options" role="radiogroup" aria-labelledby="risk_appetite-label"><label class="opt"><input type="radio" name="risk_appetite" value="low_premium" data-controls="risk_appetite" /><span>Pay less every month, and accept a bigger bill if something goes wrong</span></label><label class="opt"><input type="radio" name="risk_appetite" value="balanced" data-controls="risk_appetite" /><span>Somewhere in the middle</span></label><label class="opt"><input type="radio" name="risk_appetite" value="low_risk" data-controls="risk_appetite" /><span>Pay more every month, so a bad year cannot hurt me badly</span></label></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag route route-intake">intake</span></div>
-        <p class="why"><b>Why we ask:</b> Decides which of good, better or best to lead with. Without it the engine has to guess, and the honest answer is that this is a values question, not a maths question.</p>
-      </div>
+      <footer class="stepfoot">
+        <button class="btn quiet" type="button">Save and finish later</button>
+      </footer>
     </div>
+  </section><section class="step" data-step="10">
+    <div class="card">
+      <header class="stephead">
+        <p class="eyebrow">Step 10 of 10</p>
+        <h2>What matters to you</h2>
+        
+      </header>
+      <div class="qs"><div class="q" data-q="risk_appetite">
+    <label class="qlabel" id="risk_appetite-label" for="risk_appetite">If you had to pick one:</label>
+    
+    <div class="choices" role="radiogroup" aria-labelledby="risk_appetite-label"><label class="choice"><input type="radio" name="risk_appetite" value="low_premium" /><span class="dot"></span><span class="ctext">Pay less every month, and accept a bigger bill if something goes wrong</span></label><label class="choice"><input type="radio" name="risk_appetite" value="balanced" /><span class="dot"></span><span class="ctext">Somewhere in the middle</span></label><label class="choice"><input type="radio" name="risk_appetite" value="low_risk" /><span class="dot"></span><span class="ctext">Pay more every month, so a bad year cannot hurt me badly</span></label></div>
+    
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Decides which of good, better or best to lead with. Without it the engine has to guess, and the honest answer is that this is a values question, not a maths question.</p></details>
+    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="budget_ceiling">
-    <div class="qnum">49</div>
-    <div class="qbody">
-      <label class="qlabel" id="budget_ceiling-label" for="budget_ceiling">Is there a monthly figure you cannot go above?</label>
-      <p class="qhelp">Leave blank if there is not. This does not limit what we show you, it just tells your agent where the line is.</p>
-      <div class="withunit"><span class="unit lead">$</span><input class="field short" type="number" id="budget_ceiling" name="budget_ceiling" min="0" step="1" /></div>
-      
-      <div class="review">
-        <div class="tags"><span class="tag optional">optional</span><span class="tag route route-flag">flag</span></div>
-        
-      </div>
-    </div>
+    <label class="qlabel" id="budget_ceiling-label" for="budget_ceiling">Is there a monthly figure you cannot go above?</label>
+    <p class="qhelp">Leave blank if there is not. This does not limit what we show you, it just tells your agent where the line is.</p>
+    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="budget_ceiling" name="budget_ceiling" min="0" step="1" /></div>
+    
+    
+    <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag route-flag">flag</span></div></div>
   </div><div class="q" data-q="anything_else">
-    <div class="qnum">50</div>
-    <div class="qbody">
-      <label class="qlabel" id="anything_else-label" for="anything_else">Anything else your agent should know before you meet?</label>
-      <p class="qhelp">Anything at all. This goes straight to them.</p>
-      <textarea class="field" id="anything_else" name="anything_else" rows="4"></textarea>
-      
-      <div class="review">
-        <div class="tags"><span class="tag optional">optional</span><span class="tag route route-flag">flag</span></div>
-        
-      </div>
-    </div>
+    <label class="qlabel" id="anything_else-label" for="anything_else">Anything else your agent should know before you meet?</label>
+    <p class="qhelp">Anything at all. This goes straight to them.</p>
+    <textarea class="field" id="anything_else" name="anything_else" rows="4"></textarea>
+    
+    
+    <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag route-flag">flag</span></div></div>
   </div></div>
+      <footer class="stepfoot">
+        <button class="btn quiet" type="button">Save and finish later</button>
+      </footer>
+    </div>
   </section>
 
   <div class="end">
     <h2>That is everything</h2>
     <p>Your agent will review this before you meet and will have your options ready.</p>
-    <button class="submit" type="button">Send to my agent</button>
+    <div class="actions">
+      <button class="btn primary" type="button" id="submit">Send to my agent</button>
+      <button class="btn quiet" type="button">Save and finish later</button>
+    </div>
   </div>
 </main>
 
-<footer>
+<footer class="colophon">
   Generated from <code>src/intake/questionnaire.ts</code>, so this form and the definition we build from cannot drift apart.
   Review view reveals every conditional question, why each one is asked, and where each answer is routed.
 </footer>
@@ -921,11 +862,15 @@
   const body = document.body;
   const vClient = document.getElementById("v-client");
   const vReview = document.getElementById("v-review");
+  const fill = document.getElementById("progress-fill");
+  const count = document.getElementById("progress-count");
+  const steps = [...document.querySelectorAll(".step")];
 
   function setView(reviewing) {
     body.classList.toggle("reviewing", reviewing);
     vClient.setAttribute("aria-pressed", String(!reviewing));
     vReview.setAttribute("aria-pressed", String(reviewing));
+    document.querySelectorAll("details.why").forEach((d) => { d.open = reviewing; });
     if (!reviewing) refresh();
   }
   vClient.addEventListener("click", () => setView(false));
@@ -934,18 +879,61 @@
   // Conditional reveal. A question shows when its controlling question holds
   // one of the listed values.
   function refresh() {
-    if (body.classList.contains("reviewing")) return;
-    document.querySelectorAll("[data-showif-q]").forEach((el) => {
-      const q = el.getAttribute("data-showif-q");
-      const wanted = (el.getAttribute("data-showif-v") || "").split("|");
-      const checked = document.querySelector('input[name="' + q + '"]:checked');
-      el.hidden = !(checked && wanted.includes(checked.value));
+    if (!body.classList.contains("reviewing")) {
+      document.querySelectorAll("[data-showif-q]").forEach((el) => {
+        const q = el.getAttribute("data-showif-q");
+        const wanted = (el.getAttribute("data-showif-v") || "").split("|");
+        const checked = document.querySelector('input[name="' + q + '"]:checked');
+        el.hidden = !(checked && wanted.includes(checked.value));
+      });
+    }
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const visible = [...document.querySelectorAll(".q")].filter((q) => !q.hidden);
+    let answered = 0;
+    for (const q of visible) {
+      const inputs = [...q.querySelectorAll("input, textarea")];
+      const done = inputs.some((i) =>
+        (i.type === "radio" || i.type === "checkbox") ? i.checked : i.value.trim() !== "",
+      );
+      if (done) answered += 1;
+    }
+    const pct = visible.length ? (answered / visible.length) * 100 : 0;
+    fill.style.width = pct.toFixed(1) + "%";
+
+    let current = 1;
+    for (const s of steps) {
+      if (s.getBoundingClientRect().top <= 140) current = Number(s.dataset.step);
+    }
+    count.textContent = "Step " + current + " of " + steps.length;
+  }
+
+  // Selection state, applied explicitly so it never depends on :has() support.
+  function paintChoices() {
+    document.querySelectorAll(".choice").forEach((row) => {
+      const input = row.querySelector("input");
+      row.classList.toggle("is-selected", !!input && input.checked);
     });
   }
 
-  document.addEventListener("change", (e) => {
-    if (e.target.matches("input[type=radio], input[type=checkbox]")) refresh();
+  document.addEventListener("focusin", (e) => {
+    const row = e.target.closest && e.target.closest(".choice");
+    if (row) row.classList.add("is-focus");
   });
+  document.addEventListener("focusout", (e) => {
+    const row = e.target.closest && e.target.closest(".choice");
+    if (row) row.classList.remove("is-focus");
+  });
+
+  document.addEventListener("change", (e) => {
+    if (e.target.matches("input, textarea")) { paintChoices(); refresh(); }
+  });
+  document.addEventListener("input", (e) => {
+    if (e.target.matches("input, textarea")) updateProgress();
+  });
+  window.addEventListener("scroll", updateProgress, { passive: true });
 
   document.querySelectorAll(".addmore").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -957,9 +945,41 @@
     });
   });
 
-  document.querySelector(".submit").addEventListener("click", () => {
-    alert("Draft form. Submitting is not wired up yet.");
+  // Collects every answered field into a flat payload keyed by question id.
+  // Checkboxes become arrays; everything else is a scalar.
+  function collect() {
+    const answers = {};
+    document.querySelectorAll(".q").forEach((q) => {
+      if (q.hidden) return;
+      const id = q.dataset.q;
+      const radios = q.querySelectorAll('input[type="radio"]:checked');
+      const boxes = [...q.querySelectorAll('input[type="checkbox"]:checked')].filter(
+        (b) => !b.name.endsWith("_unsure"),
+      );
+      const texts = [...q.querySelectorAll('input[type="text"], input[type="number"], textarea')]
+        .map((i) => i.value.trim())
+        .filter(Boolean);
+      const unsure = q.querySelector('input[name$="_unsure"]:checked');
+
+      if (radios.length) answers[id] = radios[0].value;
+      else if (boxes.length) answers[id] = boxes.map((b) => b.value);
+      else if (texts.length) answers[id] = texts.length === 1 ? texts[0] : texts;
+      if (unsure) answers[id + "_unsure"] = true;
+    });
+    return answers;
+  }
+
+  document.getElementById("submit").addEventListener("click", () => {
+    const answers = collect();
+    localStorage.setItem(
+      "askmike:submission",
+      JSON.stringify({ answers, submittedAt: new Date().toISOString() }),
+    );
+    // Until there is an agent login, the recommendation opens in its own window
+    // so the two sides can be seen side by side.
+    window.open("agent.html", "askmike-agent");
   });
 
+  paintChoices();
   refresh();
 </script>

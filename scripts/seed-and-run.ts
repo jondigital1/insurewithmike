@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Builds a set of synthetic households chosen to exercise the awkward paths,
  * runs every one through the engine, and stores the submissions, the runs and
  * the shortlists.
@@ -157,7 +157,7 @@ const PERSONAS: Persona[] = [
       householdSize: 2,
       preferredHealthSystems: ["RWJBarnabas"],
       members: [
-        adult(31, { primaryCareVisit: 8, specialistVisit: 10, labWork: 14, imaging: 3 }),
+        adult(31, { primaryCareVisit: 8, specialistVisit: 10, labWork: 14, advancedImaging: 3 }),
         adult(33, { primaryCareVisit: 1 }),
       ],
     },
@@ -170,7 +170,7 @@ const PERSONAS: Persona[] = [
       annualIncome: 71000,
       householdSize: 1,
       preferredHealthSystems: ["Hackensack"],
-      members: [adult(48, { physicalTherapy: 40, specialistVisit: 4, imaging: 2, outpatientSurgery: 1 })],
+      members: [adult(48, { physicalTherapy: 40, specialistVisit: 4, advancedImaging: 2, outpatientSurgery: 1 })],
     },
   },
   {
@@ -297,3 +297,4 @@ console.log(
 console.log("turns this from a record into a measurement.");
 
 store.close();
+
