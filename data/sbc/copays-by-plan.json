@@ -1,0 +1,770 @@
+{
+  "17970NJ0010003-01": {
+    "primaryCare": 50,
+    "specialist": null,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010003-02": {
+    "primaryCare": null,
+    "specialist": 0,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010003-03": {
+    "primaryCare": 50,
+    "specialist": 0,
+    "beforeDeductible": true,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010003-04": {
+    "primaryCare": 50,
+    "specialist": null,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010003-05": {
+    "primaryCare": 30,
+    "specialist": null,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010003-06": {
+    "primaryCare": 15,
+    "specialist": null,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010006-01": {
+    "primaryCare": 75,
+    "specialist": 75,
+    "beforeDeductible": true,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010006-02": {
+    "primaryCare": null,
+    "specialist": 0,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010006-03": {
+    "primaryCare": 30,
+    "specialist": 0,
+    "beforeDeductible": true,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010006-04": {
+    "primaryCare": 75,
+    "specialist": 75,
+    "beforeDeductible": true,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010006-05": {
+    "primaryCare": 25,
+    "specialist": 25,
+    "beforeDeductible": true,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010006-06": {
+    "primaryCare": 15,
+    "specialist": 15,
+    "beforeDeductible": true,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010007-01": {
+    "primaryCare": 50,
+    "specialist": 50,
+    "beforeDeductible": true,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010007-02": {
+    "primaryCare": null,
+    "specialist": 0,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010007-03": {
+    "primaryCare": null,
+    "specialist": 0,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010009-01": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010009-02": {
+    "primaryCare": null,
+    "specialist": 0,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010009-03": {
+    "primaryCare": null,
+    "specialist": 75,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010009-04": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010009-05": {
+    "primaryCare": 10,
+    "specialist": 30,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010009-06": {
+    "primaryCare": 3,
+    "specialist": 12,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010010-01": {
+    "primaryCare": 75,
+    "specialist": 75,
+    "beforeDeductible": true,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010010-02": {
+    "primaryCare": null,
+    "specialist": 0,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010010-03": {
+    "primaryCare": 30,
+    "specialist": 0,
+    "beforeDeductible": true,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010010-04": {
+    "primaryCare": 60,
+    "specialist": 60,
+    "beforeDeductible": true,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010010-05": {
+    "primaryCare": 25,
+    "specialist": 25,
+    "beforeDeductible": true,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010010-06": {
+    "primaryCare": 15,
+    "specialist": 15,
+    "beforeDeductible": true,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010011-01": {
+    "primaryCare": 5,
+    "specialist": 60,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010011-02": {
+    "primaryCare": null,
+    "specialist": 0,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id"
+  },
+  "17970NJ0010011-03": {
+    "primaryCare": 5,
+    "specialist": 60,
+    "beforeDeductible": false,
+    "source": "sbc-by-plan-id"
+  },
+  "23818NJ0010001-01": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": false,
+    "source": "benefits-grid"
+  },
+  "23818NJ0010002-01": {
+    "primaryCare": 20,
+    "specialist": 60,
+    "beforeDeductible": true,
+    "source": "benefits-grid"
+  },
+  "23818NJ0010002-04": {
+    "primaryCare": 20,
+    "specialist": 55,
+    "beforeDeductible": true,
+    "source": "benefits-grid"
+  },
+  "23818NJ0010002-05": {
+    "primaryCare": 10,
+    "specialist": 25,
+    "beforeDeductible": true,
+    "source": "benefits-grid"
+  },
+  "23818NJ0010002-06": {
+    "primaryCare": 5,
+    "specialist": 15,
+    "beforeDeductible": true,
+    "source": "benefits-grid"
+  },
+  "23818NJ0010003-01": {
+    "primaryCare": 50,
+    "specialist": null,
+    "beforeDeductible": false,
+    "source": "benefits-grid"
+  },
+  "23818NJ0010003-04": {
+    "primaryCare": 40,
+    "specialist": null,
+    "beforeDeductible": false,
+    "source": "benefits-grid"
+  },
+  "23818NJ0010003-05": {
+    "primaryCare": 30,
+    "specialist": null,
+    "beforeDeductible": false,
+    "source": "benefits-grid"
+  },
+  "23818NJ0010003-06": {
+    "primaryCare": 5,
+    "specialist": null,
+    "beforeDeductible": false,
+    "source": "benefits-grid"
+  },
+  "23818NJ0010005-01": {
+    "primaryCare": 0,
+    "specialist": null,
+    "beforeDeductible": false,
+    "source": "benefits-grid"
+  },
+  "23818NJ0010007-01": {
+    "primaryCare": 15,
+    "specialist": 50,
+    "beforeDeductible": true,
+    "source": "benefits-grid"
+  },
+  "23818NJ0010008-01": {
+    "primaryCare": 25,
+    "specialist": 70,
+    "beforeDeductible": true,
+    "source": "benefits-grid"
+  },
+  "23818NJ0010008-04": {
+    "primaryCare": 25,
+    "specialist": 65,
+    "beforeDeductible": true,
+    "source": "benefits-grid"
+  },
+  "23818NJ0010008-05": {
+    "primaryCare": 15,
+    "specialist": 30,
+    "beforeDeductible": true,
+    "source": "benefits-grid"
+  },
+  "23818NJ0010008-06": {
+    "primaryCare": 0,
+    "specialist": 15,
+    "beforeDeductible": true,
+    "source": "benefits-grid"
+  },
+  "23818NJ0010009-01": {
+    "primaryCare": 25,
+    "specialist": 65,
+    "beforeDeductible": true,
+    "source": "benefits-grid"
+  },
+  "23818NJ0010009-04": {
+    "primaryCare": 15,
+    "specialist": 50,
+    "beforeDeductible": true,
+    "source": "benefits-grid"
+  },
+  "23818NJ0010009-05": {
+    "primaryCare": 10,
+    "specialist": 25,
+    "beforeDeductible": true,
+    "source": "benefits-grid"
+  },
+  "23818NJ0010009-06": {
+    "primaryCare": 5,
+    "specialist": 15,
+    "beforeDeductible": true,
+    "source": "benefits-grid"
+  },
+  "23818NJ0010029-01": {
+    "primaryCare": 30,
+    "specialist": 60,
+    "beforeDeductible": true,
+    "source": "benefits-grid"
+  },
+  "23818NJ0010029-04": {
+    "primaryCare": 30,
+    "specialist": 60,
+    "beforeDeductible": true,
+    "source": "benefits-grid"
+  },
+  "23818NJ0010029-05": {
+    "primaryCare": 10,
+    "specialist": 30,
+    "beforeDeductible": true,
+    "source": "benefits-grid"
+  },
+  "23818NJ0010029-06": {
+    "primaryCare": 0,
+    "specialist": 5,
+    "beforeDeductible": true,
+    "source": "benefits-grid"
+  },
+  "91661NJ2270001-01": {
+    "primaryCare": 30,
+    "specialist": 70,
+    "beforeDeductible": true,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2270001-02": {
+    "primaryCare": 30,
+    "specialist": 70,
+    "beforeDeductible": true,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2270001-03": {
+    "primaryCare": 30,
+    "specialist": 70,
+    "beforeDeductible": true,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2270001-04": {
+    "primaryCare": 30,
+    "specialist": 70,
+    "beforeDeductible": true,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2270001-05": {
+    "primaryCare": 30,
+    "specialist": 70,
+    "beforeDeductible": true,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2270001-06": {
+    "primaryCare": 30,
+    "specialist": 70,
+    "beforeDeductible": true,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2270002-01": {
+    "primaryCare": 30,
+    "specialist": null,
+    "beforeDeductible": false,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2270002-02": {
+    "primaryCare": 30,
+    "specialist": null,
+    "beforeDeductible": false,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2270002-03": {
+    "primaryCare": 30,
+    "specialist": null,
+    "beforeDeductible": false,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2340001-01": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": false,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2340001-02": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": false,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2340001-03": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": false,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2340002-01": {
+    "primaryCare": 30,
+    "specialist": 50,
+    "beforeDeductible": false,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2340002-02": {
+    "primaryCare": 30,
+    "specialist": 50,
+    "beforeDeductible": false,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2340002-03": {
+    "primaryCare": 30,
+    "specialist": 50,
+    "beforeDeductible": false,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2340002-04": {
+    "primaryCare": 30,
+    "specialist": 50,
+    "beforeDeductible": false,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2340002-05": {
+    "primaryCare": 30,
+    "specialist": 50,
+    "beforeDeductible": false,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2340002-06": {
+    "primaryCare": 30,
+    "specialist": 50,
+    "beforeDeductible": false,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2340003-01": {
+    "primaryCare": 30,
+    "specialist": 50,
+    "beforeDeductible": false,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2340003-02": {
+    "primaryCare": 30,
+    "specialist": 50,
+    "beforeDeductible": false,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2340003-03": {
+    "primaryCare": 30,
+    "specialist": 50,
+    "beforeDeductible": false,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2340003-04": {
+    "primaryCare": 30,
+    "specialist": 50,
+    "beforeDeductible": false,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2340003-05": {
+    "primaryCare": 30,
+    "specialist": 50,
+    "beforeDeductible": false,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2340003-06": {
+    "primaryCare": 30,
+    "specialist": 50,
+    "beforeDeductible": false,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2340004-01": {
+    "primaryCare": 10,
+    "specialist": 25,
+    "beforeDeductible": false,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2340004-02": {
+    "primaryCare": 10,
+    "specialist": 25,
+    "beforeDeductible": false,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2340004-03": {
+    "primaryCare": 10,
+    "specialist": 25,
+    "beforeDeductible": false,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2340006-01": {
+    "primaryCare": 45,
+    "specialist": 75,
+    "beforeDeductible": false,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2340006-02": {
+    "primaryCare": 45,
+    "specialist": 75,
+    "beforeDeductible": false,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2340006-03": {
+    "primaryCare": 45,
+    "specialist": 75,
+    "beforeDeductible": false,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2340006-04": {
+    "primaryCare": 45,
+    "specialist": 75,
+    "beforeDeductible": false,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2340006-05": {
+    "primaryCare": 45,
+    "specialist": 75,
+    "beforeDeductible": false,
+    "source": "sbc-by-name"
+  },
+  "91661NJ2340006-06": {
+    "primaryCare": 45,
+    "specialist": 75,
+    "beforeDeductible": false,
+    "source": "sbc-by-name"
+  },
+  "91762NJ0070004-01": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": false,
+    "source": "plan-name"
+  },
+  "91762NJ0070004-02": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": false,
+    "source": "plan-name"
+  },
+  "91762NJ0070004-03": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": false,
+    "source": "plan-name"
+  },
+  "91762NJ0070006-01": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": false,
+    "source": "plan-name"
+  },
+  "91762NJ0070006-02": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": true,
+    "source": "plan-name"
+  },
+  "91762NJ0070006-03": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": true,
+    "source": "plan-name"
+  },
+  "91762NJ0070006-04": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": false,
+    "source": "plan-name"
+  },
+  "91762NJ0070006-05": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": true,
+    "source": "plan-name"
+  },
+  "91762NJ0070006-06": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": true,
+    "source": "plan-name"
+  },
+  "91762NJ0070007-01": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": false,
+    "source": "plan-name"
+  },
+  "91762NJ0070007-02": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": true,
+    "source": "plan-name"
+  },
+  "91762NJ0070007-03": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": true,
+    "source": "plan-name"
+  },
+  "91762NJ0070007-04": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": false,
+    "source": "plan-name"
+  },
+  "91762NJ0070007-05": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": true,
+    "source": "plan-name"
+  },
+  "91762NJ0070007-06": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": true,
+    "source": "plan-name"
+  },
+  "91762NJ0070010-01": {
+    "primaryCare": 30,
+    "specialist": 50,
+    "beforeDeductible": true,
+    "source": "plan-name"
+  },
+  "91762NJ0070010-02": {
+    "primaryCare": 30,
+    "specialist": 50,
+    "beforeDeductible": true,
+    "source": "plan-name"
+  },
+  "91762NJ0070010-03": {
+    "primaryCare": 30,
+    "specialist": 50,
+    "beforeDeductible": true,
+    "source": "plan-name"
+  },
+  "91762NJ0070093-01": {
+    "primaryCare": 25,
+    "specialist": 60,
+    "beforeDeductible": true,
+    "source": "plan-name"
+  },
+  "91762NJ0070093-02": {
+    "primaryCare": 25,
+    "specialist": 60,
+    "beforeDeductible": true,
+    "source": "plan-name"
+  },
+  "91762NJ0070093-03": {
+    "primaryCare": 25,
+    "specialist": 60,
+    "beforeDeductible": true,
+    "source": "plan-name"
+  },
+  "91762NJ0070093-04": {
+    "primaryCare": 25,
+    "specialist": 60,
+    "beforeDeductible": true,
+    "source": "plan-name"
+  },
+  "91762NJ0070093-05": {
+    "primaryCare": 25,
+    "specialist": 60,
+    "beforeDeductible": true,
+    "source": "plan-name"
+  },
+  "91762NJ0070093-06": {
+    "primaryCare": 25,
+    "specialist": 60,
+    "beforeDeductible": true,
+    "source": "plan-name"
+  },
+  "91762NJ0070097-01": {
+    "primaryCare": 25,
+    "specialist": 50,
+    "beforeDeductible": false,
+    "source": "plan-name"
+  },
+  "91762NJ0070097-02": {
+    "primaryCare": 25,
+    "specialist": 50,
+    "beforeDeductible": false,
+    "source": "plan-name"
+  },
+  "91762NJ0070097-03": {
+    "primaryCare": 25,
+    "specialist": 50,
+    "beforeDeductible": false,
+    "source": "plan-name"
+  },
+  "91762NJ0070104-01": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": false,
+    "source": "plan-name"
+  },
+  "91762NJ0070104-02": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": false,
+    "source": "plan-name"
+  },
+  "91762NJ0070104-03": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": false,
+    "source": "plan-name"
+  },
+  "91762NJ0070107-01": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": true,
+    "source": "plan-name"
+  },
+  "91762NJ0070107-02": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": true,
+    "source": "plan-name"
+  },
+  "91762NJ0070107-03": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": true,
+    "source": "plan-name"
+  },
+  "91762NJ0070107-04": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": true,
+    "source": "plan-name"
+  },
+  "91762NJ0070107-05": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": true,
+    "source": "plan-name"
+  },
+  "91762NJ0070107-06": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": true,
+    "source": "plan-name"
+  },
+  "91762NJ0070110-01": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": false,
+    "source": "plan-name"
+  },
+  "91762NJ0070110-02": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": true,
+    "source": "plan-name"
+  },
+  "91762NJ0070110-03": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": true,
+    "source": "plan-name"
+  },
+  "91762NJ0070110-04": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": false,
+    "source": "plan-name"
+  },
+  "91762NJ0070110-05": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": true,
+    "source": "plan-name"
+  },
+  "91762NJ0070110-06": {
+    "primaryCare": 50,
+    "specialist": 75,
+    "beforeDeductible": true,
+    "source": "plan-name"
+  }
+}

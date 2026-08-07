@@ -110,7 +110,7 @@ export function applyCostSharing(
   // does nothing.
   let copayApplied = 0;
   let base = allowedCharges;
-  if (visits && !plan.hsaEligible) {
+  if (visits && !plan.hsaEligible && plan.copayBeforeDeductible) {
     const pcp = visits.primaryCareVisits ?? 0;
     const spec = visits.specialistVisits ?? 0;
     if (plan.copayPrimaryCare !== null && pcp > 0) {

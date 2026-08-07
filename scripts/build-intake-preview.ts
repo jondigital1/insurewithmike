@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Validates the questionnaire definition and generates the client intake form
  * from it, so the form Mike reviews and the definition we build from cannot
  * drift apart.
@@ -168,7 +168,11 @@ function renderSection(s: Section, n: number): string {
       </header>
       <div class="qs">${s.questions.map(renderQuestion).join("")}</div>
       <footer class="stepfoot">
-        <button class="btn quiet" type="button">Save and finish later</button>
+        <button class="btn quiet later" type="button">Save and finish later</button>
+        <div class="nav">
+          ${n > 1 ? `<button class="btn secondary back" type="button">Back</button>` : ""}
+          <button class="btn primary next" type="button">${n === QUESTIONNAIRE.length ? "Review my answers" : "Continue"}</button>
+        </div>
       </footer>
     </div>
   </section>`;
@@ -433,8 +437,26 @@ const html = `<title>Ask Mike, client intake</title>
   .stepfoot {
     margin-top: 28px; padding-top: 20px;
     border-top: 1px solid var(--am-line-soft);
-    display: flex; justify-content: flex-end;
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 12px; flex-wrap: wrap;
   }
+  .stepfoot .nav { display: flex; gap: 10px; margin-left: auto; }
+
+  /* One step at a time. Fifty questions on one page is a wall; ten short
+     screens is a conversation. Review view overrides this and shows the lot. */
+  .step { display: none; }
+  .step.current { display: block; animation: stepin 200ms ease-out; }
+  body.reviewing .step { display: block; }
+  body.reviewing .stepfoot .nav { display: none; }
+
+  @keyframes stepin {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .end { display: none; }
+  .end.current { display: block; animation: stepin 200ms ease-out; }
+  body.reviewing .end { display: block; }
 
   /* ------------------------------------------------------- why we ask */
 
@@ -552,7 +574,7 @@ const html = `<title>Ask Mike, client intake</title>
     vClient.setAttribute("aria-pressed", String(!reviewing));
     vReview.setAttribute("aria-pressed", String(reviewing));
     document.querySelectorAll("details.why").forEach((d) => { d.open = reviewing; });
-    if (!reviewing) refresh();
+    if (!reviewing) { refresh(); showStep(stepIndex); } else { updateProgress(); }
   }
   vClient.addEventListener("click", () => setView(false));
   vReview.addEventListener("click", () => setView(true));
@@ -571,24 +593,45 @@ const html = `<title>Ask Mike, client intake</title>
     updateProgress();
   }
 
-  function updateProgress() {
-    const visible = [...document.querySelectorAll(".q")].filter((q) => !q.hidden);
-    let answered = 0;
-    for (const q of visible) {
-      const inputs = [...q.querySelectorAll("input, textarea")];
-      const done = inputs.some((i) =>
-        (i.type === "radio" || i.type === "checkbox") ? i.checked : i.value.trim() !== "",
-      );
-      if (done) answered += 1;
-    }
-    const pct = visible.length ? (answered / visible.length) * 100 : 0;
-    fill.style.width = pct.toFixed(1) + "%";
+  // Step navigation. The hero only belongs on the first screen; after that the
+  // client is answering, not being introduced.
+  const endPanel = document.querySelector(".end");
+  const hero = document.querySelector(".hero");
+  let stepIndex = 0; // 0..steps.length-1, then steps.length for the end panel
 
-    let current = 1;
-    for (const s of steps) {
-      if (s.getBoundingClientRect().top <= 140) current = Number(s.dataset.step);
+  function showStep(n) {
+    stepIndex = Math.max(0, Math.min(steps.length, n));
+    steps.forEach((s, i) => s.classList.toggle("current", i === stepIndex));
+    endPanel.classList.toggle("current", stepIndex === steps.length);
+    hero.style.display = stepIndex === 0 ? "" : "none";
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: "auto" });
+    const heading = document.querySelector(".step.current h2, .end.current h2");
+    if (heading) {
+      heading.setAttribute("tabindex", "-1");
+      heading.focus({ preventScroll: true });
     }
-    count.textContent = "Step " + current + " of " + steps.length;
+  }
+
+  function updateProgress() {
+    if (body.classList.contains("reviewing")) {
+      const all = [...document.querySelectorAll(".q")];
+      const done = all.filter(isAnswered).length;
+      fill.style.width = (all.length ? (done / all.length) * 100 : 0).toFixed(1) + "%";
+      count.textContent = "All " + steps.length + " steps";
+      return;
+    }
+    const shown = Math.min(stepIndex + 1, steps.length);
+    fill.style.width = (((stepIndex) / steps.length) * 100).toFixed(1) + "%";
+    count.textContent =
+      stepIndex >= steps.length ? "Ready to send" : "Step " + shown + " of " + steps.length;
+  }
+
+  function isAnswered(q) {
+    if (q.hidden) return false;
+    return [...q.querySelectorAll("input, textarea")].some((i) =>
+      i.type === "radio" || i.type === "checkbox" ? i.checked : i.value.trim() !== "",
+    );
   }
 
   // Selection state, applied explicitly so it never depends on :has() support.
@@ -615,6 +658,16 @@ const html = `<title>Ask Mike, client intake</title>
     if (e.target.matches("input, textarea")) updateProgress();
   });
   window.addEventListener("scroll", updateProgress, { passive: true });
+
+  document.querySelectorAll(".stepfoot .next").forEach((btn) => {
+    btn.addEventListener("click", () => showStep(stepIndex + 1));
+  });
+  document.querySelectorAll(".stepfoot .back").forEach((btn) => {
+    btn.addEventListener("click", () => showStep(stepIndex - 1));
+  });
+  document.querySelectorAll(".later").forEach((btn) => {
+    btn.addEventListener("click", () => alert("Draft form. Saving is not wired up yet."));
+  });
 
   document.querySelectorAll(".addmore").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -663,6 +716,7 @@ const html = `<title>Ask Mike, client intake</title>
 
   paintChoices();
   refresh();
+  showStep(0);
 </script>
 `;
 
@@ -674,3 +728,4 @@ if (!out) {
 mkdirSync(dirname(out), { recursive: true });
 writeFileSync(out, html, "utf8");
 console.log(`\nPrototype written to ${out}  (${(html.length / 1024).toFixed(1)} KB)`);
+

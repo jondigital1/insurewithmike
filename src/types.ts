@@ -63,6 +63,12 @@ export interface Plan {
    */
   copayPrimaryCare: number | null;
   copaySpecialist: number | null;
+  /**
+   * True when the copay applies from the first visit. When false the member
+   * pays the full allowed amount until the deductible is met, and the copay
+   * only bites afterwards, which is the rule for health savings account plans.
+   */
+  copayBeforeDeductible: boolean;
 
   /** True when the plan files a distinct second network tier. */
   hasSecondNetworkTier: boolean;

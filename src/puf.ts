@@ -6,7 +6,7 @@
  * typos that are reproduced faithfully here rather than corrected upstream.
  */
 
-import { readFileSync, readdirSync } from "node:fs";
+import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { parse } from "csv-parse/sync";
 import type {
@@ -245,6 +245,7 @@ function loadPlans(dir: string): Plan[] {
 
         copayPrimaryCare: copays.primary,
         copaySpecialist: copays.specialist,
+        copayBeforeDeductible: copays.primary !== null && !yesNo(r["IS HSA ELIGIBLE"]),
 
         hasSecondNetworkTier: yesNo(r["MULTIPLE NETWORK TIERS"]),
         deductibleIndividualTier2: preferTotal(
@@ -327,10 +328,39 @@ function loadBenefits(dir: string): Map<string, BenefitRow[]> {
   return byPlan;
 }
 
-export function loadPlanDataset(dataDir: string, planYear: number): PlanDataset {
+/**
+ * Overlays the copay index built from carrier SBC documents.
+ *
+ * The filings themselves carry no copay columns, so these come from each
+ * carrier's own published documents by way of scripts/build-copay-index.ts.
+ * Applied here rather than in the cost model so that everything downstream,
+ * including the browser bundle, sees one consistent plan object.
+ */
+function applyCopayIndex(plans: Plan[], indexPath: string): void {
+  if (!existsSync(indexPath)) return;
+  const index: Record<
+    string,
+    { primaryCare: number | null; specialist: number | null; beforeDeductible: boolean }
+  > = JSON.parse(readFileSync(indexPath, "utf8"));
+  for (const plan of plans) {
+    const entry = index[plan.planId];
+    if (!entry) continue;
+    plan.copayPrimaryCare = entry.primaryCare;
+    plan.copaySpecialist = entry.specialist;
+    plan.copayBeforeDeductible = entry.beforeDeductible && !plan.hsaEligible;
+  }
+}
+
+export function loadPlanDataset(
+  dataDir: string,
+  planYear: number,
+  copayIndexPath = "data/sbc/copays-by-plan.json",
+): PlanDataset {
+  const plans = loadPlans(dataDir);
+  applyCopayIndex(plans, copayIndexPath);
   return {
     planYear,
-    plans: loadPlans(dataDir),
+    plans,
     rates: loadRates(dataDir),
     serviceAreas: loadServiceAreas(dataDir),
     benefits: loadBenefits(dataDir),
@@ -338,4 +368,5 @@ export function loadPlanDataset(dataDir: string, planYear: number): PlanDataset 
 }
 
 export { rateForAge, issuerCounties } from "./dataset.ts";
+
 

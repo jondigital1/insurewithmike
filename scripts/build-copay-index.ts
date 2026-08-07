@@ -1,0 +1,152 @@
+/**
+ * Builds a single copay index keyed by plan id, merging what each carrier
+ * makes available in a different shape.
+ *
+ *   Ambetter     per plan SBCs, addressed by plan id, so the join is exact
+ *   Horizon      per plan SBCs, joined on plan name
+ *   Oscar        one benefits grid, joined on plan name and cost sharing variant
+ *   AmeriHealth  office visit copays stated in the plan name itself
+ *
+ * The output is what the engine and the browser bundle both read, so there is
+ * one join, done once, rather than four join rules scattered through the code.
+ *
+ * Usage: npx tsx scripts/build-copay-index.ts [out.json]
+ */
+
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { loadPlanDataset, copaysFromName } from "../src/puf.ts";
+
+interface SbcRecord {
+  source: string;
+  planId: string | null;
+  planName: string | null;
+  primaryCare: number | null;
+  specialist: number | null;
+  primaryBeforeDeductible: boolean;
+  specialistBeforeDeductible: boolean;
+}
+
+interface OscarRecord {
+  planName: string;
+  csrVariant: string;
+  benefits: Record<string, string>;
+}
+
+export interface CopayEntry {
+  primaryCare: number | null;
+  specialist: number | null;
+  /** True when the copay applies without the deductible being met first. */
+  beforeDeductible: boolean;
+  source: string;
+}
+
+const read = <T,>(p: string): T[] => (existsSync(p) ? JSON.parse(readFileSync(p, "utf8")) : []);
+const sbc = read<SbcRecord>("data/sbc/copays-2026.json");
+const oscar = read<OscarRecord>("data/sbc/oscar-copays-2026.json");
+
+const norm = (s: string) =>
+  s.toLowerCase().replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
+
+/**
+ * Reads a grid cell such as "$15", "20% after deductible" or "$5 after ded".
+ * Only a flat copay is usable; a coinsurance percentage is already handled by
+ * the plan's own coinsurance rate.
+ */
+function gridCopay(cell: string | undefined): { amount: number | null; beforeDeductible: boolean } {
+  if (!cell) return { amount: null, beforeDeductible: false };
+  const afterDeductible = /after\s+ded/i.test(cell);
+  const m = cell.match(/^\$\s?([\d,]+)/);
+  if (!m) return { amount: null, beforeDeductible: false };
+  return { amount: Number(m[1]!.replace(/,/g, "")), beforeDeductible: !afterDeductible };
+}
+
+const dataset = loadPlanDataset("data/nj-sbe-puf-2026", 2026);
+const index: Record<string, CopayEntry> = {};
+
+// Ambetter, joined on plan id.
+const byPlanId = new Map(sbc.filter((s) => s.planId).map((s) => [s.planId as string, s]));
+
+// Horizon, joined on plan name.
+const horizonSbc = sbc.filter((s) => !s.planId && s.planName);
+
+for (const plan of dataset.plans) {
+  const exact = byPlanId.get(plan.planId);
+  if (exact && (exact.primaryCare !== null || exact.specialist !== null)) {
+    index[plan.planId] = {
+      primaryCare: exact.primaryCare,
+      specialist: exact.specialist,
+      beforeDeductible: exact.primaryBeforeDeductible,
+      source: "sbc-by-plan-id",
+    };
+    continue;
+  }
+
+  if (plan.issuerId === "91661") {
+    const n = norm(plan.marketingName);
+    const hit = horizonSbc.find((h) => {
+      const hn = norm(h.planName!);
+      return hn === n || n.includes(hn) || hn.includes(n);
+    });
+    if (hit && (hit.primaryCare !== null || hit.specialist !== null)) {
+      index[plan.planId] = {
+        primaryCare: hit.primaryCare,
+        specialist: hit.specialist,
+        beforeDeductible: hit.primaryBeforeDeductible,
+        source: "sbc-by-name",
+      };
+      continue;
+    }
+  }
+
+  if (plan.issuerId === "23818") {
+    const n = norm(plan.marketingName);
+    const hit = oscar.find((o) => norm(o.planName) === n && o.csrVariant === plan.csrVariant);
+    if (hit) {
+      const pc = gridCopay(hit.benefits.primaryCare);
+      const sp = gridCopay(hit.benefits.specialist);
+      if (pc.amount !== null || sp.amount !== null) {
+        index[plan.planId] = {
+          primaryCare: pc.amount,
+          specialist: sp.amount,
+          beforeDeductible: pc.beforeDeductible,
+          source: "benefits-grid",
+        };
+        continue;
+      }
+    }
+  }
+
+  // AmeriHealth state their office visit copays in the plan name.
+  const named = copaysFromName(plan.marketingName);
+  if (named.primary !== null) {
+    index[plan.planId] = {
+      primaryCare: named.primary,
+      specialist: named.specialist,
+      // Health savings account plans cannot charge a copay before the
+      // deductible, so those are recorded as applying afterwards.
+      beforeDeductible: !plan.hsaEligible,
+      source: "plan-name",
+    };
+  }
+}
+
+const out = process.argv[2] ?? "data/sbc/copays-by-plan.json";
+writeFileSync(out, JSON.stringify(index, null, 2), "utf8");
+
+const rankable = dataset.plans.filter(
+  (p) => p.csrVariant !== "zeroCostSharing" && p.csrVariant !== "limitedCostSharing",
+);
+const covered = rankable.filter((p) => index[p.planId]);
+const bySource = new Map<string, number>();
+for (const p of covered) {
+  const s = index[p.planId]!.source;
+  bySource.set(s, (bySource.get(s) ?? 0) + 1);
+}
+const beforeDed = covered.filter((p) => index[p.planId]!.beforeDeductible).length;
+
+console.log(`\nCopay index written to ${out}`);
+console.log(`  ${covered.length} of ${rankable.length} recommendable variants carry a copay`);
+console.log(`  ${beforeDed} of those apply before the deductible, which is where they change the answer\n`);
+for (const [s, n] of [...bySource.entries()].sort((a, b) => b[1] - a[1])) {
+  console.log(`    ${s.padEnd(18)} ${n}`);
+}
