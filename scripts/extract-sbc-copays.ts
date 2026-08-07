@@ -113,6 +113,25 @@ function segmentAfter(text: string, marker: RegExp, stop: RegExp): string | null
   return end > 0 ? rest.slice(0, end) : rest.slice(0, 400);
 }
 
+/**
+ * The text immediately preceding a benefit label.
+ *
+ * Some issuers lay the table out so the value cell renders on the line above
+ * its own label, which reading order then puts before it:
+ *
+ *   $50 Copay / visit          Not covered      Unlimited Virtual 24/7 Care
+ *   Primary care visit to treat an              from the designated telehealth
+ *
+ * Looking only forward from the label walks straight past the copay and into
+ * the footnote. The lookback is bounded so it cannot reach into the previous
+ * benefit row and report that row's price instead.
+ */
+function segmentBefore(text: string, marker: RegExp, maxChars = 220): string | null {
+  const m = text.match(marker);
+  if (!m || m.index === undefined) return null;
+  return text.slice(Math.max(0, m.index - maxChars), m.index);
+}
+
 export async function extract(file: string): Promise<SbcCopays> {
   const text = await pdfText(file);
   const notes: string[] = [];
@@ -136,8 +155,39 @@ export async function extract(file: string): Promise<SbcCopays> {
   if (!pcSeg) notes.push("primary care row not found");
   if (!spSeg) notes.push("specialist row not found");
 
-  const pc = pcSeg ? firstCost(pcSeg) : { copay: null, coinsurance: null, beforeDeductible: false };
-  const sp = spSeg ? firstCost(spSeg) : { copay: null, coinsurance: null, beforeDeductible: false };
+  const empty = { copay: null, coinsurance: null, beforeDeductible: false };
+  const found = (c: { copay: number | null; coinsurance: number | null }) =>
+    c.copay !== null || c.coinsurance !== null;
+
+  // Forward from the label first, since that is the common layout. Only fall
+  // back to the lookback when forward finds nothing, so a correct reading is
+  // never overridden by a stray figure sitting above the row.
+  let pc = pcSeg ? firstCost(pcSeg) : empty;
+  if (!found(pc)) {
+    const back = segmentBefore(text, /Primary care visit/i);
+    if (back) {
+      const reversed = firstCost(back.slice(-220));
+      if (found(reversed)) {
+        pc = reversed;
+        notes.push("primary care read from the line above its label");
+      }
+    }
+  }
+
+  let sp = spSeg ? firstCost(spSeg) : empty;
+  if (!found(sp)) {
+    const back = segmentBefore(text, /Specialist visit/i);
+    // The specialist row is preceded by the primary care row, so a lookback can
+    // easily report the wrong price. Only trust it when the window is clear of
+    // the primary care label.
+    if (back && !/Primary care/i.test(back.slice(-220))) {
+      const reversed = firstCost(back.slice(-220));
+      if (found(reversed)) {
+        sp = reversed;
+        notes.push("specialist read from the line above its label");
+      }
+    }
+  }
 
   if (pc.copay !== null && sp.copay !== null && sp.copay < pc.copay) {
     notes.push("specialist copay below primary care copay, columns may have been misread");

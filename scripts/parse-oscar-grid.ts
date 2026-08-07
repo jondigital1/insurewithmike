@@ -26,6 +26,8 @@ import type { CsrVariant } from "../src/types.ts";
 interface Item {
   x: number;
   y: number;
+  /** Rendered width, needed to place a header fragment by its centre. */
+  w: number;
   text: string;
 }
 
@@ -51,36 +53,52 @@ const BENEFITS: Array<[RegExp, string]> = [
 
 const LABEL_X_MAX = 240;
 
-/** Groups x positions into columns by looking for wide gaps between them. */
-function findColumns(items: Item[]): Array<{ lo: number; hi: number }> {
-  const xs = [...new Set(items.filter((i) => i.x > LABEL_X_MAX).map((i) => i.x))].sort(
-    (a, b) => a - b,
-  );
-  if (!xs.length) return [];
-  const groups: number[][] = [[xs[0]!]];
-  for (let i = 1; i < xs.length; i += 1) {
-    // Values within a column sit within about 30 points of each other because
-    // they are right aligned. The gaps between columns are 60 or more.
-    if (xs[i]! - xs[i - 1]! > 45) groups.push([xs[i]!]);
-    else groups[groups.length - 1]!.push(xs[i]!);
+/**
+ * Finds the column grid from the header rather than from the values.
+ *
+ * Clustering the values does not work, and the reason is worth stating. A wide
+ * value starts further left than a narrow one in the same column, so the
+ * spread inside a column can exceed the gap between two columns. On page 3 the
+ * gap between columns three and four is 35 points while the spread inside a
+ * single column is larger than that. No threshold separates those two columns
+ * without splitting others in half, and when two columns merge their plan
+ * names concatenate and the whole column becomes unusable.
+ *
+ * The header has no such problem. Each column carries one plan name fragment
+ * per header line, centred over the column, and those centres form an evenly
+ * spaced grid on every page. Columns come from there; everything else is
+ * assigned to the nearest one.
+ */
+function findColumns(items: Item[], headerCutoff: number): number[] {
+  const centres = items
+    .filter((i) => i.y > headerCutoff && i.x > LABEL_X_MAX)
+    .map((i) => i.x + i.w / 2)
+    .sort((a, b) => a - b);
+  if (!centres.length) return [];
+
+  const groups: number[][] = [[centres[0]!]];
+  for (let i = 1; i < centres.length; i += 1) {
+    // Fragments of one plan name share a centre within a few points.
+    // Neighbouring columns are tens of points apart.
+    if (centres[i]! - centres[i - 1]! > 25) groups.push([centres[i]!]);
+    else groups[groups.length - 1]!.push(centres[i]!);
   }
-  // Boundaries sit at the midpoint between neighbouring clusters. Padding each
-  // cluster by a fixed amount instead makes adjacent columns overlap, and then
-  // every value falls into whichever column is tested first.
-  return groups.map((g, i) => {
-    const min = Math.min(...g);
-    const max = Math.max(...g);
-    const prevMax = i > 0 ? Math.max(...groups[i - 1]!) : min - 80;
-    const nextMin = i + 1 < groups.length ? Math.min(...groups[i + 1]!) : max + 80;
-    return { lo: (prevMax + min) / 2, hi: (max + nextMin) / 2 };
-  });
+  return groups.map((g) => g.reduce((a, b) => a + b, 0) / g.length);
 }
 
-function columnOf(x: number, cols: Array<{ lo: number; hi: number }>): number {
-  for (let i = 0; i < cols.length; i += 1) {
-    if (x >= cols[i]!.lo && x <= cols[i]!.hi) return i;
+/** Assigns a fragment to the column whose centre it sits closest to. */
+function columnOf(centre: number, anchors: number[]): number {
+  if (!anchors.length) return -1;
+  let best = 0;
+  for (let i = 1; i < anchors.length; i += 1) {
+    if (Math.abs(centre - anchors[i]!) < Math.abs(centre - anchors[best]!)) best = i;
   }
-  return -1;
+  const spacing =
+    anchors.length > 1
+      ? (anchors[anchors.length - 1]! - anchors[0]!) / (anchors.length - 1)
+      : 120;
+  // Further than about half a column from every anchor means it belongs to none.
+  return Math.abs(centre - anchors[best]!) <= spacing * 0.65 ? best : -1;
 }
 
 /** Oscar name the variant by the income ceiling it serves. */
@@ -165,13 +183,14 @@ async function parsePage(file: string, pageNo: number): Promise<OscarPlanCopays[
 
   const items: Item[] = (content.items as Array<{ str: string; transform: number[] }>)
     .filter((i) => i.str?.trim())
-    .map((i) => ({ x: Math.round(i.transform[4]!), y: Math.round(i.transform[5]!), text: i.str.trim() }));
+    .map((i) => ({
+      x: Math.round(i.transform[4]!),
+      y: Math.round(i.transform[5]!),
+      w: Math.round((i as unknown as { width: number }).width ?? 0),
+      text: i.str.trim(),
+    }));
 
-  const cols = findColumns(items);
-  if (cols.length === 0) return [];
-
-  // Header sits above the first benefit row. Plan names wrap over two or three
-  // lines, so everything above that boundary is assembled per column.
+  // The header sits above the first benefit row, so that row bounds it.
   const firstBenefitY = Math.max(
     ...items
       .filter((i) => i.x <= LABEL_X_MAX && BENEFITS.some(([re]) => re.test(i.text)))
@@ -180,9 +199,12 @@ async function parsePage(file: string, pageNo: number): Promise<OscarPlanCopays[
   );
   const headerCutoff = firstBenefitY > 0 ? firstBenefitY + 10 : 0;
 
+  const cols = findColumns(items, headerCutoff);
+  if (cols.length === 0) return [];
+
   const names: string[][] = cols.map(() => []);
   for (const i of items.filter((it) => it.y > headerCutoff && it.x > LABEL_X_MAX)) {
-    const c = columnOf(i.x, cols);
+    const c = columnOf(i.x + i.w / 2, cols);
     if (c >= 0) names[c]!.push(i.text);
   }
   const planNames = names.map((parts) => parts.join(" ").replace(/\s+/g, " ").trim());
@@ -212,7 +234,7 @@ async function parsePage(file: string, pageNo: number): Promise<OscarPlanCopays[
     for (const i of items) {
       if (i.x <= LABEL_X_MAX) continue;
       if (i.y > upper || i.y <= lower) continue;
-      const c = columnOf(i.x, cols);
+      const c = columnOf(i.x + i.w / 2, cols);
       if (c >= 0) cells[c]!.push(i.text);
     }
     cells.forEach((parts, c) => {
@@ -298,5 +320,7 @@ if (out) {
   writeFileSync(out, JSON.stringify(plans, null, 2), "utf8");
   console.log(`\nWritten to ${out}`);
 }
+
+
 
 

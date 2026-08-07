@@ -17,7 +17,7 @@
       "inpatient": "50% after deductible",
       "outpatient": "50% after deductible",
       "rxBrandPreferred": "50% after deductible (cost share applies, up to $125 per script) 50% after deductible (cost share applies, up to $250 per script)",
-      "rxSpecialty": "50% after deductible (cost share applies, up to $250 per script)"
+      "rxSpecialty": "50% after deductible (cost share applies, up to $250 per script) Benefits & Coverage (SBC) for more on coverage"
     },
     "suspect": false,
     "suspectReasons": [
@@ -199,6 +199,54 @@
   },
   {
     "planName": "Silver Classic Saver Plus",
+    "csrVariant": "csr87",
+    "benefits": {
+      "outOfPocketMax": "$3,150 / $6,300",
+      "hsaCompatible": "No $0",
+      "primaryCare": "$15",
+      "specialist": "$30",
+      "urgentCare": "$50",
+      "emergencyRoom": "40%",
+      "mentalHealth": "$15",
+      "labs": "$25",
+      "xray": "$25",
+      "advancedImaging": "$100",
+      "inpatient": "40%",
+      "outpatient": "$250",
+      "rxBrandPreferred": "40% after deductible 50% after deductible",
+      "rxSpecialty": "50% after deductible Benefits & Coverage (SBC) for more on coverage"
+    },
+    "suspect": false,
+    "suspectReasons": [
+      "unreadable cells dropped: deductible, rxGenericPreferred"
+    ]
+  },
+  {
+    "planName": "Silver Classic Saver Plus",
+    "csrVariant": "csr94",
+    "benefits": {
+      "outOfPocketMax": "$1,350 / $2,700",
+      "hsaCompatible": "No $0",
+      "primaryCare": "$0",
+      "specialist": "$15",
+      "urgentCare": "$25",
+      "emergencyRoom": "20%",
+      "mentalHealth": "$0",
+      "labs": "$10",
+      "xray": "$15",
+      "advancedImaging": "$100",
+      "inpatient": "20%",
+      "outpatient": "$150",
+      "rxBrandPreferred": "20% after deductible 50% after deductible",
+      "rxSpecialty": "50% after deductible"
+    },
+    "suspect": false,
+    "suspectReasons": [
+      "unreadable cells dropped: deductible, rxGenericPreferred"
+    ]
+  },
+  {
+    "planName": "Silver Classic Saver Plus",
     "csrVariant": "standard",
     "benefits": {
       "outOfPocketMax": "$9,600 / $19,200",
@@ -215,7 +263,7 @@
       "outpatient": "$500",
       "rxGenericPreferred": "$30 after deductible $30 after deductible",
       "rxBrandPreferred": "50% after deductible 50% after deductible",
-      "rxSpecialty": "50% after deductible"
+      "rxSpecialty": "50% after deductible Benefits & Coverage (SBC) for more on coverage"
     },
     "suspect": false,
     "suspectReasons": [
@@ -238,6 +286,30 @@
       "advancedImaging": "$100 after deductible",
       "inpatient": "$500 after deductible (copay applies for a maximum of 3",
       "outpatient": "days per 1 admit) $350 after deductible",
+      "rxBrandPreferred": "50% after deductible 50% after deductible",
+      "rxSpecialty": "50% after deductible"
+    },
+    "suspect": false,
+    "suspectReasons": [
+      "unreadable cells dropped: deductible, rxGenericPreferred"
+    ]
+  },
+  {
+    "planName": "Silver Elite Plus",
+    "csrVariant": "csr87",
+    "benefits": {
+      "outOfPocketMax": "$3,300 / $6,600",
+      "hsaCompatible": "No $0",
+      "primaryCare": "$10",
+      "specialist": "$30",
+      "urgentCare": "$50",
+      "emergencyRoom": "40% after deductible",
+      "mentalHealth": "$10",
+      "labs": "$0",
+      "xray": "$20 after deductible",
+      "advancedImaging": "$20 after deductible",
+      "inpatient": "$250 after deductible (copay applies for a maximum of 3",
+      "outpatient": "days per 1 admit) $250 after deductible",
       "rxBrandPreferred": "50% after deductible 50% after deductible",
       "rxSpecialty": "50% after deductible"
     },
@@ -286,7 +358,7 @@
       "inpatient": "$500 after deductible (copay applies for a maximum of 3",
       "outpatient": "days per 1 admit) $350 after deductible",
       "rxBrandPreferred": "50% after deductible 50% after deductible",
-      "rxSpecialty": "50% after deductible"
+      "rxSpecialty": "50% after deductible Benefits & Coverage (SBC) for more on coverage"
     },
     "suspect": false,
     "suspectReasons": [
@@ -319,6 +391,54 @@
   },
   {
     "planName": "Silver Simple",
+    "csrVariant": "csr87",
+    "benefits": {
+      "deductible": "$850 / $1,700 Integrated with Medical",
+      "outOfPocketMax": "$2,800 / $5,600",
+      "hsaCompatible": "No $0",
+      "primaryCare": "$30 after deductible",
+      "specialist": "15% after deductible",
+      "urgentCare": "15% after deductible",
+      "emergencyRoom": "15% after deductible",
+      "mentalHealth": "15% after deductible",
+      "labs": "15% after deductible",
+      "xray": "15% after deductible",
+      "advancedImaging": "15% after deductible",
+      "inpatient": "15% after deductible",
+      "outpatient": "15% after deductible",
+      "rxGenericPreferred": "40% after deductible (cost share applies, up to $25 per script) 40% after deductible (cost share applies, up to $25 per script)",
+      "rxBrandPreferred": "15% after deductible (cost share applies, up to $125 per script) 50% after deductible (cost share applies, up to $150 per script)",
+      "rxSpecialty": "50% after deductible (cost share applies, up to $150 per script)"
+    },
+    "suspect": false,
+    "suspectReasons": []
+  },
+  {
+    "planName": "Silver Simple",
+    "csrVariant": "csr94",
+    "benefits": {
+      "deductible": "$100 / $200 Integrated with Medical",
+      "outOfPocketMax": "$1,400 / $2,800",
+      "hsaCompatible": "No $0",
+      "primaryCare": "$5 after deductible",
+      "specialist": "10% after deductible",
+      "urgentCare": "10% after deductible",
+      "emergencyRoom": "10% after deductible",
+      "mentalHealth": "10% after deductible",
+      "labs": "10% after deductible",
+      "xray": "10% after deductible",
+      "advancedImaging": "10% after deductible",
+      "inpatient": "10% after deductible",
+      "outpatient": "10% after deductible",
+      "rxGenericPreferred": "40% after deductible (cost share applies, up to $25 per script) 40% after deductible (cost share applies, up to $25 per script)",
+      "rxBrandPreferred": "10% after deductible (cost share applies, up to $125 per script) 50% after deductible (cost share applies, up to $150 per script)",
+      "rxSpecialty": "50% after deductible (cost share applies, up to $150 per script)"
+    },
+    "suspect": false,
+    "suspectReasons": []
+  },
+  {
+    "planName": "Silver Simple",
     "csrVariant": "standard",
     "benefits": {
       "deductible": "$2,800 / $5,600 Integrated with Medical",
@@ -336,7 +456,7 @@
       "outpatient": "40% after deductible",
       "rxGenericPreferred": "40% after deductible (cost share applies, up to $25 per script) 40% after deductible (cost share applies, up to $25 per script)",
       "rxBrandPreferred": "40% after deductible (cost share applies, up to $125 per script) 50% after deductible (cost share applies, up to $150 per script)",
-      "rxSpecialty": "50% after deductible (cost share applies, up to $150 per script) Benefits & Coverage (SBC) for more on coverage"
+      "rxSpecialty": "50% after deductible (cost share applies, up to $150 per script)"
     },
     "suspect": false,
     "suspectReasons": []
@@ -359,6 +479,31 @@
       "inpatient": "50% after deductible",
       "outpatient": "50% after deductible",
       "rxBrandPreferred": "50% after deductible 50% after deductible",
+      "rxSpecialty": "50% after deductible Benefits & Coverage (SBC) for more on coverage"
+    },
+    "suspect": false,
+    "suspectReasons": [
+      "unreadable cells dropped: rxGenericPreferred"
+    ]
+  },
+  {
+    "planName": "Silver Simple PCP Saver",
+    "csrVariant": "csr87",
+    "benefits": {
+      "deductible": "$850 / $1,700 Integrated with Medical",
+      "outOfPocketMax": "$2,900 / $5,800",
+      "hsaCompatible": "No $0",
+      "primaryCare": "$10",
+      "specialist": "$25",
+      "urgentCare": "$50",
+      "emergencyRoom": "20% after deductible",
+      "mentalHealth": "$10",
+      "labs": "$25",
+      "xray": "20% after deductible",
+      "advancedImaging": "20% after deductible",
+      "inpatient": "20% after deductible",
+      "outpatient": "20% after deductible",
+      "rxBrandPreferred": "20% after deductible 50% after deductible",
       "rxSpecialty": "50% after deductible"
     },
     "suspect": false,
@@ -409,7 +554,7 @@
       "inpatient": "50% after deductible",
       "outpatient": "50% after deductible",
       "rxBrandPreferred": "50% after deductible 50% after deductible",
-      "rxSpecialty": "50% after deductible Benefits & Coverage (SBC) for more on coverage"
+      "rxSpecialty": "50% after deductible"
     },
     "suspect": false,
     "suspectReasons": [
