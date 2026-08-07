@@ -128,6 +128,17 @@ function renderInput(q: Question, suffix = ""): string {
         <label class="choice"><input type="radio" name="${name}" value="no" /><span class="dot"></span><span class="ctext">No</span></label>
       </div>`;
     case "choice":
+      // Compact questions get pills on one line instead of a stack of cards.
+      // Nine short scales in a row is a list to run down, not nine decisions,
+      // and stacking them turns one screen into forty five rows of radio.
+      if (q.compact) {
+        return `<div class="pillrow" role="radiogroup" aria-labelledby="${name}-label">${(q.options ?? [])
+          .map(
+            (o) =>
+              `<label class="pill"><input type="radio" name="${name}" value="${esc(o.value)}" aria-label="${esc(o.label)}" /><span class="ptext" aria-hidden="true">${esc(o.short ?? o.label)}</span></label>`,
+          )
+          .join("")}</div>`;
+      }
       return `<div class="choices" role="radiogroup" aria-labelledby="${name}-label">${(q.options ?? [])
         .map(
           (o) =>
@@ -174,7 +185,7 @@ function renderQuestion(q: Question, idx = ""): string {
     : "";
 
   const nm = esc(q.id + suffix);
-  return `<div class="q" data-q="${nm}"${cond}>
+  return `<div class="q${q.compact ? " compact" : ""}" data-q="${nm}"${cond}>
     <label class="qlabel" id="${nm}-label" for="${nm}">${esc(q.label)}</label>
     ${q.help && q.kind !== "estimate" ? `<p class="qhelp">${esc(q.help)}</p>` : ""}
     ${renderInput(q, suffix)}
@@ -542,6 +553,46 @@ const html = `<title>Ask Mike, client intake</title>
   .choice.is-focus {
     border-color: var(--am-blue-600);
     box-shadow: 0 0 0 4px var(--am-blue-100);
+  }
+
+  /* ------------------------------------------------- compact scale rows */
+
+  /* Label on the left, the scale on the right, one line each. A run of these
+     reads as a short list rather than as nine separate questions. */
+  .q.compact {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center; gap: 8px 20px;
+    padding: 14px 0; border-top: 1px solid var(--am-line-soft);
+  }
+  .qs > .q.compact + .q.compact { margin-top: -32px; }
+  .q.compact .qlabel { font-size: 16px; font-weight: 400; grid-column: 1; }
+  .q.compact .qhelp { grid-column: 1; margin: 0; font-size: 13px; }
+  .q.compact .pillrow { grid-column: 2; grid-row: 1 / span 2; }
+  .q.compact .why, .q.compact .meta { grid-column: 1 / -1; }
+
+  .pillrow { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .pill {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 46px; min-height: 40px; padding: 8px 12px;
+    border: 1.5px solid var(--am-line); border-radius: var(--r-control);
+    background: var(--am-white); cursor: pointer;
+    transition: border-color 150ms ease-out, background-color 150ms ease-out;
+  }
+  .pill:hover { border-color: #C6DDEE; background: var(--am-paper); }
+  .pill:active { transform: scale(.97); }
+  .pill input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .pill .ptext { font-size: 15px; line-height: 1; color: var(--am-ink-soft); white-space: nowrap; }
+  .pill.is-selected {
+    border-color: var(--am-blue-600); background: var(--am-blue-600);
+    box-shadow: 0 1px 3px rgba(15,124,192,.2);
+  }
+  .pill.is-selected .ptext { color: var(--am-white); font-weight: 500; }
+  .pill.is-focus { border-color: var(--am-blue-600); box-shadow: 0 0 0 4px var(--am-blue-100); }
+
+  /* Below this the label and a six option scale stop sharing a line. */
+  @media (max-width: 640px) {
+    .q.compact { grid-template-columns: 1fr; gap: 10px; }
+    .q.compact .pillrow { grid-column: 1; grid-row: auto; justify-content: flex-start; }
   }
 
   /* "I am not sure" must look like a legitimate answer, because it is one. */
@@ -1063,18 +1114,18 @@ const html = `<title>Ask Mike, client intake</title>
 
   // Selection state, applied explicitly so it never depends on :has() support.
   function paintChoices() {
-    document.querySelectorAll(".choice").forEach((row) => {
+    document.querySelectorAll(".choice, .pill").forEach((row) => {
       const input = row.querySelector("input");
       row.classList.toggle("is-selected", !!input && input.checked);
     });
   }
 
   document.addEventListener("focusin", (e) => {
-    const row = e.target.closest && e.target.closest(".choice");
+    const row = e.target.closest && e.target.closest(".choice, .pill");
     if (row) row.classList.add("is-focus");
   });
   document.addEventListener("focusout", (e) => {
-    const row = e.target.closest && e.target.closest(".choice");
+    const row = e.target.closest && e.target.closest(".choice, .pill");
     if (row) row.classList.remove("is-focus");
   });
 

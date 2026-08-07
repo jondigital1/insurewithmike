@@ -302,6 +302,46 @@
     box-shadow: 0 0 0 4px var(--am-blue-100);
   }
 
+  /* ------------------------------------------------- compact scale rows */
+
+  /* Label on the left, the scale on the right, one line each. A run of these
+     reads as a short list rather than as nine separate questions. */
+  .q.compact {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center; gap: 8px 20px;
+    padding: 14px 0; border-top: 1px solid var(--am-line-soft);
+  }
+  .qs > .q.compact + .q.compact { margin-top: -32px; }
+  .q.compact .qlabel { font-size: 16px; font-weight: 400; grid-column: 1; }
+  .q.compact .qhelp { grid-column: 1; margin: 0; font-size: 13px; }
+  .q.compact .pillrow { grid-column: 2; grid-row: 1 / span 2; }
+  .q.compact .why, .q.compact .meta { grid-column: 1 / -1; }
+
+  .pillrow { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .pill {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 46px; min-height: 40px; padding: 8px 12px;
+    border: 1.5px solid var(--am-line); border-radius: var(--r-control);
+    background: var(--am-white); cursor: pointer;
+    transition: border-color 150ms ease-out, background-color 150ms ease-out;
+  }
+  .pill:hover { border-color: #C6DDEE; background: var(--am-paper); }
+  .pill:active { transform: scale(.97); }
+  .pill input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .pill .ptext { font-size: 15px; line-height: 1; color: var(--am-ink-soft); white-space: nowrap; }
+  .pill.is-selected {
+    border-color: var(--am-blue-600); background: var(--am-blue-600);
+    box-shadow: 0 1px 3px rgba(15,124,192,.2);
+  }
+  .pill.is-selected .ptext { color: var(--am-white); font-weight: 500; }
+  .pill.is-focus { border-color: var(--am-blue-600); box-shadow: 0 0 0 4px var(--am-blue-100); }
+
+  /* Below this the label and a six option scale stop sharing a line. */
+  @media (max-width: 640px) {
+    .q.compact { grid-template-columns: 1fr; gap: 10px; }
+    .q.compact .pillrow { grid-column: 1; grid-row: auto; justify-content: flex-start; }
+  }
+
   /* "I am not sure" must look like a legitimate answer, because it is one. */
   .unsure {
     display: inline-flex; align-items: center; gap: 9px;
@@ -496,11 +536,11 @@
 <div class="topbar">
   <a class="lockup" href="/" id="home" aria-label="Ask Mike, back to the start"><svg class="mark" width="32" height="32" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M6 17a11 11 0 0 1 11-11h14a11 11 0 0 1 11 11v7a11 11 0 0 1-11 11h-8l-9 6.5V35A11 11 0 0 1 6 24z" fill="#0F7CC0"/><circle cx="24" cy="20.5" r="5.5" fill="#F2A65A"/></svg><span class="word">Ask Mike</span></a>
   <div class="progress">
-    <div class="track" id="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" aria-label="Progress through the form">
+    <div class="track" id="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0" aria-label="Progress through the form">
       <div class="fill" id="progress-fill"></div>
-      <div class="pips"><span class="pip" data-pip="0" title="Let's get started"></span><span class="pip" data-pip="1" title="Who needs covering"></span><span class="pip" data-pip="2" title="Where you live"></span><span class="pip" data-pip="3" title="Income"></span><span class="pip" data-pip="4" title="What you have now"></span><span class="pip" data-pip="5" title="Your doctors and hospitals"></span><span class="pip" data-pip="6" title="Prescriptions"></span><span class="pip" data-pip="7" title="Last year"></span><span class="pip" data-pip="8" title="The year ahead"></span><span class="pip" data-pip="9" title="What matters to you"></span></div>
+      <div class="pips"><span class="pip" data-pip="0" title="Let's get started"></span><span class="pip" data-pip="1" title="Who needs covering"></span><span class="pip" data-pip="2" title="Income"></span><span class="pip" data-pip="3" title="What you have now"></span><span class="pip" data-pip="4" title="Your doctors and prescriptions"></span><span class="pip" data-pip="5" title="Last year"></span><span class="pip" data-pip="6" title="The year ahead"></span><span class="pip" data-pip="7" title="What matters to you"></span></div>
     </div>
-    <span class="count" id="progress-count">Step 1 of 10</span>
+    <span class="count" id="progress-count">Step 1 of 8</span>
   </div>
   <div class="viewtoggle" role="group" aria-label="View">
     <button type="button" class="btn secondary" id="v-client" aria-pressed="true">Client view</button>
@@ -514,7 +554,7 @@
     <p class="hlede">Your agent uses this to work out which plans are actually worth your time, so the meeting can be about the decision rather than the paperwork.</p>
     <p>Rough answers are fine. Where you are not sure, say so rather than guessing, and your agent will pick it up.</p>
     <ul class="facts">
-      <li><span class="fnum">10</span><span class="flabel">short steps,<br />one screen each</span></li>
+      <li><span class="fnum">8</span><span class="flabel">short steps,<br />one screen each</span></li>
       <li><span class="fnum">10</span><span class="flabel">minutes,<br />give or take</span></li>
       <li><span class="fnum">0</span><span class="flabel">of it sent until<br />you press send</span></li>
     </ul>
@@ -524,7 +564,7 @@
   <section class="step" data-step="1">
     <div class="card">
       <header class="stephead">
-        <p class="eyebrow">Step 1 of 10</p>
+        <p class="eyebrow">Step 1 of 8</p>
         <h2>Let's get started</h2>
         <p class="blurb">Your agent gave you a code when they sent you here. It links your answers back to your file.</p>
       </header>
@@ -575,7 +615,7 @@
   </section><section class="step" data-step="2">
     <div class="card">
       <header class="stephead">
-        <p class="eyebrow">Step 2 of 10</p>
+        <p class="eyebrow">Step 2 of 8</p>
         <h2>Who needs covering</h2>
         <p class="blurb">Include everyone on your tax return, even people who already have insurance. The number of people in your household affects the help you can get, so leaving someone out can cost you money.</p>
       </header>
@@ -650,6 +690,13 @@
     
     <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Easy to miss, and the answer is free coverage. Flags for the agent rather than feeding the maths.</p></details>
     <div class="meta"><div class="tags"><span class="tag route-flag">flag</span></div></div>
+  </div><div class="q" data-q="county">
+    <label class="qlabel" id="county-label" for="county">Which county do you live in?</label>
+    <p class="qhelp">New Jersey charges the same premium statewide, so this only affects which insurers can sell to you.</p>
+    <div class="choices" role="radiogroup" aria-labelledby="county-label"><label class="choice"><input type="radio" name="county" value="atlantic" /><span class="dot"></span><span class="ctext">Atlantic County</span></label><label class="choice"><input type="radio" name="county" value="bergen" /><span class="dot"></span><span class="ctext">Bergen County</span></label><label class="choice"><input type="radio" name="county" value="burlington" /><span class="dot"></span><span class="ctext">Burlington County</span></label><label class="choice"><input type="radio" name="county" value="camden" /><span class="dot"></span><span class="ctext">Camden County</span></label><label class="choice"><input type="radio" name="county" value="cape-may" /><span class="dot"></span><span class="ctext">Cape May County</span></label><label class="choice"><input type="radio" name="county" value="cumberland" /><span class="dot"></span><span class="ctext">Cumberland County</span></label><label class="choice"><input type="radio" name="county" value="essex" /><span class="dot"></span><span class="ctext">Essex County</span></label><label class="choice"><input type="radio" name="county" value="gloucester" /><span class="dot"></span><span class="ctext">Gloucester County</span></label><label class="choice"><input type="radio" name="county" value="hudson" /><span class="dot"></span><span class="ctext">Hudson County</span></label><label class="choice"><input type="radio" name="county" value="hunterdon" /><span class="dot"></span><span class="ctext">Hunterdon County</span></label><label class="choice"><input type="radio" name="county" value="mercer" /><span class="dot"></span><span class="ctext">Mercer County</span></label><label class="choice"><input type="radio" name="county" value="middlesex" /><span class="dot"></span><span class="ctext">Middlesex County</span></label><label class="choice"><input type="radio" name="county" value="monmouth" /><span class="dot"></span><span class="ctext">Monmouth County</span></label><label class="choice"><input type="radio" name="county" value="morris" /><span class="dot"></span><span class="ctext">Morris County</span></label><label class="choice"><input type="radio" name="county" value="ocean" /><span class="dot"></span><span class="ctext">Ocean County</span></label><label class="choice"><input type="radio" name="county" value="passaic" /><span class="dot"></span><span class="ctext">Passaic County</span></label><label class="choice"><input type="radio" name="county" value="salem" /><span class="dot"></span><span class="ctext">Salem County</span></label><label class="choice"><input type="radio" name="county" value="somerset" /><span class="dot"></span><span class="ctext">Somerset County</span></label><label class="choice"><input type="radio" name="county" value="sussex" /><span class="dot"></span><span class="ctext">Sussex County</span></label><label class="choice"><input type="radio" name="county" value="union" /><span class="dot"></span><span class="ctext">Union County</span></label><label class="choice"><input type="radio" name="county" value="warren" /><span class="dot"></span><span class="ctext">Warren County</span></label></div>
+    
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Not a pricing input. New Jersey uses a single rating area. But Ambetter sells in only 17 of 21 counties, so it gates availability. It had a screen of its own, which is a whole click for one dropdown, so it sits with the rest of the household facts.</p></details>
+    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div></div>
       <footer class="stepfoot">
         <button class="btn quiet later" type="button">Save and finish later</button>
@@ -662,30 +709,7 @@
   </section><section class="step" data-step="3">
     <div class="card">
       <header class="stephead">
-        <p class="eyebrow">Step 3 of 10</p>
-        <h2>Where you live</h2>
-        
-      </header>
-      <div class="qs"><div class="q" data-q="county">
-    <label class="qlabel" id="county-label" for="county">Which county do you live in?</label>
-    <p class="qhelp">New Jersey charges the same premium statewide, so this only affects which insurers can sell to you.</p>
-    <div class="choices" role="radiogroup" aria-labelledby="county-label"><label class="choice"><input type="radio" name="county" value="atlantic" /><span class="dot"></span><span class="ctext">Atlantic County</span></label><label class="choice"><input type="radio" name="county" value="bergen" /><span class="dot"></span><span class="ctext">Bergen County</span></label><label class="choice"><input type="radio" name="county" value="burlington" /><span class="dot"></span><span class="ctext">Burlington County</span></label><label class="choice"><input type="radio" name="county" value="camden" /><span class="dot"></span><span class="ctext">Camden County</span></label><label class="choice"><input type="radio" name="county" value="cape-may" /><span class="dot"></span><span class="ctext">Cape May County</span></label><label class="choice"><input type="radio" name="county" value="cumberland" /><span class="dot"></span><span class="ctext">Cumberland County</span></label><label class="choice"><input type="radio" name="county" value="essex" /><span class="dot"></span><span class="ctext">Essex County</span></label><label class="choice"><input type="radio" name="county" value="gloucester" /><span class="dot"></span><span class="ctext">Gloucester County</span></label><label class="choice"><input type="radio" name="county" value="hudson" /><span class="dot"></span><span class="ctext">Hudson County</span></label><label class="choice"><input type="radio" name="county" value="hunterdon" /><span class="dot"></span><span class="ctext">Hunterdon County</span></label><label class="choice"><input type="radio" name="county" value="mercer" /><span class="dot"></span><span class="ctext">Mercer County</span></label><label class="choice"><input type="radio" name="county" value="middlesex" /><span class="dot"></span><span class="ctext">Middlesex County</span></label><label class="choice"><input type="radio" name="county" value="monmouth" /><span class="dot"></span><span class="ctext">Monmouth County</span></label><label class="choice"><input type="radio" name="county" value="morris" /><span class="dot"></span><span class="ctext">Morris County</span></label><label class="choice"><input type="radio" name="county" value="ocean" /><span class="dot"></span><span class="ctext">Ocean County</span></label><label class="choice"><input type="radio" name="county" value="passaic" /><span class="dot"></span><span class="ctext">Passaic County</span></label><label class="choice"><input type="radio" name="county" value="salem" /><span class="dot"></span><span class="ctext">Salem County</span></label><label class="choice"><input type="radio" name="county" value="somerset" /><span class="dot"></span><span class="ctext">Somerset County</span></label><label class="choice"><input type="radio" name="county" value="sussex" /><span class="dot"></span><span class="ctext">Sussex County</span></label><label class="choice"><input type="radio" name="county" value="union" /><span class="dot"></span><span class="ctext">Union County</span></label><label class="choice"><input type="radio" name="county" value="warren" /><span class="dot"></span><span class="ctext">Warren County</span></label></div>
-    
-    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Not a pricing input. New Jersey uses a single rating area. But Ambetter sells in only 17 of 21 counties, so it gates availability.</p></details>
-    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
-  </div></div>
-      <footer class="stepfoot">
-        <button class="btn quiet later" type="button">Save and finish later</button>
-        <div class="nav">
-          <button class="btn secondary back" type="button">Back</button>
-          <button class="btn primary next" type="button">Continue</button>
-        </div>
-      </footer>
-    </div>
-  </section><section class="step" data-step="4">
-    <div class="card">
-      <header class="stephead">
-        <p class="eyebrow">Step 4 of 10</p>
+        <p class="eyebrow">Step 3 of 8</p>
         <h2>Income</h2>
         <p class="blurb">This decides how much help you get paying for coverage, and it is the single biggest factor in what you will actually pay. Answer the boxes however is easiest and we will add it up for you at the end. We do not ask where you work.</p>
       </header>
@@ -785,10 +809,10 @@
         </div>
       </footer>
     </div>
-  </section><section class="step" data-step="5">
+  </section><section class="step" data-step="4">
     <div class="card">
       <header class="stephead">
-        <p class="eyebrow">Step 5 of 10</p>
+        <p class="eyebrow">Step 4 of 8</p>
         <h2>What you have now</h2>
         
       </header>
@@ -839,12 +863,12 @@
         </div>
       </footer>
     </div>
-  </section><section class="step" data-step="6">
+  </section><section class="step" data-step="5">
     <div class="card">
       <header class="stephead">
-        <p class="eyebrow">Step 6 of 10</p>
-        <h2>Your doctors and hospitals</h2>
-        <p class="blurb">This is the part that usually decides which plan is right. Every plan sold in New Jersey has its own network, and a plan that looks cheaper is a bad deal if it drops your doctor.</p>
+        <p class="eyebrow">Step 5 of 8</p>
+        <h2>Your doctors and prescriptions</h2>
+        <p class="blurb">This is the part that usually decides which plan is right. Every plan sold in New Jersey has its own network and its own drug list, and a plan that looks cheaper is a bad deal if it drops your doctor or your medication.</p>
       </header>
       <div class="qs"><div class="q" data-q="health_system">
     <label class="qlabel" id="health_system-label" for="health_system">Which hospitals or health systems does your family use?</label>
@@ -881,23 +905,7 @@
     <label class="unsure"><input type="checkbox" name="network_price_unsure" /><span>I am not sure</span></label>
     
     <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag cond">only if network priority is flexible or prefer</span><span class="tag route-intake">intake</span></div></div>
-  </div></div>
-      <footer class="stepfoot">
-        <button class="btn quiet later" type="button">Save and finish later</button>
-        <div class="nav">
-          <button class="btn secondary back" type="button">Back</button>
-          <button class="btn primary next" type="button">Continue</button>
-        </div>
-      </footer>
-    </div>
-  </section><section class="step" data-step="7">
-    <div class="card">
-      <header class="stephead">
-        <p class="eyebrow">Step 7 of 10</p>
-        <h2>Prescriptions</h2>
-        <p class="blurb">Plans cover different drugs at different prices, so this can change the answer completely.</p>
-      </header>
-      <div class="qs"><div class="q" data-q="takes_medication">
+  </div><div class="q" data-q="takes_medication">
     <label class="qlabel" id="takes_medication-label" for="takes_medication">Does anyone take prescription medication regularly?</label>
     <p class="qhelp">Regularly means most months, not a one off course of antibiotics.</p>
     <div class="choices" role="radiogroup" aria-labelledby="takes_medication-label">
@@ -933,73 +941,73 @@
         </div>
       </footer>
     </div>
-  </section><section class="step" data-step="8">
+  </section><section class="step" data-step="6">
     <div class="card">
       <header class="stephead">
-        <p class="eyebrow">Step 8 of 10</p>
+        <p class="eyebrow">Step 6 of 8</p>
         <h2>Last year</h2>
         <p class="blurb">Rough numbers are genuinely fine. We are working out the shape of your year, not auditing you. Answer for everyone on the plan combined.</p>
       </header>
-      <div class="qs"><div class="q" data-q="visits_primary">
-    <label class="qlabel" id="visits_primary-label" for="visits_primary">Visits to a regular doctor or family doctor</label>
+      <div class="qs"><div class="q compact" data-q="visits_primary">
+    <label class="qlabel" id="visits_primary-label" for="visits_primary">Regular or family doctor</label>
     
-    <div class="choices" role="radiogroup" aria-labelledby="visits_primary-label"><label class="choice"><input type="radio" name="visits_primary" value="0" /><span class="dot"></span><span class="ctext">None</span></label><label class="choice"><input type="radio" name="visits_primary" value="1-2" /><span class="dot"></span><span class="ctext">1 or 2</span></label><label class="choice"><input type="radio" name="visits_primary" value="3-5" /><span class="dot"></span><span class="ctext">3 to 5</span></label><label class="choice"><input type="radio" name="visits_primary" value="6-10" /><span class="dot"></span><span class="ctext">6 to 10</span></label><label class="choice"><input type="radio" name="visits_primary" value="11-20" /><span class="dot"></span><span class="ctext">11 to 20</span></label><label class="choice"><input type="radio" name="visits_primary" value="21+" /><span class="dot"></span><span class="ctext">More than 20</span></label></div>
+    <div class="pillrow" role="radiogroup" aria-labelledby="visits_primary-label"><label class="pill"><input type="radio" name="visits_primary" value="0" aria-label="None" /><span class="ptext" aria-hidden="true">0</span></label><label class="pill"><input type="radio" name="visits_primary" value="1-2" aria-label="1 or 2" /><span class="ptext" aria-hidden="true">1-2</span></label><label class="pill"><input type="radio" name="visits_primary" value="3-5" aria-label="3 to 5" /><span class="ptext" aria-hidden="true">3-5</span></label><label class="pill"><input type="radio" name="visits_primary" value="6-10" aria-label="6 to 10" /><span class="ptext" aria-hidden="true">6-10</span></label><label class="pill"><input type="radio" name="visits_primary" value="11-20" aria-label="11 to 20" /><span class="ptext" aria-hidden="true">11-20</span></label><label class="pill"><input type="radio" name="visits_primary" value="21+" aria-label="More than 20" /><span class="ptext" aria-hidden="true">20+</span></label></div>
     
     
     <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
-  </div><div class="q" data-q="visits_specialist">
-    <label class="qlabel" id="visits_specialist-label" for="visits_specialist">Visits to a specialist</label>
+  </div><div class="q compact" data-q="visits_specialist">
+    <label class="qlabel" id="visits_specialist-label" for="visits_specialist">Specialist</label>
     <p class="qhelp">Skin, heart, joints, allergies, anything like that.</p>
-    <div class="choices" role="radiogroup" aria-labelledby="visits_specialist-label"><label class="choice"><input type="radio" name="visits_specialist" value="0" /><span class="dot"></span><span class="ctext">None</span></label><label class="choice"><input type="radio" name="visits_specialist" value="1-2" /><span class="dot"></span><span class="ctext">1 or 2</span></label><label class="choice"><input type="radio" name="visits_specialist" value="3-5" /><span class="dot"></span><span class="ctext">3 to 5</span></label><label class="choice"><input type="radio" name="visits_specialist" value="6-10" /><span class="dot"></span><span class="ctext">6 to 10</span></label><label class="choice"><input type="radio" name="visits_specialist" value="11-20" /><span class="dot"></span><span class="ctext">11 to 20</span></label><label class="choice"><input type="radio" name="visits_specialist" value="21+" /><span class="dot"></span><span class="ctext">More than 20</span></label></div>
+    <div class="pillrow" role="radiogroup" aria-labelledby="visits_specialist-label"><label class="pill"><input type="radio" name="visits_specialist" value="0" aria-label="None" /><span class="ptext" aria-hidden="true">0</span></label><label class="pill"><input type="radio" name="visits_specialist" value="1-2" aria-label="1 or 2" /><span class="ptext" aria-hidden="true">1-2</span></label><label class="pill"><input type="radio" name="visits_specialist" value="3-5" aria-label="3 to 5" /><span class="ptext" aria-hidden="true">3-5</span></label><label class="pill"><input type="radio" name="visits_specialist" value="6-10" aria-label="6 to 10" /><span class="ptext" aria-hidden="true">6-10</span></label><label class="pill"><input type="radio" name="visits_specialist" value="11-20" aria-label="11 to 20" /><span class="ptext" aria-hidden="true">11-20</span></label><label class="pill"><input type="radio" name="visits_specialist" value="21+" aria-label="More than 20" /><span class="ptext" aria-hidden="true">20+</span></label></div>
     
     
     <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
-  </div><div class="q" data-q="visits_urgent">
-    <label class="qlabel" id="visits_urgent-label" for="visits_urgent">Urgent care or walk in clinic visits</label>
+  </div><div class="q compact" data-q="visits_urgent">
+    <label class="qlabel" id="visits_urgent-label" for="visits_urgent">Urgent care or walk in clinic</label>
     
-    <div class="choices" role="radiogroup" aria-labelledby="visits_urgent-label"><label class="choice"><input type="radio" name="visits_urgent" value="0" /><span class="dot"></span><span class="ctext">None</span></label><label class="choice"><input type="radio" name="visits_urgent" value="1" /><span class="dot"></span><span class="ctext">Once</span></label><label class="choice"><input type="radio" name="visits_urgent" value="2-3" /><span class="dot"></span><span class="ctext">2 or 3</span></label><label class="choice"><input type="radio" name="visits_urgent" value="4+" /><span class="dot"></span><span class="ctext">4 or more</span></label></div>
-    
-    
-    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
-  </div><div class="q" data-q="visits_er">
-    <label class="qlabel" id="visits_er-label" for="visits_er">Emergency room visits</label>
-    
-    <div class="choices" role="radiogroup" aria-labelledby="visits_er-label"><label class="choice"><input type="radio" name="visits_er" value="0" /><span class="dot"></span><span class="ctext">None</span></label><label class="choice"><input type="radio" name="visits_er" value="1" /><span class="dot"></span><span class="ctext">Once</span></label><label class="choice"><input type="radio" name="visits_er" value="2-3" /><span class="dot"></span><span class="ctext">2 or 3</span></label><label class="choice"><input type="radio" name="visits_er" value="4+" /><span class="dot"></span><span class="ctext">4 or more</span></label></div>
+    <div class="pillrow" role="radiogroup" aria-labelledby="visits_urgent-label"><label class="pill"><input type="radio" name="visits_urgent" value="0" aria-label="None" /><span class="ptext" aria-hidden="true">0</span></label><label class="pill"><input type="radio" name="visits_urgent" value="1" aria-label="Once" /><span class="ptext" aria-hidden="true">1</span></label><label class="pill"><input type="radio" name="visits_urgent" value="2-3" aria-label="2 or 3" /><span class="ptext" aria-hidden="true">2-3</span></label><label class="pill"><input type="radio" name="visits_urgent" value="4+" aria-label="4 or more" /><span class="ptext" aria-hidden="true">4+</span></label></div>
     
     
     <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
-  </div><div class="q" data-q="hospital_stays">
+  </div><div class="q compact" data-q="visits_er">
+    <label class="qlabel" id="visits_er-label" for="visits_er">Emergency room</label>
+    
+    <div class="pillrow" role="radiogroup" aria-labelledby="visits_er-label"><label class="pill"><input type="radio" name="visits_er" value="0" aria-label="None" /><span class="ptext" aria-hidden="true">0</span></label><label class="pill"><input type="radio" name="visits_er" value="1" aria-label="Once" /><span class="ptext" aria-hidden="true">1</span></label><label class="pill"><input type="radio" name="visits_er" value="2-3" aria-label="2 or 3" /><span class="ptext" aria-hidden="true">2-3</span></label><label class="pill"><input type="radio" name="visits_er" value="4+" aria-label="4 or more" /><span class="ptext" aria-hidden="true">4+</span></label></div>
+    
+    
+    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
+  </div><div class="q compact" data-q="hospital_stays">
     <label class="qlabel" id="hospital_stays-label" for="hospital_stays">Nights spent in hospital</label>
     
-    <div class="choices" role="radiogroup" aria-labelledby="hospital_stays-label"><label class="choice"><input type="radio" name="hospital_stays" value="0" /><span class="dot"></span><span class="ctext">None</span></label><label class="choice"><input type="radio" name="hospital_stays" value="1" /><span class="dot"></span><span class="ctext">Once</span></label><label class="choice"><input type="radio" name="hospital_stays" value="2-3" /><span class="dot"></span><span class="ctext">2 or 3</span></label><label class="choice"><input type="radio" name="hospital_stays" value="4+" /><span class="dot"></span><span class="ctext">4 or more</span></label></div>
+    <div class="pillrow" role="radiogroup" aria-labelledby="hospital_stays-label"><label class="pill"><input type="radio" name="hospital_stays" value="0" aria-label="None" /><span class="ptext" aria-hidden="true">0</span></label><label class="pill"><input type="radio" name="hospital_stays" value="1" aria-label="Once" /><span class="ptext" aria-hidden="true">1</span></label><label class="pill"><input type="radio" name="hospital_stays" value="2-3" aria-label="2 or 3" /><span class="ptext" aria-hidden="true">2-3</span></label><label class="pill"><input type="radio" name="hospital_stays" value="4+" aria-label="4 or more" /><span class="ptext" aria-hidden="true">4+</span></label></div>
     
     
     <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
-  </div><div class="q" data-q="surgeries">
-    <label class="qlabel" id="surgeries-label" for="surgeries">Operations or procedures that did not need an overnight stay</label>
+  </div><div class="q compact" data-q="surgeries">
+    <label class="qlabel" id="surgeries-label" for="surgeries">Operations, no overnight stay</label>
     
-    <div class="choices" role="radiogroup" aria-labelledby="surgeries-label"><label class="choice"><input type="radio" name="surgeries" value="0" /><span class="dot"></span><span class="ctext">None</span></label><label class="choice"><input type="radio" name="surgeries" value="1" /><span class="dot"></span><span class="ctext">Once</span></label><label class="choice"><input type="radio" name="surgeries" value="2-3" /><span class="dot"></span><span class="ctext">2 or 3</span></label><label class="choice"><input type="radio" name="surgeries" value="4+" /><span class="dot"></span><span class="ctext">4 or more</span></label></div>
+    <div class="pillrow" role="radiogroup" aria-labelledby="surgeries-label"><label class="pill"><input type="radio" name="surgeries" value="0" aria-label="None" /><span class="ptext" aria-hidden="true">0</span></label><label class="pill"><input type="radio" name="surgeries" value="1" aria-label="Once" /><span class="ptext" aria-hidden="true">1</span></label><label class="pill"><input type="radio" name="surgeries" value="2-3" aria-label="2 or 3" /><span class="ptext" aria-hidden="true">2-3</span></label><label class="pill"><input type="radio" name="surgeries" value="4+" aria-label="4 or more" /><span class="ptext" aria-hidden="true">4+</span></label></div>
     
     
     <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
-  </div><div class="q" data-q="imaging">
+  </div><div class="q compact" data-q="imaging">
     <label class="qlabel" id="imaging-label" for="imaging">Scans such as MRI, CT or PET</label>
     
-    <div class="choices" role="radiogroup" aria-labelledby="imaging-label"><label class="choice"><input type="radio" name="imaging" value="0" /><span class="dot"></span><span class="ctext">None</span></label><label class="choice"><input type="radio" name="imaging" value="1" /><span class="dot"></span><span class="ctext">Once</span></label><label class="choice"><input type="radio" name="imaging" value="2-3" /><span class="dot"></span><span class="ctext">2 or 3</span></label><label class="choice"><input type="radio" name="imaging" value="4+" /><span class="dot"></span><span class="ctext">4 or more</span></label></div>
+    <div class="pillrow" role="radiogroup" aria-labelledby="imaging-label"><label class="pill"><input type="radio" name="imaging" value="0" aria-label="None" /><span class="ptext" aria-hidden="true">0</span></label><label class="pill"><input type="radio" name="imaging" value="1" aria-label="Once" /><span class="ptext" aria-hidden="true">1</span></label><label class="pill"><input type="radio" name="imaging" value="2-3" aria-label="2 or 3" /><span class="ptext" aria-hidden="true">2-3</span></label><label class="pill"><input type="radio" name="imaging" value="4+" aria-label="4 or more" /><span class="ptext" aria-hidden="true">4+</span></label></div>
     
     
     <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
-  </div><div class="q" data-q="therapy">
-    <label class="qlabel" id="therapy-label" for="therapy">Therapy or counselling sessions</label>
+  </div><div class="q compact" data-q="therapy">
+    <label class="qlabel" id="therapy-label" for="therapy">Therapy or counselling</label>
     
-    <div class="choices" role="radiogroup" aria-labelledby="therapy-label"><label class="choice"><input type="radio" name="therapy" value="0" /><span class="dot"></span><span class="ctext">None</span></label><label class="choice"><input type="radio" name="therapy" value="1-2" /><span class="dot"></span><span class="ctext">1 or 2</span></label><label class="choice"><input type="radio" name="therapy" value="3-5" /><span class="dot"></span><span class="ctext">3 to 5</span></label><label class="choice"><input type="radio" name="therapy" value="6-10" /><span class="dot"></span><span class="ctext">6 to 10</span></label><label class="choice"><input type="radio" name="therapy" value="11-20" /><span class="dot"></span><span class="ctext">11 to 20</span></label><label class="choice"><input type="radio" name="therapy" value="21+" /><span class="dot"></span><span class="ctext">More than 20</span></label></div>
+    <div class="pillrow" role="radiogroup" aria-labelledby="therapy-label"><label class="pill"><input type="radio" name="therapy" value="0" aria-label="None" /><span class="ptext" aria-hidden="true">0</span></label><label class="pill"><input type="radio" name="therapy" value="1-2" aria-label="1 or 2" /><span class="ptext" aria-hidden="true">1-2</span></label><label class="pill"><input type="radio" name="therapy" value="3-5" aria-label="3 to 5" /><span class="ptext" aria-hidden="true">3-5</span></label><label class="pill"><input type="radio" name="therapy" value="6-10" aria-label="6 to 10" /><span class="ptext" aria-hidden="true">6-10</span></label><label class="pill"><input type="radio" name="therapy" value="11-20" aria-label="11 to 20" /><span class="ptext" aria-hidden="true">11-20</span></label><label class="pill"><input type="radio" name="therapy" value="21+" aria-label="More than 20" /><span class="ptext" aria-hidden="true">20+</span></label></div>
     
     
     <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
-  </div><div class="q" data-q="physical_therapy">
-    <label class="qlabel" id="physical_therapy-label" for="physical_therapy">Physical therapy or chiropractic visits</label>
+  </div><div class="q compact" data-q="physical_therapy">
+    <label class="qlabel" id="physical_therapy-label" for="physical_therapy">Physical therapy or chiropractic</label>
     
-    <div class="choices" role="radiogroup" aria-labelledby="physical_therapy-label"><label class="choice"><input type="radio" name="physical_therapy" value="0" /><span class="dot"></span><span class="ctext">None</span></label><label class="choice"><input type="radio" name="physical_therapy" value="1-2" /><span class="dot"></span><span class="ctext">1 or 2</span></label><label class="choice"><input type="radio" name="physical_therapy" value="3-5" /><span class="dot"></span><span class="ctext">3 to 5</span></label><label class="choice"><input type="radio" name="physical_therapy" value="6-10" /><span class="dot"></span><span class="ctext">6 to 10</span></label><label class="choice"><input type="radio" name="physical_therapy" value="11-20" /><span class="dot"></span><span class="ctext">11 to 20</span></label><label class="choice"><input type="radio" name="physical_therapy" value="21+" /><span class="dot"></span><span class="ctext">More than 20</span></label></div>
+    <div class="pillrow" role="radiogroup" aria-labelledby="physical_therapy-label"><label class="pill"><input type="radio" name="physical_therapy" value="0" aria-label="None" /><span class="ptext" aria-hidden="true">0</span></label><label class="pill"><input type="radio" name="physical_therapy" value="1-2" aria-label="1 or 2" /><span class="ptext" aria-hidden="true">1-2</span></label><label class="pill"><input type="radio" name="physical_therapy" value="3-5" aria-label="3 to 5" /><span class="ptext" aria-hidden="true">3-5</span></label><label class="pill"><input type="radio" name="physical_therapy" value="6-10" aria-label="6 to 10" /><span class="ptext" aria-hidden="true">6-10</span></label><label class="pill"><input type="radio" name="physical_therapy" value="11-20" aria-label="11 to 20" /><span class="ptext" aria-hidden="true">11-20</span></label><label class="pill"><input type="radio" name="physical_therapy" value="21+" aria-label="More than 20" /><span class="ptext" aria-hidden="true">20+</span></label></div>
     
     <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Plans cap these at 30 visits a year, filed explicitly in the benefit data. Anyone in ongoing therapy will hit the ceiling, and that is a real differentiator.</p></details>
     <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
@@ -1019,10 +1027,10 @@
         </div>
       </footer>
     </div>
-  </section><section class="step" data-step="9">
+  </section><section class="step" data-step="7">
     <div class="card">
       <header class="stephead">
-        <p class="eyebrow">Step 9 of 10</p>
+        <p class="eyebrow">Step 7 of 8</p>
         <h2>The year ahead</h2>
         
       </header>
@@ -1056,10 +1064,10 @@
         </div>
       </footer>
     </div>
-  </section><section class="step" data-step="10">
+  </section><section class="step" data-step="8">
     <div class="card">
       <header class="stephead">
-        <p class="eyebrow">Step 10 of 10</p>
+        <p class="eyebrow">Step 8 of 8</p>
         <h2>What matters to you</h2>
         
       </header>
@@ -1393,18 +1401,18 @@
 
   // Selection state, applied explicitly so it never depends on :has() support.
   function paintChoices() {
-    document.querySelectorAll(".choice").forEach((row) => {
+    document.querySelectorAll(".choice, .pill").forEach((row) => {
       const input = row.querySelector("input");
       row.classList.toggle("is-selected", !!input && input.checked);
     });
   }
 
   document.addEventListener("focusin", (e) => {
-    const row = e.target.closest && e.target.closest(".choice");
+    const row = e.target.closest && e.target.closest(".choice, .pill");
     if (row) row.classList.add("is-focus");
   });
   document.addEventListener("focusout", (e) => {
-    const row = e.target.closest && e.target.closest(".choice");
+    const row = e.target.closest && e.target.closest(".choice, .pill");
     if (row) row.classList.remove("is-focus");
   });
 

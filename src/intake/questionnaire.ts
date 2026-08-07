@@ -52,6 +52,12 @@ export interface Option {
   label: string;
   /** Numeric value used by the engine when the label is a range. */
   midpoint?: number;
+  /**
+   * Terse form for a compact scale row, where six labels have to share a line
+   * with the question. The full label is what the review document shows, so
+   * nothing is lost by keeping this to a couple of characters.
+   */
+  short?: string;
   /** Reveals the named questions when this option is selected. */
   reveals?: string[];
 }
@@ -71,6 +77,13 @@ export interface Question {
   showIf?: { question: string; equals: string[] };
   /** Asked once per household member. */
   perPerson?: boolean;
+  /**
+   * Render as one line, label on the left and the options as a row, rather
+   * than as a stacked block. For short scales asked several times in a row,
+   * where the client is running down a list rather than considering each
+   * question on its own.
+   */
+  compact?: boolean;
   routing: Routing;
   /** Why this question exists, shown in review mode only. */
   rationale?: string;
@@ -95,19 +108,19 @@ const NJ_COUNTIES = [
 /** Visit count bands. Far easier to answer than an exact number, and the
  *  midpoint is accurate enough for a cost estimate. */
 const VISIT_BANDS: Option[] = [
-  { value: "0", label: "None", midpoint: 0 },
-  { value: "1-2", label: "1 or 2", midpoint: 1.5 },
-  { value: "3-5", label: "3 to 5", midpoint: 4 },
-  { value: "6-10", label: "6 to 10", midpoint: 8 },
-  { value: "11-20", label: "11 to 20", midpoint: 15 },
-  { value: "21+", label: "More than 20", midpoint: 26 },
+  { value: "0", label: "None", midpoint: 0, short: "0" },
+  { value: "1-2", label: "1 or 2", midpoint: 1.5, short: "1-2" },
+  { value: "3-5", label: "3 to 5", midpoint: 4, short: "3-5" },
+  { value: "6-10", label: "6 to 10", midpoint: 8, short: "6-10" },
+  { value: "11-20", label: "11 to 20", midpoint: 15, short: "11-20" },
+  { value: "21+", label: "More than 20", midpoint: 26, short: "20+" },
 ];
 
 const RARE_BANDS: Option[] = [
-  { value: "0", label: "None", midpoint: 0 },
-  { value: "1", label: "Once", midpoint: 1 },
-  { value: "2-3", label: "2 or 3", midpoint: 2.5 },
-  { value: "4+", label: "4 or more", midpoint: 5 },
+  { value: "0", label: "None", midpoint: 0, short: "0" },
+  { value: "1", label: "Once", midpoint: 1, short: "1" },
+  { value: "2-3", label: "2 or 3", midpoint: 2.5, short: "2-3" },
+  { value: "4+", label: "4 or more", midpoint: 5, short: "4+" },
 ];
 
 export const QUESTIONNAIRE: Section[] = [
@@ -299,14 +312,6 @@ export const QUESTIONNAIRE: Section[] = [
         routing: "flag",
         rationale: "Easy to miss, and the answer is free coverage. Flags for the agent rather than feeding the maths.",
       },
-    ],
-  },
-
-  {
-    id: "location",
-    title: "Where you live",
-    half: "eligibility",
-    questions: [
       {
         id: "county",
         kind: "choice",
@@ -316,7 +321,7 @@ export const QUESTIONNAIRE: Section[] = [
         required: true,
         routing: "intake",
         rationale:
-          "Not a pricing input. New Jersey uses a single rating area. But Ambetter sells in only 17 of 21 counties, so it gates availability.",
+          "Not a pricing input. New Jersey uses a single rating area. But Ambetter sells in only 17 of 21 counties, so it gates availability. It had a screen of its own, which is a whole click for one dropdown, so it sits with the rest of the household facts.",
       },
     ],
   },
@@ -507,9 +512,9 @@ export const QUESTIONNAIRE: Section[] = [
 
   {
     id: "doctors",
-    title: "Your doctors and hospitals",
+    title: "Your doctors and prescriptions",
     blurb:
-      "This is the part that usually decides which plan is right. Every plan sold in New Jersey has its own network, and a plan that looks cheaper is a bad deal if it drops your doctor.",
+      "This is the part that usually decides which plan is right. Every plan sold in New Jersey has its own network and its own drug list, and a plan that looks cheaper is a bad deal if it drops your doctor or your medication.",
     half: "fit",
     questions: [
       {
@@ -574,15 +579,6 @@ export const QUESTIONNAIRE: Section[] = [
         showIf: { question: "network_priority", equals: ["flexible", "prefer"] },
         routing: "intake",
       },
-    ],
-  },
-
-  {
-    id: "prescriptions",
-    title: "Prescriptions",
-    blurb: "Plans cover different drugs at different prices, so this can change the answer completely.",
-    half: "fit",
-    questions: [
       {
         id: "takes_medication",
         kind: "boolean",
@@ -625,34 +621,38 @@ export const QUESTIONNAIRE: Section[] = [
       {
         id: "visits_primary",
         kind: "choice",
-        label: "Visits to a regular doctor or family doctor",
+        label: "Regular or family doctor",
         options: VISIT_BANDS,
         required: true,
+        compact: true,
         routing: "intake",
       },
       {
         id: "visits_specialist",
         kind: "choice",
-        label: "Visits to a specialist",
+        label: "Specialist",
         help: "Skin, heart, joints, allergies, anything like that.",
         options: VISIT_BANDS,
         required: true,
+        compact: true,
         routing: "intake",
       },
       {
         id: "visits_urgent",
         kind: "choice",
-        label: "Urgent care or walk in clinic visits",
+        label: "Urgent care or walk in clinic",
         options: RARE_BANDS,
         required: true,
+        compact: true,
         routing: "intake",
       },
       {
         id: "visits_er",
         kind: "choice",
-        label: "Emergency room visits",
+        label: "Emergency room",
         options: RARE_BANDS,
         required: true,
+        compact: true,
         routing: "intake",
       },
       {
@@ -661,14 +661,16 @@ export const QUESTIONNAIRE: Section[] = [
         label: "Nights spent in hospital",
         options: RARE_BANDS,
         required: true,
+        compact: true,
         routing: "intake",
       },
       {
         id: "surgeries",
         kind: "choice",
-        label: "Operations or procedures that did not need an overnight stay",
+        label: "Operations, no overnight stay",
         options: RARE_BANDS,
         required: true,
+        compact: true,
         routing: "intake",
       },
       {
@@ -677,22 +679,25 @@ export const QUESTIONNAIRE: Section[] = [
         label: "Scans such as MRI, CT or PET",
         options: RARE_BANDS,
         required: true,
+        compact: true,
         routing: "intake",
       },
       {
         id: "therapy",
         kind: "choice",
-        label: "Therapy or counselling sessions",
+        label: "Therapy or counselling",
         options: VISIT_BANDS,
         required: true,
+        compact: true,
         routing: "intake",
       },
       {
         id: "physical_therapy",
         kind: "choice",
-        label: "Physical therapy or chiropractic visits",
+        label: "Physical therapy or chiropractic",
         options: VISIT_BANDS,
         required: true,
+        compact: true,
         routing: "intake",
         rationale:
           "Plans cap these at 30 visits a year, filed explicitly in the benefit data. Anyone in ongoing therapy will hit the ceiling, and that is a real differentiator.",
