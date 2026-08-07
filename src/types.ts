@@ -220,6 +220,17 @@ export interface CostBreakdown {
   deductibleApplied: number;
   /** Member share paid as coinsurance after the deductible. */
   coinsuranceApplied: number;
+  /** Member share paid as flat office visit copays, outside the deductible. */
+  copayApplied: number;
+  /**
+   * Whether a copay amount was available for the visits this household makes.
+   *
+   * False means those visits were priced at their full allowed charge against
+   * the deductible, because the filings carry no copay amounts and we have not
+   * recovered one for this plan from its summary of benefits. The figure is
+   * then an overstatement rather than an answer, and pages should say so.
+   */
+  copaysKnown: boolean;
   /** Estimated out of pocket cost for care, after the maximum is applied. */
   estimatedOutOfPocket: number;
   /**

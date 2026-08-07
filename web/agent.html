@@ -421,7 +421,11 @@
         (plan.coinsurance === null ? "" : ', coinsurance ' + Math.round(plan.coinsurance * 100) + '%') + '</li>';
       html += '<li>Out of pocket figure is ' + (c.outOfPocketSource === "filed"
         ? "the issuer's own filed coverage example for this client's situation"
-        : "estimated from the deductible and coinsurance, because the filings carry no copay amounts") + '</li>';
+        : c.copayApplied > 0
+          ? "estimated from this plan's copays, deductible and coinsurance. " + usd(c.copayApplied) + " of it is office visit copays, which sit outside the deductible"
+          : c.copaysKnown
+            ? "estimated from the deductible and coinsurance. This plan charges no copay before the deductible is met, so office visits count against it at full price"
+            : "estimated from the deductible and coinsurance only. We hold no copay amount for this plan, so office visits are priced at full charge and this figure is high") + '</li>';
       for (const n of e.notes) html += '<li>' + esc(n) + '</li>';
       html += '</ul></section>';
     }

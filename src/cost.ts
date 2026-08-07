@@ -67,18 +67,26 @@ export function allowedChargesByCategory(
 interface CostSharingResult {
   deductibleApplied: number;
   coinsuranceApplied: number;
+  copayApplied: number;
   outOfPocket: number;
   reachesMoop: boolean;
+  /**
+   * Whether a copay amount was actually available for the visits this household
+   * makes. False means the visits were priced at their full allowed charge
+   * against the deductible, which is an overstatement rather than an answer.
+   */
+  copaysKnown: boolean;
 }
 
 /**
- * Applies deductible, then coinsurance, then caps at the out of pocket maximum.
+ * Applies copays, then the deductible, then coinsurance, then caps at the out
+ * of pocket maximum.
  *
- * KNOWN LIMITATION: real plans meter many services by fixed copay rather than
- * by coinsurance, and copays often apply before the deductible is met. The New
- * Jersey filings we hold do not carry copay amounts, so everything is modelled
- * as deductible then coinsurance. This overstates cost for low utilisers on
- * copay heavy plans and understates the value of a rich plan's flat copays.
+ * The New Jersey filings carry no copay amounts. Where we have recovered them
+ * from a carrier's own summary of benefits they are applied; where we have not,
+ * the visit stays in the deductible base and the figure is an overstatement for
+ * a light utiliser on a copay heavy plan. `copaysKnown` reports which happened,
+ * so a page can say so rather than implying a precision it does not have.
  */
 /** Office visits that a plan meters by flat copay rather than by coinsurance. */
 export interface CopayMeteredVisits {
@@ -111,18 +119,30 @@ export function applyCostSharing(
   // does nothing.
   let copayApplied = 0;
   let base = allowedCharges;
+  let copaysKnown = true;
   if (visits && !plan.hsaEligible && plan.copayBeforeDeductible) {
     const pcp = visits.primaryCareVisits ?? 0;
     const spec = visits.specialistVisits ?? 0;
-    if (plan.copayPrimaryCare !== null && pcp > 0) {
-      copayApplied += pcp * plan.copayPrimaryCare;
-      base -= pcp * ALLOWED_AMOUNTS.primaryCareVisit;
+    if (pcp > 0) {
+      if (plan.copayPrimaryCare === null) copaysKnown = false;
+      else {
+        copayApplied += pcp * plan.copayPrimaryCare;
+        base -= pcp * ALLOWED_AMOUNTS.primaryCareVisit;
+      }
     }
-    if (plan.copaySpecialist !== null && spec > 0) {
-      copayApplied += spec * plan.copaySpecialist;
-      base -= spec * ALLOWED_AMOUNTS.specialistVisit;
+    if (spec > 0) {
+      if (plan.copaySpecialist === null) copaysKnown = false;
+      else {
+        copayApplied += spec * plan.copaySpecialist;
+        base -= spec * ALLOWED_AMOUNTS.specialistVisit;
+      }
     }
     base = Math.max(0, base);
+  } else if (visits && !plan.hsaEligible) {
+    // The plan does not meter visits by copay before the deductible, or we do
+    // not know that it does. Either way the figure below is the deductible
+    // answer, not a copay answer.
+    copaysKnown = !((visits.primaryCareVisits ?? 0) > 0 || (visits.specialistVisits ?? 0) > 0);
   }
 
   const deductibleApplied = Math.min(base, deductible);
@@ -135,8 +155,10 @@ export function applyCostSharing(
   return {
     deductibleApplied,
     coinsuranceApplied,
+    copayApplied,
     outOfPocket,
     reachesMoop: uncapped >= moop && Number.isFinite(moop),
+    copaysKnown,
   };
 }
 
@@ -192,7 +214,22 @@ export function evaluateCost(
   const yearFraction = months / 12;
 
   const allowed = estimatedAllowedCharges(household) * yearFraction;
-  const sharing = applyCostSharing(plan, allowed, isFamily);
+
+  // Office visits the plan may meter by a flat copay rather than by
+  // coinsurance. Counted here and handed over; applyCostSharing decides whether
+  // this particular plan works that way, and leaves them in the deductible base
+  // when it does not.
+  //
+  // Passing these is not optional detail. Without them a household whose care
+  // costs less than the deductible pays the full allowed amount on every plan,
+  // so a $5,000 deductible and a $12,000 deductible produce the same figure and
+  // the whole comparison collapses to the premium.
+  const countVisits = (category: ServiceCategory): number =>
+    household.members.reduce((n, m) => n + (m.utilization[category] ?? 0), 0) * yearFraction;
+  const sharing = applyCostSharing(plan, allowed, isFamily, {
+    primaryCareVisits: countVisits("primaryCareVisit"),
+    specialistVisits: countVisits("specialistVisit"),
+  });
 
   // When the client's year matches one of the standardised coverage examples,
   // prefer the issuer's own filed figure over our simulation. The filing has
@@ -237,6 +274,10 @@ export function evaluateCost(
     estimatedAllowedCharges: allowed,
     deductibleApplied: sharing.deductibleApplied,
     coinsuranceApplied: sharing.coinsuranceApplied,
+    copayApplied: sharing.copayApplied,
+    // A filed coverage example already accounts for copays, so it is never in
+    // doubt. Only the simulation can be short of a copay amount.
+    copaysKnown: filed ? true : sharing.copaysKnown,
     estimatedOutOfPocket: outOfPocket,
     outOfPocketSource,
     reachesMoop: sharing.reachesMoop,
