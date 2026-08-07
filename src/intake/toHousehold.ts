@@ -35,6 +35,14 @@ const num = (v: unknown): number => {
 
 const list = (v: unknown): string[] => (Array.isArray(v) ? v : typeof v === "string" ? [v] : []);
 
+/**
+ * Whether anyone is on regular medication, read off the list rather than off a
+ * separate yes or no. Naming a drug says yes; leaving the list blank says no.
+ */
+export function takesMedication(answers: Answers): boolean {
+  return list(answers.medications).some((m) => typeof m === "string" && m.trim() !== "");
+}
+
 /** "cape-may" becomes "Cape May", which is how the filings spell counties. */
 export function countyFromSlug(slug: unknown): string {
   if (typeof slug !== "string" || !slug) return "";
@@ -74,10 +82,10 @@ export function utilisationFrom(answers: Answers): Utilization {
     const n = midpoint(questionId, answers[questionId]);
     if (n > 0) u[category] = n;
   }
-  // The form asks whether anyone takes medication regularly and whether any of
-  // it is specialty, but not how many. Twelve months is the honest reading of
-  // "regularly", and it is flagged to the agent rather than hidden.
-  if (answers.takes_medication === "yes") {
+  // The form asks for the list itself rather than a yes or no, and whether any
+  // of it is specialty, but not how many. Twelve months is the honest reading
+  // of "regularly", and it is flagged to the agent rather than hidden.
+  if (takesMedication(answers)) {
     u.genericDrugMonths = 12;
     if (answers.specialty_drug === "yes") u.specialtyDrugMonths = 12;
     else u.preferredBrandDrugMonths = 12;
@@ -187,11 +195,13 @@ export function toHousehold(answers: Answers, today = new Date()): Conversion {
   if (answers.foster_care === "yes") {
     flags.push("Was in foster care at 18 or older. Check the free coverage pathway to age 26.");
   }
-  if (answers.will_file_taxes === "no") {
+  if (answers.tax_filing === "none") {
     flags.push("Does not plan to file a federal return, which forfeits the premium tax credit.");
   }
-  if (answers.filing_jointly === "no") {
-    flags.push("Married filing separately generally forfeits the credit. Worth confirming.");
+  if (answers.tax_filing === "separate") {
+    flags.push(
+      "Married filing separately, which generally forfeits the credit entirely. There are narrow exceptions for abuse and abandonment. Worth confirming before quoting an unsubsidised premium.",
+    );
   }
   // The client is shown the total the form worked out and asked to confirm it.
   // A correction is not a problem, but a large one means the boxes and the
@@ -219,7 +229,7 @@ export function toHousehold(answers: Answers, today = new Date()): Conversion {
       "Spends time outside New Jersey. Every plan here is an EPO with no national network, and several cover nothing outside the service area.",
     );
   }
-  if (answers.takes_medication === "yes") {
+  if (takesMedication(answers)) {
     flags.push(
       "Takes regular medication. Formulary placement cannot be checked from the public plan data, so confirm the drugs are covered before recommending.",
     );
@@ -305,7 +315,7 @@ export function toHousehold(answers: Answers, today = new Date()): Conversion {
   // Married filing separately generally forfeits the credit outright. There is
   // a narrow exception for domestic abuse and spousal abandonment, and someone
   // who has just separated is exactly who might qualify for it.
-  if (answers.filing_jointly === "no" && events.includes("divorced")) {
+  if (answers.tax_filing === "separate" && events.includes("divorced")) {
     flags.push(
       "Separating and not filing jointly. That normally forfeits the premium tax credit entirely, but there is an exception for domestic abuse and spousal abandonment which is worth raising carefully.",
     );

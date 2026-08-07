@@ -342,6 +342,25 @@
     .q.compact .pillrow { grid-column: 1; grid-row: auto; justify-content: flex-start; }
   }
 
+  /* Inside a person block the compact items sit side by side rather than as
+     rows, so one member reads as one line: age, relationship, covered. */
+  .person > .q.compact {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 7px;
+    padding: 0; border-top: 0;
+  }
+  .person > .q.compact .qlabel { font-size: 14px; color: var(--am-ink-soft); }
+  .person > .q.compact .pillrow { justify-content: flex-start; gap: 5px; }
+  .person > .q.compact .pill { min-width: 38px; padding: 8px 10px; }
+  .person > .q.compact .pill .ptext { font-size: 14px; }
+  .person > .q.compact .field.short { max-width: 88px; }
+  /* The label already says what the number is. "years" beside it costs 55px
+     of a line that has to hold three answers. */
+  .person > .q.compact .withunit .unit { display: none; }
+  /* The reason we ask belongs to the question, not to each member. Repeated
+     four times down a household it is noise, and it more than doubles the
+     height of a row that is otherwise one line. Review view still shows it. */
+  body:not(.reviewing) .person > .q.compact .why { display: none; }
+
   /* "I am not sure" must look like a legitimate answer, because it is one. */
   .unsure {
     display: inline-flex; align-items: center; gap: 9px;
@@ -355,11 +374,15 @@
   /* One block per household member. Premium is age rated per person, so each
      one gets its own answers rather than being inferred from the first. */
   .people { display: flex; flex-direction: column; gap: 28px; }
+  /* Wrapping row, so compact items share a line and anything else takes the
+     full width on its own. */
   .person {
-    display: flex; flex-direction: column; gap: 32px;
-    padding: 20px; border: 1px solid var(--am-line);
+    display: flex; flex-wrap: wrap; align-items: flex-start; gap: 16px;
+    padding: 16px; border: 1px solid var(--am-line);
     border-radius: var(--r-card); background: var(--am-paper);
   }
+  .person > * { flex: 1 1 100%; }
+  .person > .q.compact { flex: 0 1 auto; }
   .person > .personhead {
     font-size: 12px; font-weight: 600; letter-spacing: .12em;
     text-transform: uppercase; color: var(--am-muted); margin: 0;
@@ -617,7 +640,7 @@
       <header class="stephead">
         <p class="eyebrow">Step 2 of 8</p>
         <h2>Who needs covering</h2>
-        <p class="blurb">Include everyone on your tax return, even people who already have insurance. The number of people in your household affects the help you can get, so leaving someone out can cost you money.</p>
+        <p class="blurb">Include everyone on your tax return, even people who already have insurance. The number of people in your household affects the help you can get, so leaving someone out can cost you money. Answer no to needs covering for anyone who already has Medicare, military coverage or their own plan.</p>
       </header>
       <div class="qs"><div class="q" data-q="household_size">
     <label class="qlabel" id="household_size-label" for="household_size">How many people are on your federal tax return, including you?</label>
@@ -627,29 +650,29 @@
     <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Sets the federal poverty level, which drives both the subsidy and the silver cost sharing tier.</p></details>
     <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div><div class="persongroup" data-group="household-1">
-    <template class="persontpl"><div class="q" data-q="person_age____IDX__">
-    <label class="qlabel" id="person_age____IDX__-label" for="person_age____IDX__">Age on 1 January</label>
+    <template class="persontpl"><div class="q compact" data-q="person_age____IDX__">
+    <label class="qlabel" id="person_age____IDX__-label" for="person_age____IDX__">Age on 1 Jan</label>
     
     <div class="withunit"><input class="field short" type="number" id="person_age____IDX__" name="person_age____IDX__" min="0" /><span class="unit">years</span></div>
     
     <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Age is the only personal characteristic that changes the premium in New Jersey. We ask for age rather than date of birth on purpose.</p></details>
     <div class="meta"><div class="tags"><span class="tag">asked per person</span><span class="tag route-intake">intake</span></div></div>
-  </div><div class="q" data-q="person_relationship____IDX__">
+  </div><div class="q compact" data-q="person_relationship____IDX__">
     <label class="qlabel" id="person_relationship____IDX__-label" for="person_relationship____IDX__">Relationship to you</label>
     
-    <div class="choices" role="radiogroup" aria-labelledby="person_relationship____IDX__-label"><label class="choice"><input type="radio" name="person_relationship____IDX__" value="self" /><span class="dot"></span><span class="ctext">This is me</span></label><label class="choice"><input type="radio" name="person_relationship____IDX__" value="spouse" /><span class="dot"></span><span class="ctext">Spouse</span></label><label class="choice"><input type="radio" name="person_relationship____IDX__" value="child" /><span class="dot"></span><span class="ctext">Child</span></label><label class="choice"><input type="radio" name="person_relationship____IDX__" value="other" /><span class="dot"></span><span class="ctext">Other dependent</span></label></div>
+    <div class="pillrow" role="radiogroup" aria-labelledby="person_relationship____IDX__-label"><label class="pill"><input type="radio" name="person_relationship____IDX__" value="self" aria-label="This is me" /><span class="ptext" aria-hidden="true">Me</span></label><label class="pill"><input type="radio" name="person_relationship____IDX__" value="spouse" aria-label="Spouse" /><span class="ptext" aria-hidden="true">Spouse</span></label><label class="pill"><input type="radio" name="person_relationship____IDX__" value="child" aria-label="Child" /><span class="ptext" aria-hidden="true">Child</span></label><label class="pill"><input type="radio" name="person_relationship____IDX__" value="other" aria-label="Other dependent" /><span class="ptext" aria-hidden="true">Other</span></label></div>
     
     
     <div class="meta"><div class="tags"><span class="tag">asked per person</span><span class="tag route-intake">intake</span></div></div>
-  </div><div class="q" data-q="person_needs_coverage____IDX__">
-    <label class="qlabel" id="person_needs_coverage____IDX__-label" for="person_needs_coverage____IDX__">Does this person need coverage on the new plan?</label>
-    <p class="qhelp">Answer no for anyone who already has Medicare, military coverage or their own plan.</p>
-    <div class="choices" role="radiogroup" aria-labelledby="person_needs_coverage____IDX__-label">
-        <label class="choice"><input type="radio" name="person_needs_coverage____IDX__" value="yes" /><span class="dot"></span><span class="ctext">Yes</span></label>
-        <label class="choice"><input type="radio" name="person_needs_coverage____IDX__" value="no" /><span class="dot"></span><span class="ctext">No</span></label>
-      </div>
+  </div><div class="q compact" data-q="person_needs_coverage____IDX__">
+    <label class="qlabel" id="person_needs_coverage____IDX__-label" for="person_needs_coverage____IDX__">On the plan?</label>
     
-    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Counted for the poverty level either way, but only priced if they are enrolling.</p></details>
+    <div class="pillrow" role="radiogroup" aria-labelledby="person_needs_coverage____IDX__-label">
+          <label class="pill"><input type="radio" name="person_needs_coverage____IDX__" value="yes" /><span class="ptext">Yes</span></label>
+          <label class="pill"><input type="radio" name="person_needs_coverage____IDX__" value="no" /><span class="ptext">No</span></label>
+        </div>
+    
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Counted for the poverty level either way, but only priced if they are enrolling. The three facts we need about a person, their age, how they relate to you and whether they are joining the plan, now sit on one line each rather than as three stacked questions, which on a family of four was twelve blocks to work through.</p></details>
     <div class="meta"><div class="tags"><span class="tag">asked per person</span><span class="tag route-intake">intake</span></div></div>
   </div></template>
     <div class="people"></div>
@@ -713,26 +736,13 @@
         <h2>Income</h2>
         <p class="blurb">This decides how much help you get paying for coverage, and it is the single biggest factor in what you will actually pay. Answer the boxes however is easiest and we will add it up for you at the end. We do not ask where you work.</p>
       </header>
-      <div class="qs"><div class="q" data-q="will_file_taxes">
-    <label class="qlabel" id="will_file_taxes-label" for="will_file_taxes">Do you plan to file a federal tax return for next year?</label>
-    <p class="qhelp">You can still get coverage if you do not, but the help paying for it requires a return.</p>
-    <div class="choices" role="radiogroup" aria-labelledby="will_file_taxes-label">
-        <label class="choice"><input type="radio" name="will_file_taxes" value="yes" /><span class="dot"></span><span class="ctext">Yes</span></label>
-        <label class="choice"><input type="radio" name="will_file_taxes" value="no" /><span class="dot"></span><span class="ctext">No</span></label>
-      </div>
+      <div class="qs"><div class="q" data-q="tax_filing">
+    <label class="qlabel" id="tax_filing-label" for="tax_filing">How will you file your federal taxes for next year?</label>
+    <p class="qhelp">You can still get coverage whatever the answer, but the help paying for it depends on this.</p>
+    <div class="choices" role="radiogroup" aria-labelledby="tax_filing-label"><label class="choice"><input type="radio" name="tax_filing" value="joint" /><span class="dot"></span><span class="ctext">Jointly with my spouse</span></label><label class="choice"><input type="radio" name="tax_filing" value="single" /><span class="dot"></span><span class="ctext">On my own, as single or head of household</span></label><label class="choice"><input type="radio" name="tax_filing" value="separate" /><span class="dot"></span><span class="ctext">Married, but filing separately</span></label><label class="choice"><input type="radio" name="tax_filing" value="none" /><span class="dot"></span><span class="ctext">I do not plan to file a return</span></label></div>
     
-    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>No return, no premium tax credit. A hard gate rather than a preference.</p></details>
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>One question in place of two, and it captures more rather than less. Asking whether you will file and then whether you will file jointly left married filing separately looking identical to being single, and that answer generally forfeits the premium tax credit outright. Both of the bottom two options are hard gates rather than preferences.</p></details>
     <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
-  </div><div class="q" data-q="filing_jointly" data-showif-q="will_file_taxes" data-showif-v="yes" hidden>
-    <label class="qlabel" id="filing_jointly-label" for="filing_jointly">Will you file jointly with your spouse?</label>
-    
-    <div class="choices" role="radiogroup" aria-labelledby="filing_jointly-label">
-        <label class="choice"><input type="radio" name="filing_jointly" value="yes" /><span class="dot"></span><span class="ctext">Yes</span></label>
-        <label class="choice"><input type="radio" name="filing_jointly" value="no" /><span class="dot"></span><span class="ctext">No</span></label>
-      </div>
-    
-    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Married filing separately generally forfeits the credit entirely.</p></details>
-    <div class="meta"><div class="tags"><span class="tag cond">only if will file taxes is yes</span><span class="tag route-intake">intake</span></div></div>
   </div><div class="persongroup" data-group="income-1">
     <template class="persontpl"><div class="q" data-q="employment_status____IDX__">
     <label class="qlabel" id="employment_status____IDX__-label" for="employment_status____IDX__">How do you earn money?</label>
@@ -905,24 +915,14 @@
     <label class="unsure"><input type="checkbox" name="network_price_unsure" /><span>I am not sure</span></label>
     
     <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag cond">only if network priority is flexible or prefer</span><span class="tag route-intake">intake</span></div></div>
-  </div><div class="q" data-q="takes_medication">
-    <label class="qlabel" id="takes_medication-label" for="takes_medication">Does anyone take prescription medication regularly?</label>
-    <p class="qhelp">Regularly means most months, not a one off course of antibiotics.</p>
-    <div class="choices" role="radiogroup" aria-labelledby="takes_medication-label">
-        <label class="choice"><input type="radio" name="takes_medication" value="yes" /><span class="dot"></span><span class="ctext">Yes</span></label>
-        <label class="choice"><input type="radio" name="takes_medication" value="no" /><span class="dot"></span><span class="ctext">No</span></label>
-      </div>
+  </div><div class="q" data-q="medications">
+    <label class="qlabel" id="medications-label" for="medications">Anything anyone takes regularly?</label>
+    <p class="qhelp">Name and dose, both printed on the bottle. Regularly means most months, not a one off course of antibiotics. Leave it blank if nobody takes anything.</p>
+    <div class="repeater"><input class="field" type="text" name="medications_1" aria-label="Anything anyone takes regularly?, first entry" /><input class="field" type="text" name="medications_2" aria-label="Anything anyone takes regularly?, second entry" /><button class="btn quiet addmore" type="button">Add another</button></div>
     
-    
-    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
-  </div><div class="q" data-q="medications" data-showif-q="takes_medication" data-showif-v="yes" hidden>
-    <label class="qlabel" id="medications-label" for="medications">Which ones?</label>
-    <p class="qhelp">The name and the dose, both printed on the bottle. If you can, go and look rather than guessing.</p>
-    <div class="repeater"><input class="field" type="text" name="medications_1" aria-label="Which ones?, first entry" /><input class="field" type="text" name="medications_2" aria-label="Which ones?, second entry" /><button class="btn quiet addmore" type="button">Add another</button></div>
-    
-    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>The plan data gives us a formulary identifier but no drug list, so this currently produces a flag for the agent rather than an automatic check.</p></details>
-    <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag cond">only if takes medication is yes</span><span class="tag route-intake">intake</span></div></div>
-  </div><div class="q" data-q="specialty_drug" data-showif-q="takes_medication" data-showif-v="yes" hidden>
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>The yes or no gate that used to sit above this asked the same thing the list answers. Naming a drug says yes, and leaving it blank says no. The plan data gives us a formulary identifier but no drug list, so this produces a flag for the agent rather than an automatic check.</p></details>
+    <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag route-intake">intake</span></div></div>
+  </div><div class="q" data-q="specialty_drug" data-showif-q="medications" data-showif-v="__answered__" hidden>
     <label class="qlabel" id="specialty_drug-label" for="specialty_drug">Is any of it an injection, an infusion, or something the pharmacy has to order in specially?</label>
     <p class="qhelp">These are usually the most expensive drugs, and plans treat them very differently.</p>
     <div class="choices" role="radiogroup" aria-labelledby="specialty_drug-label">
@@ -931,7 +931,7 @@
       </div>
     
     <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Specialty drugs dominate a household's costs when present. Worth its own question.</p></details>
-    <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag cond">only if takes medication is yes</span><span class="tag route-intake">intake</span></div></div>
+    <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag cond">only if medications has an answer</span><span class="tag route-intake">intake</span></div></div>
   </div></div>
       <footer class="stepfoot">
         <button class="btn quiet later" type="button">Save and finish later</button>
@@ -1149,6 +1149,14 @@
         // Any selected value can satisfy the condition. Reading only the first
         // checked box is wrong for a multi-select, where a client can tick both
         // "got married" and something else.
+        // A free text question has no value to match on, so "__answered__"
+        // means shown once anything has been typed. Repeaters spread their
+        // entries across medications_1, medications_2 and so on.
+        if (wanted.length === 1 && wanted[0] === "__answered__") {
+          const typed = [...document.querySelectorAll('[name="' + q + '"], [name^="' + q + '_"]')];
+          el.hidden = !typed.some((i) => i.value && i.value.trim() !== "");
+          return;
+        }
         const checked = [...document.querySelectorAll('input[name="' + q + '"]:checked')];
         el.hidden = !checked.some((c) => wanted.includes(c.value));
       });

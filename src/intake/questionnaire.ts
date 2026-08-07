@@ -223,7 +223,7 @@ export const QUESTIONNAIRE: Section[] = [
     id: "household",
     title: "Who needs covering",
     blurb:
-      "Include everyone on your tax return, even people who already have insurance. The number of people in your household affects the help you can get, so leaving someone out can cost you money.",
+      "Include everyone on your tax return, even people who already have insurance. The number of people in your household affects the help you can get, so leaving someone out can cost you money. Answer no to needs covering for anyone who already has Medicare, military coverage or their own plan.",
     half: "eligibility",
     questions: [
       {
@@ -238,10 +238,11 @@ export const QUESTIONNAIRE: Section[] = [
       {
         id: "person_age",
         kind: "number",
-        label: "Age on 1 January",
+        label: "Age on 1 Jan",
         unit: "years",
         required: true,
         perPerson: true,
+        compact: true,
         routing: "intake",
         rationale:
           "Age is the only personal characteristic that changes the premium in New Jersey. We ask for age rather than date of birth on purpose.",
@@ -251,24 +252,26 @@ export const QUESTIONNAIRE: Section[] = [
         kind: "choice",
         label: "Relationship to you",
         options: [
-          { value: "self", label: "This is me" },
-          { value: "spouse", label: "Spouse" },
-          { value: "child", label: "Child" },
-          { value: "other", label: "Other dependent" },
+          { value: "self", label: "This is me", short: "Me" },
+          { value: "spouse", label: "Spouse", short: "Spouse" },
+          { value: "child", label: "Child", short: "Child" },
+          { value: "other", label: "Other dependent", short: "Other" },
         ],
         required: true,
         perPerson: true,
+        compact: true,
         routing: "intake",
       },
       {
         id: "person_needs_coverage",
         kind: "boolean",
-        label: "Does this person need coverage on the new plan?",
-        help: "Answer no for anyone who already has Medicare, military coverage or their own plan.",
+        label: "On the plan?",
         required: true,
         perPerson: true,
+        compact: true,
         routing: "intake",
-        rationale: "Counted for the poverty level either way, but only priced if they are enrolling.",
+        rationale:
+          "Counted for the poverty level either way, but only priced if they are enrolling. The three facts we need about a person, their age, how they relate to you and whether they are joining the plan, now sit on one line each rather than as three stacked questions, which on a family of four was twelve blocks to work through.",
       },
       {
         id: "pregnancy",
@@ -334,22 +337,20 @@ export const QUESTIONNAIRE: Section[] = [
     half: "eligibility",
     questions: [
       {
-        id: "will_file_taxes",
-        kind: "boolean",
-        label: "Do you plan to file a federal tax return for next year?",
-        help: "You can still get coverage if you do not, but the help paying for it requires a return.",
+        id: "tax_filing",
+        kind: "choice",
+        label: "How will you file your federal taxes for next year?",
+        help: "You can still get coverage whatever the answer, but the help paying for it depends on this.",
+        options: [
+          { value: "joint", label: "Jointly with my spouse" },
+          { value: "single", label: "On my own, as single or head of household" },
+          { value: "separate", label: "Married, but filing separately" },
+          { value: "none", label: "I do not plan to file a return" },
+        ],
         required: true,
         routing: "intake",
-        rationale: "No return, no premium tax credit. A hard gate rather than a preference.",
-      },
-      {
-        id: "filing_jointly",
-        kind: "boolean",
-        label: "Will you file jointly with your spouse?",
-        required: true,
-        showIf: { question: "will_file_taxes", equals: ["yes"] },
-        routing: "intake",
-        rationale: "Married filing separately generally forfeits the credit entirely.",
+        rationale:
+          "One question in place of two, and it captures more rather than less. Asking whether you will file and then whether you will file jointly left married filing separately looking identical to being single, and that answer generally forfeits the premium tax credit outright. Both of the bottom two options are hard gates rather than preferences.",
       },
       {
         id: "employment_status",
@@ -580,23 +581,14 @@ export const QUESTIONNAIRE: Section[] = [
         routing: "intake",
       },
       {
-        id: "takes_medication",
-        kind: "boolean",
-        label: "Does anyone take prescription medication regularly?",
-        help: "Regularly means most months, not a one off course of antibiotics.",
-        required: true,
-        routing: "intake",
-      },
-      {
         id: "medications",
         kind: "repeater",
-        label: "Which ones?",
-        help: "The name and the dose, both printed on the bottle. If you can, go and look rather than guessing.",
+        label: "Anything anyone takes regularly?",
+        help: "Name and dose, both printed on the bottle. Regularly means most months, not a one off course of antibiotics. Leave it blank if nobody takes anything.",
         required: false,
-        showIf: { question: "takes_medication", equals: ["yes"] },
         routing: "intake",
         rationale:
-          "The plan data gives us a formulary identifier but no drug list, so this currently produces a flag for the agent rather than an automatic check.",
+          "The yes or no gate that used to sit above this asked the same thing the list answers. Naming a drug says yes, and leaving it blank says no. The plan data gives us a formulary identifier but no drug list, so this produces a flag for the agent rather than an automatic check.",
       },
       {
         id: "specialty_drug",
@@ -604,7 +596,7 @@ export const QUESTIONNAIRE: Section[] = [
         label: "Is any of it an injection, an infusion, or something the pharmacy has to order in specially?",
         help: "These are usually the most expensive drugs, and plans treat them very differently.",
         required: false,
-        showIf: { question: "takes_medication", equals: ["yes"] },
+        showIf: { question: "medications", equals: ["__answered__"] },
         routing: "intake",
         rationale: "Specialty drugs dominate a household's costs when present. Worth its own question.",
       },

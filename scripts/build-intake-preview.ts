@@ -123,6 +123,12 @@ function renderInput(q: Question, suffix = ""): string {
     case "repeater":
       return `<div class="repeater"><input class="field" type="text" name="${name}_1" aria-label="${esc(q.label)}, first entry" /><input class="field" type="text" name="${name}_2" aria-label="${esc(q.label)}, second entry" /><button class="btn quiet addmore" type="button">Add another</button></div>`;
     case "boolean":
+      if (q.compact) {
+        return `<div class="pillrow" role="radiogroup" aria-labelledby="${name}-label">
+          <label class="pill"><input type="radio" name="${name}" value="yes" /><span class="ptext">Yes</span></label>
+          <label class="pill"><input type="radio" name="${name}" value="no" /><span class="ptext">No</span></label>
+        </div>`;
+      }
       return `<div class="choices" role="radiogroup" aria-labelledby="${name}-label">
         <label class="choice"><input type="radio" name="${name}" value="yes" /><span class="dot"></span><span class="ctext">Yes</span></label>
         <label class="choice"><input type="radio" name="${name}" value="no" /><span class="dot"></span><span class="ctext">No</span></label>
@@ -171,7 +177,11 @@ function renderQuestion(q: Question, idx = ""): string {
     q.required ? "" : `<span class="tag">optional</span>`,
     q.perPerson ? `<span class="tag">asked per person</span>` : "",
     q.showIf
-      ? `<span class="tag cond">only if ${esc(q.showIf.question.replace(/_/g, " "))} is ${esc(q.showIf.equals.join(" or "))}</span>`
+      ? `<span class="tag cond">${
+          q.showIf.equals.length === 1 && q.showIf.equals[0] === "__answered__"
+            ? `only if ${esc(q.showIf.question.replace(/_/g, " "))} has an answer`
+            : `only if ${esc(q.showIf.question.replace(/_/g, " "))} is ${esc(q.showIf.equals.join(" or "))}`
+        }</span>`
       : "",
     `<span class="tag route-${q.routing}">${q.routing}</span>`,
   ]
@@ -595,6 +605,25 @@ const html = `<title>Ask Mike, client intake</title>
     .q.compact .pillrow { grid-column: 1; grid-row: auto; justify-content: flex-start; }
   }
 
+  /* Inside a person block the compact items sit side by side rather than as
+     rows, so one member reads as one line: age, relationship, covered. */
+  .person > .q.compact {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 7px;
+    padding: 0; border-top: 0;
+  }
+  .person > .q.compact .qlabel { font-size: 14px; color: var(--am-ink-soft); }
+  .person > .q.compact .pillrow { justify-content: flex-start; gap: 5px; }
+  .person > .q.compact .pill { min-width: 38px; padding: 8px 10px; }
+  .person > .q.compact .pill .ptext { font-size: 14px; }
+  .person > .q.compact .field.short { max-width: 88px; }
+  /* The label already says what the number is. "years" beside it costs 55px
+     of a line that has to hold three answers. */
+  .person > .q.compact .withunit .unit { display: none; }
+  /* The reason we ask belongs to the question, not to each member. Repeated
+     four times down a household it is noise, and it more than doubles the
+     height of a row that is otherwise one line. Review view still shows it. */
+  body:not(.reviewing) .person > .q.compact .why { display: none; }
+
   /* "I am not sure" must look like a legitimate answer, because it is one. */
   .unsure {
     display: inline-flex; align-items: center; gap: 9px;
@@ -608,11 +637,15 @@ const html = `<title>Ask Mike, client intake</title>
   /* One block per household member. Premium is age rated per person, so each
      one gets its own answers rather than being inferred from the first. */
   .people { display: flex; flex-direction: column; gap: 28px; }
+  /* Wrapping row, so compact items share a line and anything else takes the
+     full width on its own. */
   .person {
-    display: flex; flex-direction: column; gap: 32px;
-    padding: 20px; border: 1px solid var(--am-line);
+    display: flex; flex-wrap: wrap; align-items: flex-start; gap: 16px;
+    padding: 16px; border: 1px solid var(--am-line);
     border-radius: var(--r-card); background: var(--am-paper);
   }
+  .person > * { flex: 1 1 100%; }
+  .person > .q.compact { flex: 0 1 auto; }
   .person > .personhead {
     font-size: 12px; font-weight: 600; letter-spacing: .12em;
     text-transform: uppercase; color: var(--am-muted); margin: 0;
@@ -862,6 +895,14 @@ const html = `<title>Ask Mike, client intake</title>
         // Any selected value can satisfy the condition. Reading only the first
         // checked box is wrong for a multi-select, where a client can tick both
         // "got married" and something else.
+        // A free text question has no value to match on, so "__answered__"
+        // means shown once anything has been typed. Repeaters spread their
+        // entries across medications_1, medications_2 and so on.
+        if (wanted.length === 1 && wanted[0] === "__answered__") {
+          const typed = [...document.querySelectorAll('[name="' + q + '"], [name^="' + q + '_"]')];
+          el.hidden = !typed.some((i) => i.value && i.value.trim() !== "");
+          return;
+        }
         const checked = [...document.querySelectorAll('input[name="' + q + '"]:checked')];
         el.hidden = !checked.some((c) => wanted.includes(c.value));
       });
