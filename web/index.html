@@ -845,8 +845,15 @@
     <p class="qhelp">The amount that actually leaves your account, after any help you already receive.</p>
     <div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="current_premium" name="current_premium" min="0" step="1" /></div>
     <label class="unsure"><input type="checkbox" name="current_premium_unsure" /><span>I am not sure</span></label>
-    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>The anchor the client will judge every option against.</p></details>
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>The anchor the client will judge every option against, so the agent page reports every recommended plan as a difference against it rather than as a bare figure. This replaced a question asking for a monthly ceiling, which was the same subject asked the wrong way round: a fact the agent can work with rather than a limit the client has committed to in advance.</p></details>
     <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag cond">only if coverage situation is renewing or losing</span><span class="tag route-intake">intake</span></div></div>
+  </div><div class="q" data-q="expected_premium" data-showif-q="coverage_situation" data-showif-v="new" hidden>
+    <label class="qlabel" id="expected_premium-label" for="expected_premium">Roughly what were you expecting this to cost each month?</label>
+    <p class="qhelp">A guess is genuinely fine, and being wrong costs you nothing. It just tells your agent where to start.</p>
+    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="expected_premium" name="expected_premium" min="0" step="1" /></div>
+    <label class="unsure"><input type="checkbox" name="expected_premium_unsure" /><span>I am not sure</span></label>
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>The same anchor for someone with no plan to quote. Deliberately an expectation rather than a limit: a belief is something the agent can correct in the meeting, whereas a figure the client has named as their ceiling is one they have to be argued out of, and they will read anything above it as a failure even when it is the right plan.</p></details>
+    <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag cond">only if coverage situation is new</span><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="employer_offer">
     <label class="qlabel" id="employer_offer-label" for="employer_offer">Is health insurance available to anyone in your household through a job, including your spouse's or a parent's job?</label>
     <p class="qhelp">Answer yes even if you turned it down because it was too expensive.</p>
@@ -1078,13 +1085,6 @@
     
     <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Decides which of good, better or best to lead with. Without it the engine has to guess, and the honest answer is that this is a values question, not a maths question.</p></details>
     <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
-  </div><div class="q" data-q="budget_ceiling">
-    <label class="qlabel" id="budget_ceiling-label" for="budget_ceiling">Is there a monthly figure you cannot go above?</label>
-    <p class="qhelp">Leave blank if there is not. This does not limit what we show you, it just tells your agent where the line is.</p>
-    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="budget_ceiling" name="budget_ceiling" min="0" step="1" /></div>
-    
-    
-    <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag route-flag">flag</span></div></div>
   </div><div class="q" data-q="anything_else">
     <label class="qlabel" id="anything_else-label" for="anything_else">Anything else your agent should know before you meet?</label>
     <p class="qhelp">Anything at all. This goes straight to them.</p>

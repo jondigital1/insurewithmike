@@ -220,6 +220,12 @@ ${TOKENS}
   .fig .k { font-size: 12px; color: var(--am-muted); }
   .fig .v { font-size: 20px; font-weight: 500; }
   .fig.lead .v { color: var(--am-blue-700); }
+  /* Stated plainly in both directions. A rise is a fact the agent has to raise
+     anyway, and colouring it as an alarm makes the page argue with them. */
+  .vs { font-size: 12px; line-height: 1.4; margin-top: 3px; color: var(--am-ink-soft); }
+  .vs.down { color: #1D7A4C; }
+  .vs.up { color: var(--am-amber-text); }
+  .vs.same { color: var(--am-muted); }
 
   .notes { list-style: none; margin: 14px 0 0; padding: 0; font-size: 13px; color: var(--am-ink-soft); }
   .notes li { padding: 3px 0 3px 14px; position: relative; }
@@ -301,6 +307,22 @@ ${TOKENS}
   const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const AMBER_MARK = ${JSON.stringify(markSmall(17, "#C67E32"))};
 
+  /**
+   * A premium against what the client pays today, which is the only way any
+   * of these numbers mean anything to them. Renders nothing when there is no
+   * baseline, rather than inventing one.
+   */
+  function againstBaseline(monthly, baseline) {
+    if (!baseline || !baseline.monthly) return "";
+    const diff = Math.round(monthly - baseline.monthly);
+    const against = baseline.source === "current" ? "what they pay now" : "what they expected";
+    if (Math.abs(diff) < 5) return '<div class="vs same">About the same as ' + against + '<\\/div>';
+    const pct = Math.round((Math.abs(diff) / baseline.monthly) * 100);
+    return '<div class="vs ' + (diff > 0 ? "up" : "down") + '">' +
+      (diff > 0 ? "+" : "&minus;") + usd(Math.abs(diff)) + '/mo against ' + against +
+      (pct >= 5 ? ', ' + pct + '%' : '') + '<\\/div>';
+  }
+
   function render(result, submittedAt) {
     document.getElementById("forwhom").textContent =
       "Submitted " + new Date(submittedAt).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" });
@@ -332,6 +354,13 @@ ${TOKENS}
     if (h.preferredHealthSystems.length) {
       html += '<p style="margin:18px 0 0;font-size:14px;color:var(--am-ink-soft)">Wants to keep: <strong>' +
         esc(h.preferredHealthSystems.join(", ")) + '</strong></p>';
+    }
+    if (result.baseline) {
+      html += '<p style="margin:8px 0 0;font-size:14px;color:var(--am-ink-soft)">' +
+        (result.baseline.source === "current"
+          ? 'Paying <strong>' + usd(result.baseline.monthly) + '/mo</strong> today. Every premium below is shown against it.'
+          : 'No plan today. They were expecting around <strong>' + usd(result.baseline.monthly) +
+            '/mo</strong>, which is a guess rather than a limit, and premiums below are shown against it.') + '</p>';
     }
     html += '</section>';
 
@@ -418,7 +447,8 @@ ${TOKENS}
       // bronze plan's largest figure and it belongs in a conversation rather
       // than in a box on a page a client reads across the desk.
       html += '<div class="figures two">';
-      html += '<div class="fig"><div class="k">Monthly premium</div><div class="v">' + usd(c.annualPremiumNet / 12) + '/mo</div></div>';
+      html += '<div class="fig"><div class="k">Monthly premium</div><div class="v">' + usd(c.annualPremiumNet / 12) + '/mo</div>' +
+        againstBaseline(c.annualPremiumNet / 12, result.baseline) + '</div>';
       html += '<div class="fig"><div class="k">Expected out of pocket</div><div class="v">' + usd(c.estimatedOutOfPocket) + '</div></div>';
       html += '</div>';
       html += '<ul class="notes">';

@@ -484,7 +484,20 @@ export const QUESTIONNAIRE: Section[] = [
         allowUnsure: true,
         showIf: { question: "coverage_situation", equals: ["renewing", "losing"] },
         routing: "intake",
-        rationale: "The anchor the client will judge every option against.",
+        rationale:
+          "The anchor the client will judge every option against, so the agent page reports every recommended plan as a difference against it rather than as a bare figure. This replaced a question asking for a monthly ceiling, which was the same subject asked the wrong way round: a fact the agent can work with rather than a limit the client has committed to in advance.",
+      },
+      {
+        id: "expected_premium",
+        kind: "currency",
+        label: "Roughly what were you expecting this to cost each month?",
+        help: "A guess is genuinely fine, and being wrong costs you nothing. It just tells your agent where to start.",
+        required: false,
+        allowUnsure: true,
+        showIf: { question: "coverage_situation", equals: ["new"] },
+        routing: "intake",
+        rationale:
+          "The same anchor for someone with no plan to quote. Deliberately an expectation rather than a limit: a belief is something the agent can correct in the meeting, whereas a figure the client has named as their ceiling is one they have to be argued out of, and they will read anything above it as a failure even when it is the right plan.",
       },
       {
         id: "employer_offer",
@@ -794,14 +807,6 @@ export const QUESTIONNAIRE: Section[] = [
         routing: "intake",
         rationale:
           "Decides which of good, better or best to lead with. Without it the engine has to guess, and the honest answer is that this is a values question, not a maths question.",
-      },
-      {
-        id: "budget_ceiling",
-        kind: "currency",
-        label: "Is there a monthly figure you cannot go above?",
-        help: "Leave blank if there is not. This does not limit what we show you, it just tells your agent where the line is.",
-        required: false,
-        routing: "flag",
       },
       {
         id: "anything_else",
