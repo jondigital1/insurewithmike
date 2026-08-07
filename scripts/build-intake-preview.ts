@@ -1353,30 +1353,63 @@ const html = `<title>Ask Mike, client intake</title>
         if (out.length > 900) break;
       }
       out.sort((a, b) => b.score - a.score);
-      return out.slice(0, limit);
+      // Deliberately wider than the list shown. Both routes are merged before
+      // anything is cut, so slicing to the display limit here would drop rows
+      // the other route would have ranked above what survived.
+      return out.slice(0, limit * 4);
     }
 
-    // What they typed, taken literally, first. The corpus already carries many
-    // brands in brackets, and going to the alias list first mislabels them:
-    // someone typing "levo" means levothyroxine, not the brand Levoxyl.
-    const direct = rank(words, null);
-    if (direct.length) return direct;
+    // Brand and generic both reach the same drug, so both searches always run
+    // and the results merge. The corpus carries some brands in brackets and not
+    // others, so neither route on its own is complete: a client typing Ozempic
+    // needs the bracketed rows, and one typing Lipitor needs atorvastatin,
+    // which shares no letters with what they typed.
+    const merged = new Map();
+    const take = (hits) => {
+      for (const h of hits) {
+        let via = h.via;
+        // A row that names its own brand speaks for itself. Reaching the
+        // semaglutide products by typing Ozempic is right, but labelling the
+        // Rybelsus one "the generic for Ozempic" is not, because it is not.
+        if (via) {
+          const bracket = h.name.match(/\\[([^\\]]+)\\]/);
+          if (bracket && bracket[1].toLowerCase() !== via.toLowerCase()) via = null;
+        }
+        const prev = merged.get(h.name);
+        // A name found by typing it directly is not labelled as a swap, even if
+        // the alias route reached it too.
+        if (!prev) merged.set(h.name, { name: h.name, via: via, score: h.score });
+        else if (prev.via && !via) merged.set(h.name, { name: h.name, via: null, score: Math.max(prev.score, h.score) });
+        else if (h.score > prev.score) merged.set(h.name, { name: h.name, via: prev.via, score: h.score });
+      }
+    };
 
-    // Nothing matched, so try reading the first word as a brand from the bottle
-    // and swapping in the ingredient the formulary lists. Labelled in the
-    // result, so the client can see the swap and reject it.
+    take(rank(words, null));
+
     if (words[0].length >= 3) {
       for (const pair of DRUGS.aliases) {
         if (!pair[0].toLowerCase().startsWith(words[0])) continue;
-        const hits = rank([pair[1].toLowerCase()].concat(words.slice(1)), pair[0]);
-        if (hits.length) return hits;
+        take(rank([pair[1].toLowerCase()].concat(words.slice(1)), pair[0]));
       }
     }
 
-    // Still nothing. Drop everything after the drug name, so someone who typed
+    if (merged.size) {
+      return [...merged.values()].sort((a, b) => b.score - a.score).slice(0, limit);
+    }
+
+    // Nothing at all. Drop everything after the drug name, so someone who typed
     // a form or a dose we do not spell the same way still sees their options
     // rather than an empty box.
-    if (words.length > 1) return rank([words[0]], null);
+    if (words.length > 1) {
+      take(rank([words[0]], null));
+      if (words[0].length >= 3) {
+        for (const pair of DRUGS.aliases) {
+          if (!pair[0].toLowerCase().startsWith(words[0])) continue;
+          take(rank([pair[1].toLowerCase()], pair[0]));
+        }
+      }
+      return [...merged.values()].sort((a, b) => b.score - a.score).slice(0, limit);
+    }
     return [];
   }
 
