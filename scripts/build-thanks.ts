@@ -140,7 +140,10 @@ function calendarBlock(): string {
 
 const html = `<title>Thank you</title>
 <meta name="robots" content="noindex, nofollow" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#FCFBF8" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="Ask Mike" />
 <link rel="icon" href="${FAVICON}" />
 ${FONT_LINKS}
 
@@ -296,6 +299,26 @@ ${TOKENS}
     .calmock { grid-template-columns: 1fr; }
     .calside { border-right: 0; border-bottom: 1px solid var(--am-line); }
     .playtitle { font-size: 21px; }
+  }
+
+  /* Phones. The client reaches this page from the form, on the same handset,
+     so it gets the same treatment: cards edge to edge rather than framed, and
+     type that does not need pinching. */
+  @media (max-width: 720px) {
+    body { -webkit-tap-highlight-color: transparent; }
+    .topbar { padding: 10px max(14px, env(safe-area-inset-left, 0px)); }
+    .lockup .word { font-size: 21px; }
+    .notice { padding: 10px 14px; font-size: 13px; }
+    main { padding: 34px 0 calc(44px + env(safe-area-inset-bottom, 0px)); }
+    .hero { padding: 0 16px; }
+    .card {
+      border-left: 0; border-right: 0; border-radius: 0;
+      box-shadow: none; padding: 22px 16px;
+    }
+    .viewtoggle .btn { padding: 7px 10px; font-size: 12px; min-height: 32px; }
+    .slotbtn { min-height: 46px; font-size: 16px; }
+    .calslots { gap: 8px; }
+    footer { padding: 0 16px calc(40px + env(safe-area-inset-bottom, 0px)); }
   }
 
   .next { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }

@@ -70,6 +70,7 @@ if (existsSync(formularySrc)) {
 
 const html = `<title>Ask Mike, recommendation</title>
 <meta name="robots" content="noindex, nofollow" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#FCFBF8" />
 <link rel="icon" href="${FAVICON}" />
 ${FONT_LINKS}

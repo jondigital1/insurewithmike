@@ -1,7 +1,18 @@
 <title>Ask Mike, client intake</title>
 <meta name="robots" content="noindex, nofollow" />
+<!-- Without this a phone renders the page at desktop width and scales it down,
+     which is why it read as a website someone had shrunk. viewport-fit=cover
+     lets the sticky footer sit under the home indicator rather than above it. -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#FCFBF8" media="(prefers-color-scheme: light)" />
 <meta name="theme-color" content="#FCFBF8" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="Ask Mike" />
+<meta name="format-detection" content="telephone=no" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Crect%20width%3D%2248%22%20height%3D%2248%22%20rx%3D%2210%22%20fill%3D%22%23FCFBF8%22%2F%3E%3Cpath%20d%3D%22M5%2016.5a11.5%2011.5%200%200%201%2011.5-11.5h15A11.5%2011.5%200%200%201%2043%2016.5v8A11.5%2011.5%200%200%201%2031.5%2036h-8l-9%207v-7.3A11.5%2011.5%200%200%201%205%2024.5z%22%20fill%3D%22%230F7CC0%22%2F%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%2220.5%22%20r%3D%226%22%20fill%3D%22%23F2A65A%22%2F%3E%3C%2Fsvg%3E" />
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Crect%20width%3D%2248%22%20height%3D%2248%22%20rx%3D%2210%22%20fill%3D%22%23FCFBF8%22%2F%3E%3Cpath%20d%3D%22M5%2016.5a11.5%2011.5%200%200%201%2011.5-11.5h15A11.5%2011.5%200%200%201%2043%2016.5v8A11.5%2011.5%200%200%201%2031.5%2036h-8l-9%207v-7.3A11.5%2011.5%200%200%201%205%2024.5z%22%20fill%3D%22%230F7CC0%22%2F%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%2220.5%22%20r%3D%226%22%20fill%3D%22%23F2A65A%22%2F%3E%3C%2Fsvg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
@@ -596,6 +607,125 @@
     color: var(--am-muted); font-size: 14px; line-height: 1.55;
   }
 
+  /* ==================================================================
+     Phones
+     ==================================================================
+     A form someone fills in on a phone, sitting on a sofa, not a desktop
+     page that happens to fit. What changes below is not decoration:
+
+       the card loses its frame and runs edge to edge, because a 12px
+       margin around a 375px screen is 6 per cent of the width spent on
+       showing the client there is a card
+
+       Continue moves to a bar fixed at the bottom, in the thumb, instead
+       of sitting at the end of a scroll that can be twenty answers long
+
+       everything typed into is at least 16px, because iOS zooms the page
+       when a focused field is smaller and never zooms back out
+     ================================================================== */
+  @media (max-width: 720px) {
+    body { font-size: 16px; -webkit-tap-highlight-color: transparent; overscroll-behavior-y: contain; }
+
+    /* Room for the fixed bar, plus the home indicator on a modern iPhone. */
+    main { padding: 24px 0 calc(104px + env(safe-area-inset-bottom, 0px)); }
+
+    .topbar {
+      padding: 10px max(14px, env(safe-area-inset-left, 0px));
+      gap: 10px;
+    }
+    .lockup .word { font-size: 21px; }
+    .lockup .mark { width: 26px; height: 26px; }
+    .progress { width: 100%; order: 3; gap: 10px; }
+    .progress .track { flex: 1; width: auto; }
+    .progress .count { font-size: 12px; }
+    .viewtoggle { margin-left: auto; }
+    .viewtoggle .btn { padding: 7px 10px; font-size: 12px; min-height: 32px; }
+
+    .notice { padding: 10px 14px; font-size: 13px; }
+
+    .hero { padding: 0 16px; margin-bottom: 28px; }
+    .facts { gap: 12px 26px; }
+    .facts .fnum { font-size: 30px; }
+
+    /* Edge to edge. A frame around content that already fills the screen
+       is a border drawn for its own sake. */
+    .step { margin-bottom: 0; }
+    .card {
+      border-left: 0; border-right: 0; border-radius: 0;
+      box-shadow: none; padding: 22px 16px 24px;
+    }
+    .stephead { margin-bottom: 22px; }
+    .qs { gap: 26px; }
+    .qlabel { font-size: 19px; }
+
+    /* No iOS zoom on focus. Anything below 16px triggers it. */
+    .field, .choice .ctext, .pill .ptext, .estask, .sug, .chip { font-size: 16px; }
+    .field { padding: 14px 15px; min-height: 50px; }
+    .field.short { max-width: 100%; }
+    .withunit .field.short { max-width: 160px; }
+
+    /* Thumbs, not cursors. */
+    .choice { padding: 15px 16px; min-height: 52px; }
+    .choice:active { background: var(--am-blue-50); }
+    /* A six point scale has to survive 375px. Sized so the widest run,
+       0 / 1-2 / 3-5 / 6-10 / 11-20 / 20+, stays on one line: wrapping it
+       turns a glanceable row into two rows that read as two questions. */
+    .pill { min-height: 46px; min-width: 42px; padding: 8px 9px; }
+    .pill .ptext { font-size: 15px; }
+    .pillrow { gap: 6px; }
+
+    .person { padding: 14px; gap: 14px; }
+    .estimate { padding: 18px 16px; }
+    .estnum { font-size: 38px; }
+
+    /* The suggestion list becomes a sheet under the field, wide enough to
+       read a full drug name without truncation. */
+    /* Above the action bar, or the last few options sit under it and cannot
+       be tapped when the field is low on the screen. */
+    .suggest { max-height: 46vh; border-radius: 12px; z-index: 50; }
+    .sug { padding: 13px 12px; }
+    /* Keep a focused field clear of the bar when the keyboard pushes it down. */
+    .field, .picker { scroll-margin-bottom: 110px; }
+
+    /* The action bar. Fixed, so Continue is always a thumb away, and the
+       label says which step is next rather than just "Continue". */
+    .stepfoot {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+      margin: 0; padding: 12px max(14px, env(safe-area-inset-left, 0px))
+        calc(12px + env(safe-area-inset-bottom, 0px));
+      background: color-mix(in srgb, var(--am-white) 92%, transparent);
+      -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+      border-top: 1px solid var(--am-line);
+      box-shadow: 0 -1px 12px rgba(20,48,74,.06);
+      display: flex; align-items: center; gap: 10px;
+    }
+    /* Saving is not wired up and takes a whole row it has not earned. */
+    .stepfoot .later { display: none; }
+    .stepfoot .nav { margin-left: 0; width: 100%; gap: 10px; }
+    .stepfoot .nav .next { flex: 1; }
+    .stepfoot .nav .back { flex: 0 0 auto; padding: 14px 18px; }
+    .btn { min-height: 52px; }
+
+    /* Never animate the bar in. It is chrome, not content, and a control
+       that slides up under a thumb gets mis-tapped. */
+    body:not(.reviewing) .step.current .stepfoot { animation: none; }
+
+    .end { border-radius: 0; border-left: 0; border-right: 0; padding: 28px 16px; margin-top: 0; }
+    .end .actions { flex-direction: column; }
+    .end .actions .btn { width: 100%; }
+    .tally { gap: 14px 22px; }
+    .tally .tnum { font-size: 28px; }
+
+    footer.colophon { padding: 0 16px calc(24px + env(safe-area-inset-bottom, 0px)); }
+  }
+
+  /* Review view is a desk document. It keeps the scrolling footer, or every
+     one of the eight steps would try to pin itself to the bottom. */
+  @media (max-width: 720px) {
+    body.reviewing .stepfoot { position: static; background: none; box-shadow: none; backdrop-filter: none; }
+    body.reviewing main { padding-bottom: 48px; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
     /* The underline is drawn by the animation, so killing it would leave the
@@ -646,7 +776,7 @@
       <div class="qs"><div class="q" data-q="client_code">
     <label class="qlabel" id="client_code-label" for="client_code">Enter the code your agent gave you</label>
     <p class="qhelp">Six characters, letters and numbers. Not case sensitive.</p>
-    <input class="field code" type="text" id="client_code" name="client_code" placeholder="K7M4QX" maxlength="6" autocomplete="off" spellcheck="false" />
+    <input class="field code" type="text" id="client_code" name="client_code" placeholder="K7M4QX" maxlength="6" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="next" />
     
     <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Randomly generated per agency. Opens a blank form and locks on submission, so a leaked code exposes nothing.</p></details>
     <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
@@ -697,7 +827,7 @@
       <div class="qs"><div class="q" data-q="household_size">
     <label class="qlabel" id="household_size-label" for="household_size">How many people are on your federal tax return, including you?</label>
     
-    <div class="withunit"><input class="field short" type="number" id="household_size" name="household_size" min="0" /><span class="unit">people</span></div>
+    <div class="withunit"><input class="field short" type="number" inputmode="numeric" id="household_size" name="household_size" min="0" enterkeyhint="next" /><span class="unit">people</span></div>
     
     <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Sets the federal poverty level, which drives both the subsidy and the silver cost sharing tier.</p></details>
     <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
@@ -705,7 +835,7 @@
     <template class="persontpl"><div class="q compact" data-q="person_age____IDX__">
     <label class="qlabel" id="person_age____IDX__-label" for="person_age____IDX__">Age on 1 Jan</label>
     
-    <div class="withunit"><input class="field short" type="number" id="person_age____IDX__" name="person_age____IDX__" min="0" /><span class="unit">years</span></div>
+    <div class="withunit"><input class="field short" type="number" inputmode="numeric" id="person_age____IDX__" name="person_age____IDX__" min="0" enterkeyhint="next" /><span class="unit">years</span></div>
     
     <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Age is the only personal characteristic that changes the premium in New Jersey. We ask for age rather than date of birth on purpose.</p></details>
     <div class="meta"><div class="tags"><span class="tag">asked per person</span><span class="tag route-intake">intake</span></div></div>
@@ -806,14 +936,14 @@
   </div><div class="q" data-q="wages____IDX__" data-showif-q="employment_status____IDX__" data-showif-v="employed|both" hidden>
     <label class="qlabel" id="wages____IDX__-label" for="wages____IDX__">Estimated yearly earnings, before tax</label>
     <p class="qhelp">For the whole year, before anything is taken out. If you are paid hourly or weekly, a rough total for the year is fine.</p>
-    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="wages____IDX__" name="wages____IDX__" min="0" step="1" /></div>
+    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" inputmode="numeric" id="wages____IDX__" name="wages____IDX__" min="0" step="1" enterkeyhint="next" /></div>
     
     <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>One yearly figure rather than an amount and a pay period. The pay period list added a screen of buttons to every earner in the household and bought nothing: the subsidy runs on the annual number, and someone paid every two weeks still knows roughly what they make in a year.</p></details>
     <div class="meta"><div class="tags"><span class="tag">asked per person</span><span class="tag cond">only if employment status is employed or both</span><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="self_employment_net____IDX__" data-showif-q="employment_status____IDX__" data-showif-v="self|both" hidden>
     <label class="qlabel" id="self_employment_net____IDX__-label" for="self_employment_net____IDX__">Net business income for the year, after expenses</label>
     <p class="qhelp">What is left once you have paid business expenses, not what came in. A rough figure for the year.</p>
-    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="self_employment_net____IDX__" name="self_employment_net____IDX__" min="0" step="1" /></div>
+    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" inputmode="numeric" id="self_employment_net____IDX__" name="self_employment_net____IDX__" min="0" step="1" enterkeyhint="next" /></div>
     <label class="unsure"><input type="checkbox" name="self_employment_net____IDX___unsure" /><span>I am not sure</span></label>
     
     <div class="meta"><div class="tags"><span class="tag">asked per person</span><span class="tag cond">only if employment status is self or both</span><span class="tag route-intake">intake</span></div></div>
@@ -822,14 +952,14 @@
   </div><div class="q" data-q="other_income_amount">
     <label class="qlabel" id="other_income_amount-label" for="other_income_amount">Anything else coming in, per year</label>
     <p class="qhelp">Social Security, pensions, retirement withdrawals, unemployment, rental or royalty income, alimony from a divorce finalised before 2019, farming or fishing. Leave out child support, veterans payments and Supplemental Security Income, which do not count. Enter 0 if there is none.</p>
-    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="other_income_amount" name="other_income_amount" min="0" step="1" /></div>
+    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" inputmode="numeric" id="other_income_amount" name="other_income_amount" min="0" step="1" enterkeyhint="next" /></div>
     
     <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>One box rather than the state application's checklist. The subsidy maths only needs the total, and the categories exist for verification, which happens in GetCoveredNJ rather than here.</p></details>
     <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="deductions_amount">
     <label class="qlabel" id="deductions_amount-label" for="deductions_amount">Anything that lowers your taxable income, per year</label>
     <p class="qhelp">Student loan interest, alimony you pay from a divorce finalised before 2019, health savings account contributions, traditional IRA contributions. These reduce the income we count, which usually increases the help you get. Enter 0 if none apply.</p>
-    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="deductions_amount" name="deductions_amount" min="0" step="1" /></div>
+    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" inputmode="numeric" id="deductions_amount" name="deductions_amount" min="0" step="1" enterkeyhint="next" /></div>
     <label class="unsure"><input type="checkbox" name="deductions_amount_unsure" /><span>I am not sure</span></label>
     <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Routinely forgotten, and they move the subsidy in the client's favour. Subtracted from the estimate rather than left for the agent to remember.</p></details>
     <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
@@ -848,7 +978,7 @@
           <div class="estfix" data-showif-q="expected_income_ok" data-showif-v="no" hidden>
             <label class="qlabel small" for="expected_income_correction">What should it be, for the year?</label>
             <p class="qhelp">Your figure is the one we will use. Your agent will go through it with you.</p>
-            <div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="expected_income_correction" name="expected_income_correction" min="0" step="1" /></div>
+            <div class="withunit"><span class="unit">$</span><input class="field short" type="number" inputmode="numeric" id="expected_income_correction" name="expected_income_correction" min="0" step="1" enterkeyhint="done" /></div>
           </div>
         </div>
       </div>
@@ -895,7 +1025,7 @@
   </div><div class="q" data-q="current_premium" data-showif-q="coverage_situation" data-showif-v="renewing|losing" hidden>
     <label class="qlabel" id="current_premium-label" for="current_premium">What do you pay each month for it?</label>
     <p class="qhelp">The amount that actually leaves your account, after any help you already receive.</p>
-    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="current_premium" name="current_premium" min="0" step="1" /></div>
+    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" inputmode="numeric" id="current_premium" name="current_premium" min="0" step="1" enterkeyhint="next" /></div>
     <label class="unsure"><input type="checkbox" name="current_premium_unsure" /><span>I am not sure</span></label>
     <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>The anchor the client will judge every option against, so the agent page reports every recommended plan as a difference against it rather than as a bare figure. This replaced a question asking for a monthly ceiling, which was the same subject asked the wrong way round: a fact the agent can work with rather than a limit the client has committed to in advance. Nothing equivalent is asked of someone with no coverage. What they imagined it might cost is not information, it is a guess about a market they have not shopped, and the agent page says plainly when there is no baseline rather than comparing against one.</p></details>
     <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag cond">only if coverage situation is renewing or losing</span><span class="tag route-intake">intake</span></div></div>
@@ -912,7 +1042,7 @@
   </div><div class="q" data-q="employer_offer_cost" data-showif-q="employer_offer" data-showif-v="yes" hidden>
     <label class="qlabel" id="employer_offer_cost-label" for="employer_offer_cost">Roughly what would it cost per month to cover just that one employee?</label>
     <p class="qhelp">Not the family rate. Just the employee on their own. Your agent will confirm the details.</p>
-    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="employer_offer_cost" name="employer_offer_cost" min="0" step="1" /></div>
+    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" inputmode="numeric" id="employer_offer_cost" name="employer_offer_cost" min="0" step="1" enterkeyhint="next" /></div>
     <label class="unsure"><input type="checkbox" name="employer_offer_cost_unsure" /><span>I am not sure</span></label>
     <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>The affordability test runs on the employee only rate, which surprises almost everybody.</p></details>
     <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag cond">only if employer offer is yes</span><span class="tag route-flag">flag</span></div></div>
@@ -963,7 +1093,7 @@
   </div><div class="q" data-q="network_price" data-showif-q="network_priority" data-showif-v="flexible|prefer" hidden>
     <label class="qlabel" id="network_price-label" for="network_price">How much would you need to save in a year to make changing worth it?</label>
     
-    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="network_price" name="network_price" min="0" step="1" /></div>
+    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" inputmode="numeric" id="network_price" name="network_price" min="0" step="1" enterkeyhint="next" /></div>
     <label class="unsure"><input type="checkbox" name="network_price_unsure" /><span>I am not sure</span></label>
     
     <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag cond">only if network priority is flexible or prefer</span><span class="tag route-intake">intake</span></div></div>
@@ -974,6 +1104,7 @@
         <ul class="chips" id="medications_chips" aria-live="polite"></ul>
         <div class="pickerbox">
           <input class="field" type="text" id="medications_input" autocomplete="off" spellcheck="false"
+            autocapitalize="off" autocorrect="off" enterkeyhint="done"
             role="combobox" aria-expanded="false" aria-controls="medications_list" aria-autocomplete="list"
             aria-label="Anything anyone takes regularly?" placeholder="Start typing, for example atorvastatin or Lipitor" />
           <ul class="suggest" id="medications_list" role="listbox" hidden></ul>
@@ -1075,7 +1206,7 @@
   </div><div class="q" data-q="perceived_spend">
     <label class="qlabel" id="perceived_spend-label" for="perceived_spend">Roughly what do you think all of that cost you out of pocket?</label>
     <p class="qhelp">Not counting your monthly premium. Copays, deductibles, prescriptions. A guess is fine, and we will show you what our numbers say.</p>
-    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="perceived_spend" name="perceived_spend" min="0" step="1" /></div>
+    <div class="withunit"><span class="unit">$</span><input class="field short" type="number" inputmode="numeric" id="perceived_spend" name="perceived_spend" min="0" step="1" enterkeyhint="next" /></div>
     <label class="unsure"><input type="checkbox" name="perceived_spend_unsure" /><span>I am not sure</span></label>
     <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>The anchor the client judges everything against. When our computed figure disagrees with their belief, that gap is worth showing rather than hiding, because it usually means they forgot something.</p></details>
     <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag route-intake">intake</span></div></div>

@@ -90,12 +90,14 @@ const FAVICON =
 function renderInput(q: Question, suffix = ""): string {
   const name = esc(q.id + suffix);
   switch (q.kind) {
+    // inputmode decides which keyboard a phone raises. Without it a client
+    // types a dollar figure on a full qwerty and hunts for the number row.
     case "code":
-      return `<input class="field code" type="text" id="${name}" name="${name}" placeholder="K7M4QX" maxlength="6" autocomplete="off" spellcheck="false" />`;
+      return `<input class="field code" type="text" id="${name}" name="${name}" placeholder="K7M4QX" maxlength="6" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="next" />`;
     case "number":
-      return `<div class="withunit"><input class="field short" type="number" id="${name}" name="${name}" min="0" />${q.unit ? `<span class="unit">${esc(q.unit)}</span>` : ""}</div>`;
+      return `<div class="withunit"><input class="field short" type="number" inputmode="numeric" id="${name}" name="${name}" min="0" enterkeyhint="next" />${q.unit ? `<span class="unit">${esc(q.unit)}</span>` : ""}</div>`;
     case "currency":
-      return `<div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="${name}" name="${name}" min="0" step="1" /></div>`;
+      return `<div class="withunit"><span class="unit">$</span><input class="field short" type="number" inputmode="numeric" id="${name}" name="${name}" min="0" step="1" enterkeyhint="next" /></div>`;
     // Worked out from the boxes above and shown back for confirmation. The
     // client never adds anything up, and a wrong figure gets caught here
     // rather than at tax time.
@@ -112,7 +114,7 @@ function renderInput(q: Question, suffix = ""): string {
           <div class="estfix" data-showif-q="${name}_ok" data-showif-v="no" hidden>
             <label class="qlabel small" for="${name}_correction">What should it be, for the year?</label>
             <p class="qhelp">Your figure is the one we will use. Your agent will go through it with you.</p>
-            <div class="withunit"><span class="unit">$</span><input class="field short" type="number" id="${name}_correction" name="${name}_correction" min="0" step="1" /></div>
+            <div class="withunit"><span class="unit">$</span><input class="field short" type="number" inputmode="numeric" id="${name}_correction" name="${name}_correction" min="0" step="1" enterkeyhint="done" /></div>
           </div>
         </div>
       </div>`;
@@ -130,6 +132,7 @@ function renderInput(q: Question, suffix = ""): string {
         <ul class="chips" id="${name}_chips" aria-live="polite"></ul>
         <div class="pickerbox">
           <input class="field" type="text" id="${name}_input" autocomplete="off" spellcheck="false"
+            autocapitalize="off" autocorrect="off" enterkeyhint="done"
             role="combobox" aria-expanded="false" aria-controls="${name}_list" aria-autocomplete="list"
             aria-label="${esc(q.label)}" placeholder="Start typing, for example atorvastatin or Lipitor" />
           <ul class="suggest" id="${name}_list" role="listbox" hidden></ul>
@@ -277,8 +280,19 @@ const sections = QUESTIONNAIRE.map((s, i) => renderSection(s, i + 1)).join("");
 
 const html = `<title>Ask Mike, client intake</title>
 <meta name="robots" content="noindex, nofollow" />
+<!-- Without this a phone renders the page at desktop width and scales it down,
+     which is why it read as a website someone had shrunk. viewport-fit=cover
+     lets the sticky footer sit under the home indicator rather than above it. -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#FCFBF8" media="(prefers-color-scheme: light)" />
 <meta name="theme-color" content="#FCFBF8" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="Ask Mike" />
+<meta name="format-detection" content="telephone=no" />
 <link rel="icon" href="${FAVICON}" />
+<link rel="apple-touch-icon" href="${FAVICON}" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
@@ -871,6 +885,125 @@ const html = `<title>Ask Mike, client intake</title>
     max-width: var(--measure); margin: 0 auto;
     padding: 0 clamp(16px, 4vw, 24px) 56px;
     color: var(--am-muted); font-size: 14px; line-height: 1.55;
+  }
+
+  /* ==================================================================
+     Phones
+     ==================================================================
+     A form someone fills in on a phone, sitting on a sofa, not a desktop
+     page that happens to fit. What changes below is not decoration:
+
+       the card loses its frame and runs edge to edge, because a 12px
+       margin around a 375px screen is 6 per cent of the width spent on
+       showing the client there is a card
+
+       Continue moves to a bar fixed at the bottom, in the thumb, instead
+       of sitting at the end of a scroll that can be twenty answers long
+
+       everything typed into is at least 16px, because iOS zooms the page
+       when a focused field is smaller and never zooms back out
+     ================================================================== */
+  @media (max-width: 720px) {
+    body { font-size: 16px; -webkit-tap-highlight-color: transparent; overscroll-behavior-y: contain; }
+
+    /* Room for the fixed bar, plus the home indicator on a modern iPhone. */
+    main { padding: 24px 0 calc(104px + env(safe-area-inset-bottom, 0px)); }
+
+    .topbar {
+      padding: 10px max(14px, env(safe-area-inset-left, 0px));
+      gap: 10px;
+    }
+    .lockup .word { font-size: 21px; }
+    .lockup .mark { width: 26px; height: 26px; }
+    .progress { width: 100%; order: 3; gap: 10px; }
+    .progress .track { flex: 1; width: auto; }
+    .progress .count { font-size: 12px; }
+    .viewtoggle { margin-left: auto; }
+    .viewtoggle .btn { padding: 7px 10px; font-size: 12px; min-height: 32px; }
+
+    .notice { padding: 10px 14px; font-size: 13px; }
+
+    .hero { padding: 0 16px; margin-bottom: 28px; }
+    .facts { gap: 12px 26px; }
+    .facts .fnum { font-size: 30px; }
+
+    /* Edge to edge. A frame around content that already fills the screen
+       is a border drawn for its own sake. */
+    .step { margin-bottom: 0; }
+    .card {
+      border-left: 0; border-right: 0; border-radius: 0;
+      box-shadow: none; padding: 22px 16px 24px;
+    }
+    .stephead { margin-bottom: 22px; }
+    .qs { gap: 26px; }
+    .qlabel { font-size: 19px; }
+
+    /* No iOS zoom on focus. Anything below 16px triggers it. */
+    .field, .choice .ctext, .pill .ptext, .estask, .sug, .chip { font-size: 16px; }
+    .field { padding: 14px 15px; min-height: 50px; }
+    .field.short { max-width: 100%; }
+    .withunit .field.short { max-width: 160px; }
+
+    /* Thumbs, not cursors. */
+    .choice { padding: 15px 16px; min-height: 52px; }
+    .choice:active { background: var(--am-blue-50); }
+    /* A six point scale has to survive 375px. Sized so the widest run,
+       0 / 1-2 / 3-5 / 6-10 / 11-20 / 20+, stays on one line: wrapping it
+       turns a glanceable row into two rows that read as two questions. */
+    .pill { min-height: 46px; min-width: 42px; padding: 8px 9px; }
+    .pill .ptext { font-size: 15px; }
+    .pillrow { gap: 6px; }
+
+    .person { padding: 14px; gap: 14px; }
+    .estimate { padding: 18px 16px; }
+    .estnum { font-size: 38px; }
+
+    /* The suggestion list becomes a sheet under the field, wide enough to
+       read a full drug name without truncation. */
+    /* Above the action bar, or the last few options sit under it and cannot
+       be tapped when the field is low on the screen. */
+    .suggest { max-height: 46vh; border-radius: 12px; z-index: 50; }
+    .sug { padding: 13px 12px; }
+    /* Keep a focused field clear of the bar when the keyboard pushes it down. */
+    .field, .picker { scroll-margin-bottom: 110px; }
+
+    /* The action bar. Fixed, so Continue is always a thumb away, and the
+       label says which step is next rather than just "Continue". */
+    .stepfoot {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+      margin: 0; padding: 12px max(14px, env(safe-area-inset-left, 0px))
+        calc(12px + env(safe-area-inset-bottom, 0px));
+      background: color-mix(in srgb, var(--am-white) 92%, transparent);
+      -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+      border-top: 1px solid var(--am-line);
+      box-shadow: 0 -1px 12px rgba(20,48,74,.06);
+      display: flex; align-items: center; gap: 10px;
+    }
+    /* Saving is not wired up and takes a whole row it has not earned. */
+    .stepfoot .later { display: none; }
+    .stepfoot .nav { margin-left: 0; width: 100%; gap: 10px; }
+    .stepfoot .nav .next { flex: 1; }
+    .stepfoot .nav .back { flex: 0 0 auto; padding: 14px 18px; }
+    .btn { min-height: 52px; }
+
+    /* Never animate the bar in. It is chrome, not content, and a control
+       that slides up under a thumb gets mis-tapped. */
+    body:not(.reviewing) .step.current .stepfoot { animation: none; }
+
+    .end { border-radius: 0; border-left: 0; border-right: 0; padding: 28px 16px; margin-top: 0; }
+    .end .actions { flex-direction: column; }
+    .end .actions .btn { width: 100%; }
+    .tally { gap: 14px 22px; }
+    .tally .tnum { font-size: 28px; }
+
+    footer.colophon { padding: 0 16px calc(24px + env(safe-area-inset-bottom, 0px)); }
+  }
+
+  /* Review view is a desk document. It keeps the scrolling footer, or every
+     one of the eight steps would try to pin itself to the bottom. */
+  @media (max-width: 720px) {
+    body.reviewing .stepfoot { position: static; background: none; box-shadow: none; backdrop-filter: none; }
+    body.reviewing main { padding-bottom: 48px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
