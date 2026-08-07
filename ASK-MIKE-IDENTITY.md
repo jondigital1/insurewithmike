@@ -1,9 +1,9 @@
-# Ask Mike — Visual Identity Spec
+# Ask Mike: Visual Identity Spec
 
 Drop this file at the repo root. Instruction to give Claude Code:
 
 > Read `ASK-MIKE-IDENTITY.md` and restyle the app to match it. Do not change any
-> question logic in `src/intake/questionnaire.ts` — only presentation.
+> question logic in `src/intake/questionnaire.ts`, only presentation.
 
 ---
 
@@ -32,7 +32,7 @@ impersonating them.
   --am-ink-soft:   #4A6076;  /* body, helper text */
   --am-muted:      #7C8FA3;  /* labels, eyebrows, meta */
 
-  /* Blue — primary */
+  /* Blue, the primary */
   --am-blue-800:   #083F66;
   --am-blue-700:   #0B5E96;  /* hover / pressed */
   --am-blue-600:   #0F7CC0;  /* PRIMARY */
@@ -40,7 +40,7 @@ impersonating them.
   --am-blue-100:   #E3F0F9;  /* focus ring, progress track */
   --am-blue-50:    #F2F8FC;  /* selected row, tinted panel */
 
-  /* Amber — the single accent */
+  /* Amber, the single accent */
   --am-amber-600:  #C67E32;  /* amber text on amber-100 */
   --am-amber-500:  #E8973F;
   --am-amber-400:  #F2A65A;  /* MARK, accents */
@@ -50,11 +50,11 @@ impersonating them.
   /* Support */
   --am-green:      #2E8B72;  /* saved, complete, positive */
   --am-green-100:  #E4F1EC;
-  --am-alert:      #B4472E;  /* errors — never used for urgency */
+  --am-alert:      #B4472E;  /* errors, never used for urgency */
   --am-alert-100:  #F8E9E5;
 
   /* Surface */
-  --am-paper:      #FCFBF8;  /* page background — warm, never pure white */
+  --am-paper:      #FCFBF8;  /* page background: warm, never pure white */
   --am-white:      #FFFFFF;  /* cards */
   --am-line:       #E0E8EF;  /* borders */
   --am-line-soft:  #F0F4F8;  /* internal dividers */
@@ -109,8 +109,8 @@ module.exports = {
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 ```
 
-**Instrument Serif** — page titles and step headings only. Nothing else, ever.
-**Instrument Sans** — questions, options, helper text, buttons, numbers.
+**Instrument Serif**: page titles and step headings only. Nothing else, ever.
+**Instrument Sans**: questions, options, helper text, buttons, numbers.
 
 | Role | Size / line-height / weight | Colour | Notes |
 |---|---|---|---|
@@ -118,7 +118,7 @@ module.exports = {
 | Step heading | 34 / 1.1 / 400 serif | ink | |
 | Section eyebrow | 12 / 1 / 600, .12em, uppercase | muted | Above the heading |
 | Question | 21 / 1.35 / 500 sans | ink | The `<label>` |
-| Body | 17 / 1.65 / 400 sans | ink-soft | Larger than typical — people read this carefully |
+| Body | 17 / 1.65 / 400 sans | ink-soft | Larger than typical, people read this carefully |
 | Option label | 16 / 1.5 / 400 sans | ink | |
 | Helper | 14 / 1.55 / 400 sans | ink-soft | Under the question, above the control |
 | Meta / step count | 14 / 1.4 / 400 sans | muted | |
@@ -131,7 +131,7 @@ All numeric inputs and displayed figures use `font-variant-numeric: tabular-nums
 
 ## 3. Logo
 
-The mark is **The Reply** — a wide, soft-cornered speech bubble with a warm
+The mark is **The Reply**, a wide, soft-cornered speech bubble with a warm
 light inside. It says the product's name back to you before you have read a
 word. Round corners and a single flat fill keep it friendly rather than
 official; the amber dot means someone is already in there, waiting. Explicitly
@@ -162,7 +162,7 @@ this fatter variant for the favicon and any inline glyph:
 ```
 
 Never outline the bubble, never add a drop shadow, never animate the dot as a
-typing indicator — that turns the logo into a loading state.
+typing indicator, because that turns the logo into a loading state.
 
 ### Lockup
 
@@ -188,14 +188,14 @@ export function AskMikeLogo({ size = 32, dark = false }) {
 - Clear space on all sides = the mark's height.
 - Approved colourways: blue mark + ink wordmark on paper/white; white mark +
   white wordmark on ink; all-ink monochrome. The amber dot stays amber in every
-  colourway — it is the one thing that never goes monochrome.
+  colourway. It is the one thing that never goes monochrome.
 - On navy, fill the bubble `#FCFBF8`, not pure white.
 
 ### Alternates (kept on file, not in use)
 
-- **The Arch** — an open doorway with the amber dot inside. More distinctive and
+- **The Arch**, an open doorway with the amber dot inside. More distinctive and
   further from the category, but it asks the viewer to work out what it means.
-- **The Spark** — a soft-lobed four-point star with a small amber companion.
+- **The Spark**, a soft-lobed four-point star with a small amber companion.
   Signals intelligence, but promises cleverness at a moment when people want to
   be told it will be alright.
 
@@ -228,7 +228,7 @@ A quiet **Save and finish later** sits beside the primary on every step.
 
 ### Choice (radio / checkbox rows)
 
-The single most-used component in this product — a 50-question form is mostly
+The single most-used component in this product. A 50-question form is mostly
 these. Full-width tappable rows, never bare inputs.
 
 ```
@@ -247,7 +247,7 @@ Label (question, 21/500) → helper (14, ink-soft) → control. Never placeholde
 Prefix `$` and suffix units (`people`, `years`) live outside the input in `--am-muted`
 so the typed value stays clean.
 The **"I am not sure"** escape hatch is a Quiet-styled toggle *below* the field,
-not an option inside it — it must always look like a legitimate answer, because
+not an option inside it. It must always look like a legitimate answer, because
 it is one.
 
 ### "Why we ask" callout
@@ -255,7 +255,7 @@ it is one.
 The signature component. Amber-100 background, 12px radius, 15px/17px padding,
 the bubble glyph (small variant) in `amber-600` with an `amber-100` dot, at 19px, text in `amber-text` at 14/1.55.
 Collapsed by default on the client view; always expanded on the review view.
-Never red, never an ⓘ icon, never a tooltip — it is reassurance, not an alert.
+Never red, never an ⓘ icon, never a tooltip. It is reassurance, not an alert.
 
 ### Progress
 
@@ -276,7 +276,7 @@ Already correct on the draft site. Keep it.
 
 **Principles**
 1. **Plain, not simple.** Short words for hard things. Never simplify the
-   substance — "the 400 percent cliff is back for 2026" stays.
+   substance. "The 400 percent cliff is back for 2026" stays.
 2. **Say why.** Any question that could feel intrusive earns a reason under it.
 3. **No urgency.** No countdowns, no scarcity, no "don't miss out". Deadlines are
    stated once, as facts.
@@ -287,7 +287,7 @@ Already correct on the draft site. Keep it.
 
 **Mechanics:** sentence case everywhere, including buttons and headings. Second
 person. No exclamation marks. No emoji. Numbers as numerals. Currency as
-`$1,240`. Contractions sparingly — the draft's slightly formal register
+`$1,240`. Contractions sparingly, because the draft's slightly formal register
 ("I am not sure", "do not") is deliberate and reads as careful, not stiff.
 
 | Write | Not |
@@ -302,7 +302,7 @@ person. No exclamation marks. No emoji. Numbers as numerals. Currency as
 
 ## 6. Motion
 
-150ms `ease-out` on colour and border. 200ms on step transitions — a short
+150ms `ease-out` on colour and border. 200ms on step transitions: a short
 cross-fade with an 8px vertical slide, nothing more. `prefers-reduced-motion`
 removes all of it. No skeleton shimmer, no spinners longer than a heartbeat, no
 loading copy that jokes about how hard the AI is working.
