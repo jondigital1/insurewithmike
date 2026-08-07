@@ -79,8 +79,11 @@ const index: Record<string, CopayEntry> = {};
 // Ambetter, joined on plan id.
 const byPlanId = new Map(sbc.filter((s) => s.planId).map((s) => [s.planId as string, s]));
 
-// Horizon, joined on plan name.
-const horizonSbc = sbc.filter((s) => !s.planId && s.planName);
+// Horizon and AmeriHealth, joined on plan name. Neither serves documents at a
+// URL carrying the plan id, so the name is the only join available.
+const byName = sbc.filter((s) => !s.planId && s.planName);
+const horizonSbc = byName.filter((s) => !/^IHC\s/i.test(s.planName!));
+const amerihealthSbc = byName.filter((s) => /^IHC\s/i.test(s.planName!));
 
 for (const plan of dataset.plans) {
   const exact = byPlanId.get(plan.planId);
@@ -101,6 +104,38 @@ for (const plan of dataset.plans) {
         : {}),
     };
     continue;
+  }
+
+  // AmeriHealth, joined on plan name, and read for timing rather than amount.
+  //
+  // Their marketing name states the two office visit copays outright, as in
+  // "IHC Silver EPO AmeriHealth Advantage $25/$60", so the amounts are not in
+  // doubt. Their SBC lays the table out with two provider columns and the
+  // specialist figure rendering on the line above its own label, which makes
+  // the forward read return the second column: $75 where the name says $60.
+  // Taking the amount from the name and the deductible timing from the SBC uses
+  // each source for the thing it states unambiguously, rather than picking a
+  // winner between them.
+  if (plan.issuerId === "91762") {
+    const n = norm(plan.marketingName);
+    const hit = amerihealthSbc.find((h) => {
+      const hn = norm(h.planName!);
+      return hn === n || n.includes(hn) || hn.includes(n);
+    });
+    if (hit) {
+      const named = copaysFromName(plan.marketingName);
+      const coinsured = named.primary === null && hit.primaryCoinsurance !== null;
+      if (named.primary !== null || coinsured) {
+        index[plan.planId] = {
+          primaryCare: named.primary,
+          specialist: named.specialist,
+          beforeDeductible: hit.primaryBeforeDeductible,
+          source: "sbc-timing-name-amount",
+          ...(coinsured ? { coinsuredInstead: true } : {}),
+        };
+        continue;
+      }
+    }
   }
 
   if (plan.issuerId === "91661") {

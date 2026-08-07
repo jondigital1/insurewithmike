@@ -12,8 +12,11 @@
  *                   they carry document ids that will change next plan year.
  *   Oscar           No per plan SBCs. One document covering every plan as a
  *                   benefits grid, which needs a different parser.
- *   AmeriHealth     Not yet located. Their plan names state office visit
- *                   copays, which is where those currently come from.
+ *   AmeriHealth     Per plan SBCs at a stable path, but addressed by an
+ *                   internal form code rather than by anything in the filings,
+ *                   so there is no way to derive the URL from a plan id. The
+ *                   codes below were found by probing the pattern; see the note
+ *                   on the map for which plans are still missing and why.
  *   UnitedHealthcare Addressable by exact plan id, like Ambetter, once you know
  *                   the pattern. The plan picker on uhone.com is a front end to
  *                   it, not a gate. Note the filings carry a "URL FOR SUMMARY OF
@@ -30,6 +33,7 @@ import { loadPlanDataset } from "../src/puf.ts";
 const outDir = process.argv[2] ?? "data/sbc/source";
 mkdirSync(join(outDir, "ambetter"), { recursive: true });
 mkdirSync(join(outDir, "uhc"), { recursive: true });
+mkdirSync(join(outDir, "amerihealth"), { recursive: true });
 
 const UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36";
@@ -110,4 +114,34 @@ for (const id of uhc) {
 }
 console.log(`UHC         ${uok} of ${uhc.length} plan variants`);
 
-console.log("\nStill missing: AmeriHealth SBCs.");
+/**
+ * AmeriHealth, by internal form code.
+ *
+ * The path is stable and the codes are systematic: IHC, then a number where 1xx
+ * is bronze and 2xx is silver, then a network abbreviation. AA is AmeriHealth
+ * Advantage and AHNJHA is AmeriHealth Hospital Advantage.
+ *
+ * Nothing in the filings carries these codes and AmeriHealth publish no index,
+ * so they were found by probing. The Local Value and Regional Preferred plans
+ * use an abbreviation the probe did not reach: roughly fifty candidates were
+ * tried across the number bands that produced hits, and none returned a
+ * document. Those four plans keep taking their copays from the plan name, which
+ * states them, and lose only the deductible timing, which is then inferred.
+ */
+const AMERIHEALTH = [
+  "IHC151AHNJHA", // Bronze EPO HSA AmeriHealth Hospital Advantage $50/$75
+  "IHC156AA", // Bronze EPO HSA AmeriHealth Advantage $25/$50
+  "IHC251AHNJHA", // Silver EPO HSA AmeriHealth Hospital Advantage $50/$75
+  "IHC253AHNJHA", // Silver EPO AmeriHealth Hospital Advantage $50/$75
+  "IHC255AA", // Silver EPO AmeriHealth Advantage 40%/40%
+  "IHC256AA", // Silver EPO AmeriHealth Advantage $25/$60
+];
+
+let aok = 0;
+for (const code of AMERIHEALTH) {
+  const url = `https://www.amerihealth.com/pdfs/sbcs/2026/2026-${code}.pdf`;
+  if (await grab(url, join(outDir, "amerihealth", `${code}.pdf`))) aok += 1;
+}
+console.log(`AmeriHealth ${aok} of ${AMERIHEALTH.length} plans`);
+
+console.log("\nStill missing: AmeriHealth Local Value and Regional Preferred.");

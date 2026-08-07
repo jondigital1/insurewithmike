@@ -366,6 +366,80 @@
     "notes": []
   },
   {
+    "source": "IHC151AHNJHA.pdf",
+    "planId": null,
+    "planName": "IHC Bronze EPO HSA AmeriHealth Hospital Advantage $50/$75",
+    "primaryCare": 50,
+    "specialist": 75,
+    "primaryBeforeDeductible": false,
+    "specialistBeforeDeductible": false,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": []
+  },
+  {
+    "source": "IHC156AA.pdf",
+    "planId": null,
+    "planName": "IHC Bronze EPO HSA AmeriHealth Advantage $25/$50",
+    "primaryCare": 25,
+    "specialist": 50,
+    "primaryBeforeDeductible": false,
+    "specialistBeforeDeductible": false,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": []
+  },
+  {
+    "source": "IHC251AHNJHA.pdf",
+    "planId": null,
+    "planName": "IHC Silver EPO HSA AmeriHealth Hospital Advantage $50/$75",
+    "primaryCare": 50,
+    "specialist": 75,
+    "primaryBeforeDeductible": false,
+    "specialistBeforeDeductible": false,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": []
+  },
+  {
+    "source": "IHC253AHNJHA.pdf",
+    "planId": null,
+    "planName": "IHC Silver EPO AmeriHealth Hospital Advantage $50/$75",
+    "primaryCare": 50,
+    "specialist": 75,
+    "primaryBeforeDeductible": true,
+    "specialistBeforeDeductible": false,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": [
+      "specialist read from the line above its label"
+    ]
+  },
+  {
+    "source": "IHC255AA.pdf",
+    "planId": null,
+    "planName": "IHC Silver EPO AmeriHealth Advantage 40%/40%",
+    "primaryCare": null,
+    "specialist": null,
+    "primaryBeforeDeductible": false,
+    "specialistBeforeDeductible": false,
+    "primaryCoinsurance": 0.4,
+    "specialistCoinsurance": 0.4,
+    "notes": []
+  },
+  {
+    "source": "IHC256AA.pdf",
+    "planId": null,
+    "planName": "IHC Silver EPO AmeriHealth Advantage $25/$60",
+    "primaryCare": 25,
+    "specialist": 75,
+    "primaryBeforeDeductible": true,
+    "specialistBeforeDeductible": false,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": []
+  },
+  {
     "source": "horizon-adv-epo-bronze.pdf",
     "planId": null,
     "planName": "Horizon Advantage EPO Bronze",
@@ -443,8 +517,8 @@
     "planName": "OMNIA Silver Value",
     "primaryCare": 45,
     "specialist": 75,
-    "primaryBeforeDeductible": false,
-    "specialistBeforeDeductible": false,
+    "primaryBeforeDeductible": true,
+    "specialistBeforeDeductible": true,
     "primaryCoinsurance": null,
     "specialistCoinsurance": null,
     "notes": []
@@ -455,8 +529,8 @@
     "planName": "OMNIA Silver Value",
     "primaryCare": 45,
     "specialist": 75,
-    "primaryBeforeDeductible": false,
-    "specialistBeforeDeductible": false,
+    "primaryBeforeDeductible": true,
+    "specialistBeforeDeductible": true,
     "primaryCoinsurance": null,
     "specialistCoinsurance": null,
     "notes": []
@@ -659,7 +733,7 @@
     "planName": "Insurance Company",
     "primaryCare": 5,
     "specialist": 50,
-    "primaryBeforeDeductible": false,
+    "primaryBeforeDeductible": true,
     "specialistBeforeDeductible": true,
     "primaryCoinsurance": null,
     "specialistCoinsurance": null,

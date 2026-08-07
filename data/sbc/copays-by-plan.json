@@ -396,7 +396,7 @@
   "37777NJ0100007-01": {
     "primaryCare": 5,
     "specialist": 50,
-    "beforeDeductible": false,
+    "beforeDeductible": true,
     "source": "sbc-by-plan-id"
   },
   "37777NJ0100007-02": {
@@ -636,56 +636,56 @@
   "91661NJ2340006-01": {
     "primaryCare": 45,
     "specialist": 75,
-    "beforeDeductible": false,
+    "beforeDeductible": true,
     "source": "sbc-by-name"
   },
   "91661NJ2340006-02": {
     "primaryCare": 45,
     "specialist": 75,
-    "beforeDeductible": false,
+    "beforeDeductible": true,
     "source": "sbc-by-name"
   },
   "91661NJ2340006-03": {
     "primaryCare": 45,
     "specialist": 75,
-    "beforeDeductible": false,
+    "beforeDeductible": true,
     "source": "sbc-by-name"
   },
   "91661NJ2340006-04": {
     "primaryCare": 45,
     "specialist": 75,
-    "beforeDeductible": false,
+    "beforeDeductible": true,
     "source": "sbc-by-name"
   },
   "91661NJ2340006-05": {
     "primaryCare": 45,
     "specialist": 75,
-    "beforeDeductible": false,
+    "beforeDeductible": true,
     "source": "sbc-by-name"
   },
   "91661NJ2340006-06": {
     "primaryCare": 45,
     "specialist": 75,
-    "beforeDeductible": false,
+    "beforeDeductible": true,
     "source": "sbc-by-name"
   },
   "91762NJ0070004-01": {
     "primaryCare": 50,
     "specialist": 75,
     "beforeDeductible": false,
-    "source": "plan-name"
+    "source": "sbc-timing-name-amount"
   },
   "91762NJ0070004-02": {
     "primaryCare": 50,
     "specialist": 75,
     "beforeDeductible": false,
-    "source": "plan-name"
+    "source": "sbc-timing-name-amount"
   },
   "91762NJ0070004-03": {
     "primaryCare": 50,
     "specialist": 75,
     "beforeDeductible": false,
-    "source": "plan-name"
+    "source": "sbc-timing-name-amount"
   },
   "91762NJ0070006-01": {
     "primaryCare": 50,
@@ -727,37 +727,37 @@
     "primaryCare": 50,
     "specialist": 75,
     "beforeDeductible": false,
-    "source": "plan-name"
+    "source": "sbc-timing-name-amount"
   },
   "91762NJ0070007-02": {
     "primaryCare": 50,
     "specialist": 75,
-    "beforeDeductible": true,
-    "source": "plan-name"
+    "beforeDeductible": false,
+    "source": "sbc-timing-name-amount"
   },
   "91762NJ0070007-03": {
     "primaryCare": 50,
     "specialist": 75,
-    "beforeDeductible": true,
-    "source": "plan-name"
+    "beforeDeductible": false,
+    "source": "sbc-timing-name-amount"
   },
   "91762NJ0070007-04": {
     "primaryCare": 50,
     "specialist": 75,
     "beforeDeductible": false,
-    "source": "plan-name"
+    "source": "sbc-timing-name-amount"
   },
   "91762NJ0070007-05": {
     "primaryCare": 50,
     "specialist": 75,
-    "beforeDeductible": true,
-    "source": "plan-name"
+    "beforeDeductible": false,
+    "source": "sbc-timing-name-amount"
   },
   "91762NJ0070007-06": {
     "primaryCare": 50,
     "specialist": 75,
-    "beforeDeductible": true,
-    "source": "plan-name"
+    "beforeDeductible": false,
+    "source": "sbc-timing-name-amount"
   },
   "91762NJ0070010-01": {
     "primaryCare": 30,
@@ -781,55 +781,55 @@
     "primaryCare": 25,
     "specialist": 60,
     "beforeDeductible": true,
-    "source": "plan-name"
+    "source": "sbc-timing-name-amount"
   },
   "91762NJ0070093-02": {
     "primaryCare": 25,
     "specialist": 60,
     "beforeDeductible": true,
-    "source": "plan-name"
+    "source": "sbc-timing-name-amount"
   },
   "91762NJ0070093-03": {
     "primaryCare": 25,
     "specialist": 60,
     "beforeDeductible": true,
-    "source": "plan-name"
+    "source": "sbc-timing-name-amount"
   },
   "91762NJ0070093-04": {
     "primaryCare": 25,
     "specialist": 60,
     "beforeDeductible": true,
-    "source": "plan-name"
+    "source": "sbc-timing-name-amount"
   },
   "91762NJ0070093-05": {
     "primaryCare": 25,
     "specialist": 60,
     "beforeDeductible": true,
-    "source": "plan-name"
+    "source": "sbc-timing-name-amount"
   },
   "91762NJ0070093-06": {
     "primaryCare": 25,
     "specialist": 60,
     "beforeDeductible": true,
-    "source": "plan-name"
+    "source": "sbc-timing-name-amount"
   },
   "91762NJ0070097-01": {
     "primaryCare": 25,
     "specialist": 50,
     "beforeDeductible": false,
-    "source": "plan-name"
+    "source": "sbc-timing-name-amount"
   },
   "91762NJ0070097-02": {
     "primaryCare": 25,
     "specialist": 50,
     "beforeDeductible": false,
-    "source": "plan-name"
+    "source": "sbc-timing-name-amount"
   },
   "91762NJ0070097-03": {
     "primaryCare": 25,
     "specialist": 50,
     "beforeDeductible": false,
-    "source": "plan-name"
+    "source": "sbc-timing-name-amount"
   },
   "91762NJ0070104-01": {
     "primaryCare": 50,
@@ -849,41 +849,83 @@
     "beforeDeductible": false,
     "source": "plan-name"
   },
+  "91762NJ0070106-01": {
+    "primaryCare": null,
+    "specialist": null,
+    "beforeDeductible": false,
+    "source": "sbc-timing-name-amount",
+    "coinsuredInstead": true
+  },
+  "91762NJ0070106-02": {
+    "primaryCare": null,
+    "specialist": null,
+    "beforeDeductible": false,
+    "source": "sbc-timing-name-amount",
+    "coinsuredInstead": true
+  },
+  "91762NJ0070106-03": {
+    "primaryCare": null,
+    "specialist": null,
+    "beforeDeductible": false,
+    "source": "sbc-timing-name-amount",
+    "coinsuredInstead": true
+  },
+  "91762NJ0070106-04": {
+    "primaryCare": null,
+    "specialist": null,
+    "beforeDeductible": false,
+    "source": "sbc-timing-name-amount",
+    "coinsuredInstead": true
+  },
+  "91762NJ0070106-05": {
+    "primaryCare": null,
+    "specialist": null,
+    "beforeDeductible": false,
+    "source": "sbc-timing-name-amount",
+    "coinsuredInstead": true
+  },
+  "91762NJ0070106-06": {
+    "primaryCare": null,
+    "specialist": null,
+    "beforeDeductible": false,
+    "source": "sbc-timing-name-amount",
+    "coinsuredInstead": true
+  },
   "91762NJ0070107-01": {
     "primaryCare": 50,
     "specialist": 75,
     "beforeDeductible": true,
-    "source": "plan-name"
+    "source": "sbc-timing-name-amount"
   },
   "91762NJ0070107-02": {
     "primaryCare": 50,
     "specialist": 75,
     "beforeDeductible": true,
-    "source": "plan-name"
+    "source": "sbc-timing-name-amount"
   },
   "91762NJ0070107-03": {
     "primaryCare": 50,
     "specialist": 75,
     "beforeDeductible": true,
-    "source": "plan-name"
+    "source": "sbc-timing-name-amount"
   },
   "91762NJ0070107-04": {
     "primaryCare": 50,
     "specialist": 75,
     "beforeDeductible": true,
-    "source": "plan-name"
+    "source": "sbc-timing-name-amount"
   },
   "91762NJ0070107-05": {
     "primaryCare": 50,
     "specialist": 75,
     "beforeDeductible": true,
-    "source": "plan-name"
+    "source": "sbc-timing-name-amount"
   },
   "91762NJ0070107-06": {
     "primaryCare": 50,
     "specialist": 75,
     "beforeDeductible": true,
-    "source": "plan-name"
+    "source": "sbc-timing-name-amount"
   },
   "91762NJ0070110-01": {
     "primaryCare": 50,

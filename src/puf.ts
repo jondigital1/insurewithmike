@@ -349,6 +349,7 @@ function applyCopayIndex(plans: Plan[], indexPath: string): void {
       specialist: number | null;
       beforeDeductible: boolean;
       coinsuredInstead?: boolean;
+      source?: string;
     }
   > = JSON.parse(readFileSync(indexPath, "utf8"));
   for (const plan of plans) {
@@ -356,8 +357,11 @@ function applyCopayIndex(plans: Plan[], indexPath: string): void {
     if (!entry) continue;
     plan.copayPrimaryCare = entry.primaryCare;
     plan.copaySpecialist = entry.specialist;
-    // We read this plan's schedule, whether or not it produced an amount.
-    plan.copaysRead = true;
+    // A benefit schedule was read for this plan, whether or not it produced an
+    // amount. A copay lifted out of the marketing name is not that: it gives an
+    // amount and says nothing about anything else, so a plan sourced that way
+    // and carrying no amount is a gap rather than an answer.
+    plan.copaysRead = entry.source !== "plan-name";
     plan.copaysCoinsuredInstead = entry.coinsuredInstead === true;
     // The index value is the plan's own summary of benefits saying whether the
     // deductible applies, so it is taken as stated. It used to be overridden

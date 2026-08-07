@@ -77,7 +77,12 @@ function firstCost(segment: string): {
   beforeDeductible: boolean;
 } {
   const window = segment.slice(0, 260);
-  const copayMatch = window.match(/\$\s?([\d,]+)(?:\.\d\d)?\s*Copay/i);
+  // Two ways of saying the same thing. Centene and UnitedHealthcare write
+  // "$25 copay /visit"; AmeriHealth writes "$25/visit." and never uses the
+  // word copay at all, which is why their whole book read as unparsed.
+  const copayMatch = window.match(
+    /\$\s?([\d,]+)(?:\.\d\d)?\s*(?:copay|\/\s?visit|per\s+visit)/i,
+  );
   const coinsMatch = window.match(/(\d{1,3})\s?%\s*Coinsurance/i);
   const noChargeMatch = window.match(/No Charge/i);
 
@@ -85,7 +90,13 @@ function firstCost(segment: string): {
   // from the first visit rather than after the deductible is satisfied. The
   // phrase lands on the line below the amount in the same table cell, so the
   // window has to be wide enough to reach it.
-  const beforeDeductible = /Deductible does not apply/i.test(window);
+  //
+  // The two halves are allowed to drift apart because reading order interleaves
+  // the columns: AmeriHealth's cell renders as "$25/visit. Deductible" on one
+  // line and "does not apply." three lines later, with the next column's text
+  // in between. Requiring the words to be adjacent read every one of their
+  // plans as applying after the deductible, which is the opposite of the truth.
+  const beforeDeductible = /deductible[\s\S]{0,120}?does not apply/i.test(window);
 
   const copayAt = copayMatch?.index ?? Infinity;
   const coinsAt = coinsMatch?.index ?? Infinity;
@@ -143,7 +154,12 @@ export async function extract(file: string): Promise<SbcCopays> {
   const notes: string[] = [];
 
   const nameMatch = text.match(/^(.*?):\s*(.+?)\s*$/m);
+  // A line that is the plan name and nothing else, which is how AmeriHealth
+  // and Horizon head their documents. Tried first because the fallback below
+  // matches on a carrier word and returns whatever follows it, which on
+  // "IHC Silver EPO AmeriHealth Advantage $25/$60" is only the tail.
   const planName =
+    text.match(/^\s*(IHC\s+[^\n]{4,80}?)\s*$/m)?.[1]?.trim() ??
     text.match(/(?:BCBSNJ|Ambetter|Oscar|AmeriHealth|UnitedHealthcare|Oxford)[:\s]+([^\n]{3,70})/)?.[1]?.trim() ??
     nameMatch?.[2]?.trim() ??
     null;
