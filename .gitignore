@@ -11,3 +11,5 @@ data/testing.sqlite-*
 
 data/sbc/source/
 
+data/formulary/*.raw.json
+
