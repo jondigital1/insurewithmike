@@ -158,7 +158,22 @@ ${TOKENS}
 
   .topbar {
     background: var(--am-white); border-bottom: 1px solid var(--am-line);
-    padding: 12px clamp(16px, 4vw, 32px); display: flex; align-items: center;
+    padding: 12px clamp(16px, 4vw, 32px);
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  }
+  /* A testing control, so it only exists while the page is in draft. A real
+     client must never be one click from the agent's working document. */
+  .viewtoggle { display: flex; gap: 8px; margin-left: auto; }
+  .viewtoggle .btn {
+    font: inherit; font-size: 14px; font-weight: 500; text-decoration: none;
+    display: inline-flex; align-items: center; padding: 8px 14px; min-height: 36px;
+    border: 1.5px solid var(--am-line); border-radius: var(--r-control);
+    background: var(--am-white); color: var(--am-blue-700);
+  }
+  .viewtoggle a.btn:hover { border-color: var(--am-blue-300); }
+  .viewtoggle .is-current {
+    background: var(--am-blue-700); border-color: var(--am-blue-700);
+    color: var(--am-white); cursor: default;
   }
   .lockup {
     display: inline-flex; align-items: center; gap: 0.34em;
@@ -306,7 +321,17 @@ ${TOKENS}
   <b>Draft for review.</b> This is not the live form yet, so nothing was actually sent.
 </div>
 
-<div class="topbar">${lockup(32)}</div>
+<div class="topbar">
+  ${lockup(32)}
+  ${
+    AGENCY.draft
+      ? `<div class="viewtoggle" role="group" aria-label="View">
+    <a class="btn secondary" href="agent.html">Agent recommendation</a>
+    <span class="btn secondary is-current" aria-current="page">What the client sees</span>
+  </div>`
+      : ""
+  }
+</div>
 
 <main>
   <div class="hero">

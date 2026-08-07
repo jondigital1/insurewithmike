@@ -59,12 +59,27 @@
     padding: 12px clamp(16px, 4vw, 32px);
     display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
   }
-  .lockup { display: inline-flex; align-items: center; gap: 0.34em; margin-right: auto; }
+  .lockup {
+    display: inline-flex; align-items: center; gap: 0.34em;
+    text-decoration: none; border-radius: 8px; padding: 2px 4px; margin-left: -4px;
+    transition: opacity 150ms ease-out;
+  }
+  .lockup:hover { opacity: .78; }
+  .lockup:focus-visible { outline: 2px solid var(--am-blue-600); outline-offset: 2px; }
   .lockup .word {
     font-family: var(--display); font-weight: 400; font-size: 26px;
     line-height: 1; letter-spacing: -0.015em; color: var(--am-ink);
   }
-  .forwhom { font-size: 14px; color: var(--am-muted); }
+  .forwhom { font-size: 14px; color: var(--am-muted); margin-left: auto; }
+
+  /* Until there is an agent login, both sides of the product are reachable
+     from either page, so the two can be checked against each other. */
+  .viewtoggle { display: flex; gap: 8px; }
+  .viewtoggle .btn { padding: 8px 14px; font-size: 14px; min-height: 36px; text-decoration: none; }
+  .viewtoggle .is-current {
+    background: var(--am-blue-700); border-color: var(--am-blue-700); color: var(--am-white);
+    cursor: default;
+  }
 
   .btn {
     font: inherit; font-size: 15px; font-weight: 600; border-radius: var(--r-control);
@@ -84,7 +99,12 @@
   }
   .notice b { color: var(--am-ink); font-weight: 600; }
 
-  main { max-width: 860px; margin: 0 auto; padding: 40px clamp(16px, 4vw, 24px) 72px; }
+  /* Wider than the client form on purpose. That page is prose and wants a
+     reading measure; this one is a working document with a seven column table
+     on it, and 860px was clipping the last column off the end. */
+  main { max-width: 1140px; margin: 0 auto; padding: 40px clamp(16px, 4vw, 28px) 72px; }
+  /* The prose that opens the page still gets a readable line length. */
+  .sub, .pick .why, .notes { max-width: 76ch; }
 
   h1 {
     font-family: var(--display); font-weight: 400; font-size: clamp(30px, 6vw, 42px);
@@ -160,6 +180,9 @@
   .pick .why { color: var(--am-ink-soft); font-size: 15px; margin: 0 0 16px; }
 
   .figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 14px; }
+  /* Two figures on a 1140px page would stretch to half the width each and read
+     as banners. Sized to their content instead, left aligned. */
+  .figures.two { grid-template-columns: repeat(2, minmax(170px, 230px)); justify-content: start; }
   .fig { background: var(--am-paper); border-radius: var(--r-control); padding: 12px 14px; }
   .fig .k { font-size: 12px; color: var(--am-muted); }
   .fig .v { font-size: 20px; font-weight: 500; }
@@ -170,21 +193,28 @@
   .notes li::before { content: ""; position: absolute; left: 0; top: 12px; width: 5px; height: 5px; border-radius: 50%; background: var(--am-blue-300); }
 
   .scroll { overflow-x: auto; }
-  table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 14px; }
+  table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 14px; }
+  /* The full plan list is seven columns, four of them money. Wide enough that
+     the plan name gets two lines rather than five and no figure wraps. Below
+     that the wrapper scrolls, which is the right answer for a table this wide;
+     squeezing it until the last column falls off the end is not. */
+  table.plans { min-width: 900px; }
   th {
     text-align: left; font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
     color: var(--am-muted); font-weight: 600; padding: 8px 10px;
     border-bottom: 1.5px solid var(--am-line); white-space: nowrap;
   }
-  td { padding: 8px 10px; border-bottom: 1px solid var(--am-line-soft); }
+  td { padding: 8px 10px; border-bottom: 1px solid var(--am-line-soft); vertical-align: top; }
   td.n { text-align: right; white-space: nowrap; }
+  td.planname { min-width: 250px; }
+  td.carrier { white-space: nowrap; }
   tbody tr:nth-child(even) td { background: var(--am-paper); }
 
   .empty { text-align: center; padding: 64px 24px; color: var(--am-ink-soft); }
   .empty h1 { font-size: 30px; }
 
   footer.colophon {
-    max-width: 860px; margin: 0 auto; padding: 0 clamp(16px,4vw,24px) 56px;
+    max-width: 1140px; margin: 0 auto; padding: 0 clamp(16px,4vw,28px) 56px;
     color: var(--am-muted); font-size: 13px; line-height: 1.55;
   }
 
@@ -197,7 +227,7 @@
   @media print {
     body { background: #fff; font-size: 11pt; }
     .topbar { position: static; border-bottom: 1px solid #ccc; padding: 0 0 8pt; }
-    .topbar .btn, .notice { display: none; }
+    .topbar .btn, .topbar .viewtoggle, .notice { display: none; }
     main { max-width: none; padding: 12pt 0 0; }
     .card { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; page-break-inside: avoid; margin-bottom: 10pt; padding: 12pt 14pt; }
     h1 { font-size: 22pt; }
@@ -217,6 +247,10 @@
 
 <div class="topbar">
   <a class="lockup" href="/" aria-label="Ask Mike, back to the start"><svg class="mark" width="32" height="32" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M6 17a11 11 0 0 1 11-11h14a11 11 0 0 1 11 11v7a11 11 0 0 1-11 11h-8l-9 6.5V35A11 11 0 0 1 6 24z" fill="#0F7CC0"/><circle cx="24" cy="20.5" r="5.5" fill="#F2A65A"/></svg><span class="word">Ask Mike</span></a>
+  <div class="viewtoggle" role="group" aria-label="View">
+    <span class="btn secondary is-current" aria-current="page">Agent recommendation</span>
+    <a class="btn secondary" href="thanks.html">What the client sees</a>
+  </div>
   <span class="forwhom" id="forwhom"></span>
   <button class="btn secondary" type="button" id="reload">Reload answers</button>
   <button class="btn primary" type="button" id="print">Print</button>
@@ -345,11 +379,14 @@
       html += '<h3>' + esc(plan.marketingName) + '</h3>';
       html += '<p class="meta">' + esc(plan.issuerName) + ' &middot; ' + esc(plan.metalLevel) + ' &middot; ' + esc(plan.planType) + '</p>';
       html += '<p class="why">' + esc(p.rationale) + '</p>';
-      html += '<div class="figures">';
-      html += '<div class="fig lead"><div class="k">Expected for the year</div><div class="v">' + usd(c.estimatedAnnualTotal) + '</div></div>';
-      html += '<div class="fig"><div class="k">Premium after help</div><div class="v">' + usd(c.annualPremiumNet / 12) + '/mo</div></div>';
+      // Two figures. The monthly premium is what the client is deciding to
+      // pay, and the expected out of pocket is what that does not cover. The
+      // worst case is a real number and the agent still needs it, but it is a
+      // bronze plan's largest figure and it belongs in a conversation rather
+      // than in a box on a page a client reads across the desk.
+      html += '<div class="figures two">';
+      html += '<div class="fig"><div class="k">Monthly premium</div><div class="v">' + usd(c.annualPremiumNet / 12) + '/mo</div></div>';
       html += '<div class="fig"><div class="k">Expected out of pocket</div><div class="v">' + usd(c.estimatedOutOfPocket) + '</div></div>';
-      html += '<div class="fig"><div class="k">If the year goes badly</div><div class="v">' + usd(c.worstCaseAnnualTotal) + '</div></div>';
       html += '</div>';
       html += '<ul class="notes">';
       html += '<li>Deductible ' + (plan.deductibleFamily === null ? "not filed" : usd(h.householdSize > 1 ? plan.deductibleFamily : plan.deductibleIndividual)) +
@@ -363,10 +400,10 @@
     }
 
     // ---- everything else
-    html += '<section class="card"><h2>Every plan available to them</h2><div class="scroll"><table>';
+    html += '<section class="card"><h2>Every plan available to them</h2><div class="scroll"><table class="plans">';
     html += '<thead><tr><th>Carrier</th><th>Plan</th><th>Metal</th><th class="n">Premium/mo</th><th class="n">Out of pocket</th><th class="n">Expected total</th><th class="n">Worst case</th></tr></thead><tbody>';
     for (const e of result.allEligible) {
-      html += '<tr><td>' + esc(e.plan.issuerName.split(" ")[0]) + '</td><td>' + esc(e.plan.marketingName) + '</td><td>' + esc(e.plan.metalLevel) + '</td>' +
+      html += '<tr><td class="carrier">' + esc(e.plan.issuerName.split(" ")[0]) + '</td><td class="planname">' + esc(e.plan.marketingName) + '</td><td>' + esc(e.plan.metalLevel) + '</td>' +
         '<td class="n">' + usd(e.cost.annualPremiumNet / 12) + '</td>' +
         '<td class="n">' + usd(e.cost.estimatedOutOfPocket) + '</td>' +
         '<td class="n">' + usd(e.cost.estimatedAnnualTotal) + '</td>' +
