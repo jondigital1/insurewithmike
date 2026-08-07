@@ -116,7 +116,7 @@ const FREQUENCIES: Option[] = [
 export const QUESTIONNAIRE: Section[] = [
   {
     id: "start",
-    title: "Getting started",
+    title: "Let's get started",
     blurb:
       "Your agent gave you a code when they sent you here. It links your answers back to your file.",
     half: "eligibility",
