@@ -171,9 +171,52 @@ state skew that ruined the Ambetter feed is not really present here, at 0 and 4
 per cent of distinct names, which is a point in its favour.
 
 So this is usable for the plans it names and must not be used to tell a client
-that something is *not* covered. It still wants the ground truth check: take
-twenty facilities off Horizon's own provider finder and see whether this file
-agrees. That is the test, and it has not been run.
+that something is *not* covered.
+
+### The completeness check, and what it found
+
+The intended test was twenty facilities off Horizon's own Doctor & Hospital
+Finder. **That test could not be run.** The finder is a Sapphire single page app
+behind Imperva bot protection: its API returns 403 to any scripted request,
+including one issued from inside the page, and the plan selector does not open
+under synthetic clicks. It needs a person.
+
+A second source was available. Horizon publishes an OMNIA hospital list as a
+PDF, with a Tier 1 and Tier 2 column, at
+`horizonblue.com/sites/default/files/pdf/OMNIA_health_Plan_Hospital_List.pdf`.
+It carries 76 hospitals. It also says "complete as of October 2017", which is
+the very list `provider-data-findings.md` warns about, so it is **not** ground
+truth for a tier in 2026.
+
+It can still measure one thing that does not depend on its age: whether our
+roster names these hospitals at all.
+
+**30 of 76, or 39 per cent.** Forty-five are not named anywhere in the
+transparency roster, including AtlantiCare, both Inspira hospitals, Deborah
+Heart and Lung, Virtua Memorial, and effectively all of RWJBarnabas and Atlantic
+Health System: Morristown, Overlook, Newton, Chilton, Clara Maass, Saint
+Barnabas, Jersey City Medical Center, Robert Wood Johnson at New Brunswick.
+
+Some of that is nine years of drift and some is crude name matching on my part.
+Neither explains whole founding systems being absent. The likelier reading is
+structural: `provider_references` lists the **billing entities that have
+negotiated rates in that file**, not a provider directory. A hospital can sit
+under a parent tax id, under a different business name, or in a rate file we did
+not read.
+
+### What that means for using it
+
+The tier label is still trustworthy *for an entity that appears*, because no tax
+id appears in both files and the split is clean. What is now measured, rather
+than merely suspected, is that **absence carries no information whatsoever**.
+
+So this answers "what tier is X" when X is in the file, and can never answer "is
+X in network". That is a narrower claim than it looked like an hour ago, and it
+is not enough on its own to replace "network unverified" in front of a client.
+
+The real ground truth check is still unrun, and now has a known shape: it needs
+a person on the Doctor & Hospital Finder, or Horizon's current published list
+rather than the 2017 one.
 
 ### What is still open here
 
@@ -243,7 +286,7 @@ Service providers, so their copays are correct as filed.
 | Gap | Status after this survey |
 |---|---|
 | AmeriHealth copays inferred from plan names | **Closable now.** Exact SBC url for all 11 standard ids. |
-| Horizon OMNIA tier 1 vs tier 2 | **Retrieved.** 629 tier 1 and 1,354 tier 2 groups, no tax id in both. Needs a ground truth check before it is said to a client. |
+| Horizon OMNIA tier 1 vs tier 2 | **Retrieved but weaker than it looks.** 629 tier 1 and 1,354 tier 2 groups, no tax id in both, so the tier is sound for anyone named. But it names only 39% of the hospitals on Horizon's own OMNIA list, so absence means nothing and it cannot answer "is X in network". |
 | Second carrier provider directory | **Available.** AmeriHealth 329.6 MB medical file in CMS shape. |
 | Oscar and UHC remaining copays | **Not a gap.** UHC is 24 of 24, its nulls are coinsured plans. Oscar's 14 are AI/AN variants already excluded from ranking. |
 | Zero cost sharing variants carrying a copay | **Fixed.** 16 of 37 held a copay of up to $50 against a $0 out of pocket maximum. All 37 now $0. |
