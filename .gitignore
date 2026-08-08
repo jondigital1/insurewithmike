@@ -16,3 +16,7 @@ data/formulary/*.raw.json
 data/providers/.tmp-*
 data/providers/.state-*
 
+# 21 MB, and scripts/extract-omnia-tiers.ts rebuilds it from a public url in
+# under a minute, so it is a build artefact rather than a source of truth.
+data/providers/horizon-omnia-tiers.json
+
