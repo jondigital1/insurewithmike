@@ -107,12 +107,23 @@ ${TOKENS}
   .forwhom { font-size: 14px; color: var(--am-muted); margin-left: auto; }
 
   /* Until there is an agent login, both sides of the product are reachable
-     from either page, so the two can be checked against each other. */
-  .viewtoggle { display: flex; gap: 8px; }
-  .viewtoggle .btn { padding: 8px 14px; font-size: 14px; min-height: 36px; text-decoration: none; }
-  .viewtoggle .is-current {
-    background: var(--am-blue-700); border-color: var(--am-blue-700); color: var(--am-white);
-    cursor: default;
+     from either page, so the two can be checked against each other. It sits in
+     the draft band rather than the header, which already carries the document's
+     own controls, and reads as one segmented switch rather than two buttons. */
+  .viewtoggle { display: flex; margin-left: auto; flex: none; }
+  .notice .viewtoggle .btn {
+    padding: 6px 13px; font-size: 13px; font-weight: 500; min-height: 32px;
+    text-decoration: none; border-radius: 0;
+    border: 1px solid var(--am-line);
+    background: transparent; color: var(--am-ink-soft);
+  }
+  .notice .viewtoggle .btn:first-child { border-radius: 8px 0 0 8px; }
+  .notice .viewtoggle .btn:last-child { border-radius: 0 8px 8px 0; margin-left: -1px; }
+  .notice .viewtoggle a.btn:hover { background: var(--am-paper); color: var(--am-ink); border-color: #C6DDEE; }
+  .notice .viewtoggle .is-current {
+    background: var(--am-white); color: var(--am-ink); cursor: default;
+    border-color: var(--am-blue-300); box-shadow: inset 0 0 0 1px var(--am-blue-300);
+    z-index: 1;
   }
 
   .btn {
@@ -126,11 +137,15 @@ ${TOKENS}
   .btn.secondary { background: var(--am-white); color: var(--am-blue-700); border: 1.5px solid #C6DDEE; }
   .btn.secondary:hover { border-color: var(--am-blue-600); background: var(--am-blue-50); }
 
+  /* Deliberately not brand blue. This band is scaffolding, and tinting it with
+     the primary makes it read as the first thing the product wants to say. */
   .notice {
-    background: var(--am-blue-50); border-bottom: 1px solid var(--am-line);
+    background: var(--am-line-soft); border-bottom: 1px solid var(--am-line);
     color: var(--am-ink-soft); font-size: 14px; line-height: 1.55;
-    padding: 12px clamp(16px, 4vw, 32px);
+    padding: 10px clamp(16px, 4vw, 32px);
+    display: flex; align-items: center; gap: 12px 20px; flex-wrap: wrap;
   }
+  .notice .ntext { margin: 0; flex: 1 1 320px; }
   .notice b { color: var(--am-ink); font-weight: 600; }
 
   /* Wider than the client form on purpose. That page is prose and wants a
@@ -281,16 +296,16 @@ ${TOKENS}
   .printfoot { display: none; }
 </style>
 
-<div class="notice" role="status">
-  <b>Testing arrangement.</b> There is no agent login yet, so this page reads the client's answers straight from this browser. In the finished product it lives behind a login and the client never reaches it.
-</div>
-
-<div class="topbar">
-  ${lockup(32)}
+<div class="notice">
+  <p class="ntext" role="status"><b>Testing arrangement.</b> There is no agent login yet, so this page reads the client's answers straight from this browser. In the finished product it lives behind a login and the client never reaches it.</p>
   <div class="viewtoggle" role="group" aria-label="View">
     <span class="btn secondary is-current" aria-current="page">Agent recommendation</span>
     <a class="btn secondary" href="thanks.html">What the client sees</a>
   </div>
+</div>
+
+<div class="topbar">
+  ${lockup(32)}
   <span class="forwhom" id="forwhom"></span>
   <button class="btn secondary" type="button" id="reload">Reload answers</button>
   <button class="btn primary" type="button" id="print">Print</button>

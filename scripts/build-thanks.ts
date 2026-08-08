@@ -165,18 +165,23 @@ ${TOKENS}
     display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
   }
   /* A testing control, so it only exists while the page is in draft. A real
-     client must never be one click from the agent's working document. */
-  .viewtoggle { display: flex; gap: 8px; margin-left: auto; }
+     client must never be one click from the agent's working document. It lives
+     in the draft band with the rest of the scaffolding, not in the header, and
+     reads as one segmented switch rather than two competing buttons. */
+  .viewtoggle { display: flex; margin-left: auto; flex: none; }
   .viewtoggle .btn {
-    font: inherit; font-size: 14px; font-weight: 500; text-decoration: none;
-    display: inline-flex; align-items: center; padding: 8px 14px; min-height: 36px;
-    border: 1.5px solid var(--am-line); border-radius: var(--r-control);
-    background: var(--am-white); color: var(--am-blue-700);
+    font: inherit; font-size: 13px; font-weight: 500; text-decoration: none;
+    display: inline-flex; align-items: center; padding: 6px 13px; min-height: 32px;
+    border: 1px solid var(--am-line); border-radius: 0;
+    background: transparent; color: var(--am-ink-soft);
   }
-  .viewtoggle a.btn:hover { border-color: var(--am-blue-300); }
+  .viewtoggle .btn:first-child { border-radius: 8px 0 0 8px; }
+  .viewtoggle .btn:last-child { border-radius: 0 8px 8px 0; margin-left: -1px; }
+  .viewtoggle a.btn:hover { background: var(--am-paper); color: var(--am-ink); border-color: #C6DDEE; }
   .viewtoggle .is-current {
-    background: var(--am-blue-700); border-color: var(--am-blue-700);
-    color: var(--am-white); cursor: default;
+    background: var(--am-white); color: var(--am-ink); cursor: default;
+    border-color: var(--am-blue-300); box-shadow: inset 0 0 0 1px var(--am-blue-300);
+    z-index: 1;
   }
   .lockup {
     display: inline-flex; align-items: center; gap: 0.34em;
@@ -190,11 +195,15 @@ ${TOKENS}
     line-height: 1; letter-spacing: -0.015em; color: var(--am-ink);
   }
 
+  /* Deliberately not brand blue. This band is scaffolding, and tinting it with
+     the primary makes it read as the first thing the product wants to say. */
   .notice {
-    background: var(--am-blue-50); border-bottom: 1px solid var(--am-line);
+    background: var(--am-line-soft); border-bottom: 1px solid var(--am-line);
     color: var(--am-ink-soft); font-size: 14px; line-height: 1.55;
-    padding: 12px clamp(16px, 4vw, 32px);
+    padding: 10px clamp(16px, 4vw, 32px);
+    display: flex; align-items: center; gap: 12px 20px; flex-wrap: wrap;
   }
+  .notice .ntext { margin: 0; flex: 1 1 320px; }
   .notice b { color: var(--am-ink); font-weight: 600; }
 
   main { max-width: 700px; margin: 0 auto; padding: 56px clamp(16px, 4vw, 24px) 72px; }
@@ -340,12 +349,8 @@ ${TOKENS}
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 
-<div class="notice" role="status">
-  <b>Draft for review.</b> This is not the live form yet, so nothing was actually sent.
-</div>
-
-<div class="topbar">
-  ${lockup(32)}
+<div class="notice">
+  <p class="ntext" role="status"><b>Draft for review.</b> This is not the live form yet, so nothing was actually sent.</p>
   ${
     AGENCY.draft
       ? `<div class="viewtoggle" role="group" aria-label="View">
@@ -354,6 +359,10 @@ ${TOKENS}
   </div>`
       : ""
   }
+</div>
+
+<div class="topbar">
+  ${lockup(32)}
 </div>
 
 <main>

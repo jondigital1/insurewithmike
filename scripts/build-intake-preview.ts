@@ -348,12 +348,13 @@ const html = `<title>Ask Mike, client intake</title>
   }
 
   /* A wash of the brand blue behind the top of the page, gone by the time the
-     first card starts. Gives the paper somewhere to come from. */
+     first card starts. Gives the paper somewhere to come from.
+     One wash, not two: the amber one sat behind the header and put a second
+     accent on a screen that already spends its amber on the callout, which is
+     the one place the colour is supposed to mean something. */
   body::before {
-    content: ""; position: fixed; inset: 0 0 auto 0; height: 520px; z-index: -1;
-    background:
-      radial-gradient(120% 100% at 12% 0%, rgba(15,124,192,.10) 0%, rgba(15,124,192,0) 62%),
-      radial-gradient(90% 80% at 96% 4%, rgba(242,166,90,.13) 0%, rgba(242,166,90,0) 60%);
+    content: ""; position: fixed; inset: 0 0 auto 0; height: 460px; z-index: -1;
+    background: radial-gradient(120% 100% at 12% 0%, rgba(15,124,192,.07) 0%, rgba(15,124,192,0) 64%);
     pointer-events: none;
   }
 
@@ -391,7 +392,7 @@ const html = `<title>Ask Mike, client intake</title>
   }
   .progress .fill {
     height: 100%; width: 0%;
-    background: linear-gradient(90deg, var(--am-blue-600), #2E97D4);
+    background: var(--am-blue-600);
     transition: width 320ms cubic-bezier(.22,1,.36,1);
   }
   .progress .pips { position: absolute; inset: 0; display: flex; }
@@ -400,18 +401,40 @@ const html = `<title>Ask Mike, client intake</title>
   .progress .count { font-size: 14px; line-height: 1.4; color: var(--am-muted); white-space: nowrap; }
   .progress .count b { color: var(--am-ink); font-weight: 600; }
 
-  .viewtoggle { display: flex; gap: 8px; }
-  .viewtoggle .btn { padding: 8px 14px; font-size: 14px; min-height: 36px; }
+  /* A segmented pair rather than two buttons, so it reads as one switch and
+     takes the weight of one control instead of two. Unselected recedes into
+     the band: two white segments on a grey strip leave the selected state
+     resting on a 1px ring, which is not enough to see at a glance. */
+  .viewtoggle { display: flex; margin-left: auto; flex: none; }
+  .notice .viewtoggle .btn {
+    padding: 6px 13px; font-size: 13px; font-weight: 500; min-height: 32px;
+    border-radius: 0; border: 1px solid var(--am-line);
+    background: transparent; color: var(--am-ink-soft);
+  }
+  .notice .viewtoggle .btn:first-child { border-radius: 8px 0 0 8px; }
+  .notice .viewtoggle .btn:last-child { border-radius: 0 8px 8px 0; margin-left: -1px; }
+  .notice .viewtoggle .btn:hover { background: var(--am-paper); color: var(--am-ink); border-color: #C6DDEE; }
+  .notice .viewtoggle .btn[aria-pressed="true"] {
+    background: var(--am-white); color: var(--am-ink);
+    border-color: var(--am-blue-300); box-shadow: inset 0 0 0 1px var(--am-blue-300);
+    z-index: 1;
+  }
 
   /* ------------------------------------------------------------- the notice */
 
+  /* Deliberately not brand blue. This band is scaffolding, and tinting it with
+     the primary makes it read as the first thing the product wants to say. It
+     also carries the view switch, so the header holds only the lockup and the
+     progress and the whole strip lifts out in one piece when this goes live. */
   .notice {
-    background: var(--am-blue-50);
+    background: var(--am-line-soft);
     border-bottom: 1px solid var(--am-line);
     color: var(--am-ink-soft);
     font-size: 14px; line-height: 1.55;
-    padding: 12px clamp(16px, 4vw, 32px);
+    padding: 10px clamp(16px, 4vw, 32px);
+    display: flex; align-items: center; gap: 12px 20px; flex-wrap: wrap;
   }
+  .notice .ntext { margin: 0; flex: 1 1 320px; }
   .notice b { color: var(--am-ink); font-weight: 600; }
 
   /* ----------------------------------------------------------------- shell */
@@ -450,8 +473,11 @@ const html = `<title>Ask Mike, client intake</title>
     display: flex; flex-wrap: wrap; gap: 14px 40px;
   }
   .facts li { display: flex; align-items: baseline; gap: 10px; }
+  /* These were 38px, which is where the h1 starts on a narrow screen. Three
+     figures reassuring you about the length of a form should not be able to
+     tie with the sentence that says what the form is for. */
   .facts .fnum {
-    font-family: var(--display); font-size: 38px; line-height: .9;
+    font-family: var(--display); font-size: 27px; line-height: .95;
     color: var(--am-blue-700); letter-spacing: -0.02em;
   }
   .facts .flabel { font-size: 13px; line-height: 1.35; color: var(--am-muted); }
@@ -807,22 +833,34 @@ const html = `<title>Ask Mike, client intake</title>
 
   /* ------------------------------------------------------- why we ask */
 
+  /* Closed, this is a line of text, not a panel. There are 32 of them in the
+     form and roughly four on any one screen; as filled amber slabs they stack
+     down the page and turn the one accent colour into wallpaper, which is the
+     opposite of what an accent is for. The fill is the reward for opening it. */
   .why {
-    background: var(--am-amber-100);
     border-radius: var(--r-control);
-    padding: 15px 17px;
     align-self: flex-start; max-width: 100%;
+    transition: background-color 150ms ease-out;
   }
   .why summary {
-    display: flex; align-items: center; gap: 9px;
+    display: inline-flex; align-items: center; gap: 8px;
     cursor: pointer; list-style: none;
-    font-size: 14px; font-weight: 600; color: var(--am-amber-text);
-    min-height: 24px;
+    font-size: 14px; font-weight: 500; color: var(--am-amber-600);
+    min-height: 24px; padding: 4px 0;
   }
   .why summary::-webkit-details-marker { display: none; }
+  .why summary:hover { color: var(--am-amber-text); }
   .why summary:focus-visible { outline: 2px solid var(--am-amber-600); outline-offset: 3px; border-radius: 4px; }
+  /* The glyph is what carries the amber when the panel is not there. */
+  .why summary svg { flex: none; opacity: .9; }
+
+  .why[open] {
+    background: var(--am-amber-100);
+    padding: 13px 17px 15px;
+  }
+  .why[open] summary { color: var(--am-amber-text); font-weight: 600; padding-top: 0; }
   .why p {
-    margin: 10px 0 0; font-size: 14px; line-height: 1.55;
+    margin: 8px 0 0; font-size: 14px; line-height: 1.55;
     color: var(--am-amber-text);
   }
 
@@ -918,14 +956,13 @@ const html = `<title>Ask Mike, client intake</title>
     .progress { width: 100%; order: 3; gap: 10px; }
     .progress .track { flex: 1; width: auto; }
     .progress .count { font-size: 12px; }
-    .viewtoggle { margin-left: auto; }
-    .viewtoggle .btn { padding: 7px 10px; font-size: 12px; min-height: 32px; }
+    .notice .viewtoggle .btn { padding: 7px 11px; font-size: 12px; min-height: 34px; }
 
     .notice { padding: 10px 14px; font-size: 13px; }
 
     .hero { padding: 0 16px; margin-bottom: 28px; }
     .facts { gap: 12px 26px; }
-    .facts .fnum { font-size: 30px; }
+    .facts .fnum { font-size: 23px; }
 
     /* Edge to edge. A frame around content that already fills the screen
        is a border drawn for its own sake. */
@@ -1014,8 +1051,17 @@ const html = `<title>Ask Mike, client intake</title>
   }
 </style>
 
-<div class="notice" role="status">
-  <b>Draft for review.</b> This is not the live form yet, so it is not connected to anything. The finished version sends your answers straight to your agent before you meet.
+<!-- The draft banner and the client/review switch are both scaffolding: one
+     says this is not wired up, the other is a tool for us rather than for the
+     client. Keeping them in one band leaves the real header holding only the
+     lockup and the progress, and means the whole strip lifts out in one piece
+     the day this goes live. -->
+<div class="notice">
+  <p class="ntext" role="status"><b>Draft for review.</b> This is not the live form yet, so it is not connected to anything. The finished version sends your answers straight to your agent before you meet.</p>
+  <div class="viewtoggle" role="group" aria-label="View">
+    <button type="button" class="btn secondary" id="v-client" aria-pressed="true">Client view</button>
+    <button type="button" class="btn secondary" id="v-review" aria-pressed="false">Review view</button>
+  </div>
 </div>
 
 <div class="topbar">
@@ -1026,10 +1072,6 @@ const html = `<title>Ask Mike, client intake</title>
       <div class="pips">${QUESTIONNAIRE.map((s, i) => `<span class="pip" data-pip="${i}" title="${esc(s.title)}"></span>`).join("")}</div>
     </div>
     <span class="count" id="progress-count">Step 1 of ${QUESTIONNAIRE.length}</span>
-  </div>
-  <div class="viewtoggle" role="group" aria-label="View">
-    <button type="button" class="btn secondary" id="v-client" aria-pressed="true">Client view</button>
-    <button type="button" class="btn secondary" id="v-review" aria-pressed="false">Review view</button>
   </div>
 </div>
 
