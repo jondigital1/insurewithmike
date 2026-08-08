@@ -374,6 +374,41 @@ function applyCopayIndex(plans: Plan[], indexPath: string): void {
     // that can disagree.
     plan.copayBeforeDeductible = entry.beforeDeductible;
   }
+
+  // A zero cost sharing variation charges the member nothing. All 37 of them
+  // are filed with a deductible, an out of pocket maximum and a coinsurance
+  // rate of zero, which is the signature of the variation rather than a
+  // coincidence, and a plan whose out of pocket maximum is $0 cannot also
+  // charge $30 to see a doctor.
+  //
+  // Two ways the wrong number got there. The copay index is keyed by plan id
+  // but sourced from a benefit summary written for the standard variant, so
+  // that variant's copay landed on the variation: 16 of the 37 were carrying
+  // one. The rest had no index entry at all and sat at null, which reads as
+  // "we do not know" when in fact it is the one cost we can state exactly.
+  //
+  // This runs over every plan rather than only those with an index entry,
+  // because the amount follows from the filing and not from whether anyone
+  // found a document. It has been invisible because rank.ts excludes these
+  // variants from recommendations, but the wrong number still ships in the
+  // browser bundle and would become a wrong answer the moment they surfaced.
+  //
+  // Guarded on the plan's own filed figures rather than on the variant label
+  // alone, so a filing that ever disagreed would be left alone rather than
+  // silently overwritten.
+  for (const plan of plans) {
+    if (
+      plan.csrVariant !== "zeroCostSharing" ||
+      plan.deductibleIndividual !== 0 ||
+      plan.moopIndividual !== 0 ||
+      plan.coinsurance !== 0
+    )
+      continue;
+    plan.copayPrimaryCare = 0;
+    plan.copaySpecialist = 0;
+    plan.copayBeforeDeductible = true;
+    plan.copaysCoinsuredInstead = false;
+  }
 }
 
 export function loadPlanDataset(
