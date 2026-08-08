@@ -366,6 +366,142 @@
     "notes": []
   },
   {
+    "source": "91762NJ0070004.pdf",
+    "planId": null,
+    "planName": "IHC Bronze EPO HSA AmeriHealth Hospital Advantage $50/$75",
+    "primaryCare": 50,
+    "specialist": 75,
+    "primaryBeforeDeductible": false,
+    "specialistBeforeDeductible": false,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": []
+  },
+  {
+    "source": "91762NJ0070006.pdf",
+    "planId": null,
+    "planName": "IHC Silver EPO HSA Local Value $50/$75",
+    "primaryCare": 50,
+    "specialist": 75,
+    "primaryBeforeDeductible": false,
+    "specialistBeforeDeductible": false,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": []
+  },
+  {
+    "source": "91762NJ0070007.pdf",
+    "planId": null,
+    "planName": "IHC Silver EPO HSA AmeriHealth Hospital Advantage $50/$75",
+    "primaryCare": 50,
+    "specialist": 75,
+    "primaryBeforeDeductible": false,
+    "specialistBeforeDeductible": false,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": []
+  },
+  {
+    "source": "91762NJ0070010.pdf",
+    "planId": null,
+    "planName": "IHC Gold EPO Regional Preferred $30/$50",
+    "primaryCare": 30,
+    "specialist": 50,
+    "primaryBeforeDeductible": false,
+    "specialistBeforeDeductible": false,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": [
+      "specialist read from the line above its label"
+    ]
+  },
+  {
+    "source": "91762NJ0070093.pdf",
+    "planId": null,
+    "planName": "IHC Silver EPO AmeriHealth Advantage $25/$60",
+    "primaryCare": 25,
+    "specialist": 75,
+    "primaryBeforeDeductible": true,
+    "specialistBeforeDeductible": false,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": []
+  },
+  {
+    "source": "91762NJ0070097.pdf",
+    "planId": null,
+    "planName": "IHC Bronze EPO HSA AmeriHealth Advantage $25/$50",
+    "primaryCare": 25,
+    "specialist": 50,
+    "primaryBeforeDeductible": false,
+    "specialistBeforeDeductible": false,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": []
+  },
+  {
+    "source": "91762NJ0070104.pdf",
+    "planId": null,
+    "planName": "IHC Bronze EPO Local Value $50/$75",
+    "primaryCare": 50,
+    "specialist": 75,
+    "primaryBeforeDeductible": false,
+    "specialistBeforeDeductible": false,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": []
+  },
+  {
+    "source": "91762NJ0070105.pdf",
+    "planId": null,
+    "planName": "IHC Bronze EPO HSA Local Value 50%/50%",
+    "primaryCare": null,
+    "specialist": null,
+    "primaryBeforeDeductible": false,
+    "specialistBeforeDeductible": false,
+    "primaryCoinsurance": 0.5,
+    "specialistCoinsurance": 0.5,
+    "notes": []
+  },
+  {
+    "source": "91762NJ0070106.pdf",
+    "planId": null,
+    "planName": "IHC Silver EPO AmeriHealth Advantage 40%/40%",
+    "primaryCare": null,
+    "specialist": null,
+    "primaryBeforeDeductible": false,
+    "specialistBeforeDeductible": false,
+    "primaryCoinsurance": 0.4,
+    "specialistCoinsurance": 0.4,
+    "notes": []
+  },
+  {
+    "source": "91762NJ0070107.pdf",
+    "planId": null,
+    "planName": "IHC Silver EPO AmeriHealth Hospital Advantage $50/$75",
+    "primaryCare": 50,
+    "specialist": 75,
+    "primaryBeforeDeductible": true,
+    "specialistBeforeDeductible": false,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": [
+      "specialist read from the line above its label"
+    ]
+  },
+  {
+    "source": "91762NJ0070110.pdf",
+    "planId": null,
+    "planName": "IHC Silver EPO HSA Regional Preferred $50/$75",
+    "primaryCare": 50,
+    "specialist": 75,
+    "primaryBeforeDeductible": false,
+    "specialistBeforeDeductible": false,
+    "primaryCoinsurance": null,
+    "specialistCoinsurance": null,
+    "notes": []
+  },
+  {
     "source": "IHC151AHNJHA.pdf",
     "planId": null,
     "planName": "IHC Bronze EPO HSA AmeriHealth Hospital Advantage $50/$75",
