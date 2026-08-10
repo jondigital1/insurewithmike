@@ -124,14 +124,21 @@ enrolment season. The NJ SBE publishes them in the fall; when they drop:
 
 ## Legal and commercial wrap. Parallel track, needs humans
 
-- Privacy policy and terms for the intake. No PII by design, but household
-  health answers are sensitive even when pseudonymous. New Jersey's Data
-  Privacy Act is in force; early volume is likely under its thresholds, but
-  the policy gets written as if it applies, because the product's whole
-  posture is that it would pass inspection.
-- Mike confirms the agent-side rules: GetCoveredNJ agent conduct and
-  marketing requirements, and that his E&O coverage is comfortable with
-  tool-assisted recommendations. His compliance contact, not our guess.
+Researched in depth on 10 August, four lanes plus adversarial verification
+of every statutory claim: see
+[legal-compliance-research.md](legal-compliance-research.md). The short
+version: the product's core design choices (agent-only recommendations,
+intake-only consumer side, no PII, verbatim answer records) came back as
+the legally correct pattern on four independent bodies of law. The build
+items it adds are all tractable: a clickwrap and a standalone health-data
+opt-in at intake start, producer identification and an insurance
+information practices notice on every agent subdomain, a privacy policy
+that matches the code exactly, native WCAG 2.1 AA accessibility with no
+overlay widgets, permanently tracker-free health pages, and an agent
+review-and-adopt flow with a frozen, exportable audit record. Six
+consolidated questions go to a NJ insurance lawyer; Mike pulls his Broker
+Acknowledgment and checks his E&O policy for new AI exclusions.
+
 - Domains: beforewequote.com nameservers delegated to Vercel, wildcard
   ready for per-agent subdomains. enrollasst.com stays parked until the
   broker site exists.
