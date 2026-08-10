@@ -22,6 +22,23 @@ trustworthy. Do both.
 
 ## Gate 1: the server. Biggest build, no external dependency, start first
 
+Stack decided by Jon on 10 August after the trade-off was laid out: **Vercel
+hosting plus Supabase for both Postgres and logins**, one vendor and one
+source of truth, with row-level security living inside the database. The
+alternative (Neon plus Clerk, polished org screens at the cost of a
+permanent sync seam) was considered and declined; revisit the login layer
+only if enterprise polish becomes a sales requirement. Notifications ship
+email-first; the 10DLC carrier registration for agent SMS starts now so
+texts can follow without blocking anything. The engine stays in the browser
+for v1: the server is storage, login and delivery, not a rebuild of the
+brain.
+
+Build order, each slice testable when done: submissions land server-side
+with the code minted there; agent login and the submissions list; the
+notification email; the agency table, subdomains and invites; the ops floor.
+Then cutover: beforewequote.com points at the app and the localStorage era
+ends.
+
 Today the survey and the agent view talk through one browser's localStorage.
 Launch requires the server work specified in
 [handoff-2026-08-10.md](handoff-2026-08-10.md), all four decisions plus the
