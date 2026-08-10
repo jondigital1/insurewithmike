@@ -192,6 +192,13 @@ export interface DentalPlan {
   issuerName: string;
   marketingName: string;
   planType: string;
+  /**
+   * Which filed service area the plan is sold in. Dental needs this per plan
+   * where medical gets away with per issuer: 8 of the 28 dental plans are
+   * county limited while sibling plans from the same issuer are statewide,
+   * so the issuer alone says nothing about availability.
+   */
+  serviceAreaId: string;
   deductibleIndividual: number | null;
   deductibleFamily: number | null;
   moopIndividual: number | null;
@@ -226,6 +233,12 @@ export interface DentalDataset {
   planYear: number;
   plans: DentalPlan[];
   rates: Map<string, RateRow[]>;
+  /**
+   * The dental rows of NJServiceAreas, which loadServiceAreas used to drop
+   * entirely. Without them the dental view offered county limited plans to
+   * households that cannot buy them.
+   */
+  serviceAreas: ServiceArea[];
 }
 
 /**

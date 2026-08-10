@@ -14,7 +14,7 @@ import { computeSubsidy, njHealthPlanSavings } from "../subsidy.ts";
 import { CATEGORY_LABELS, federalPovertyLevel, fplPercentage } from "../assumptions.ts";
 import { coverageTimeline } from "../planyear.ts";
 import { checkDrugs, type FormularyIndex } from "../formulary.ts";
-import { quoteAllDental, orderedBenefits, isChild } from "../dental.ts";
+import { quoteAllDental, orderedBenefits, isChild, dentalSoldIn } from "../dental.ts";
 import type { DentalDataset, Household, PlanDataset, RateRow } from "../types.ts";
 
 interface SerialisedDataset {
@@ -29,6 +29,11 @@ interface SerialisedDataset {
    * does not have.
    */
   dentalPlans?: DentalDataset["plans"];
+  /**
+   * The dental rows of NJServiceAreas. Absent on older plans.json builds, and
+   * hydrate treats absence as no restriction rather than no availability.
+   */
+  dentalServiceAreas?: DentalDataset["serviceAreas"];
 }
 
 function hydrate(raw: SerialisedDataset): PlanDataset {
@@ -47,6 +52,7 @@ function hydrateDental(raw: SerialisedDataset): DentalDataset | null {
     planYear: raw.planYear,
     plans: raw.dentalPlans,
     rates: new Map(Object.entries(raw.rates)),
+    serviceAreas: raw.dentalServiceAreas ?? [],
   };
 }
 
@@ -157,7 +163,14 @@ function dentalView(dental: DentalDataset | null, household: Household) {
     hasChildren: children.length > 0,
     childCount: children.length,
     adultCount: household.members.length - children.length,
-    quotes: quoteAllDental(dental, household.members).map((q) => ({
+    // Named so the agent can say why the list is shorter than 28, instead of
+    // the county filter looking like missing data.
+    excludedForCounty: household.county
+      ? dental.plans
+          .filter((p) => !dentalSoldIn(dental, p, household.county))
+          .map((p) => p.marketingName)
+      : [],
+    quotes: quoteAllDental(dental, household.members, household.county).map((q) => ({
       planId: q.plan.planId,
       issuerName: q.plan.issuerName,
       marketingName: q.plan.marketingName,
@@ -169,6 +182,7 @@ function dentalView(dental: DentalDataset | null, household: Household) {
       annualTotal: q.annualTotal,
       perMember: q.perMember,
       uncoveredAges: q.uncoveredAges,
+      freeChildAges: q.freeChildAges,
       benefits: orderedBenefits(q.plan),
     })),
   };

@@ -362,9 +362,9 @@ function assertOneRatePerAge(byPlan: Map<string, RateRow[]>): void {
   }
 }
 
-function loadServiceAreas(dir: string): ServiceArea[] {
+function loadServiceAreas(dir: string, dentalOnly: boolean): ServiceArea[] {
   return readCsv(dir, "NJServiceAreas")
-    .filter((r) => r["DENTAL PLAN ONLY"] === "No")
+    .filter((r) => r["DENTAL PLAN ONLY"] === (dentalOnly ? "Yes" : "No"))
     .map((r) => ({
       serviceAreaId: r["SERVICE AREA ID"] ?? "",
       issuerId: r["ISSUER ID"] ?? "",
@@ -471,6 +471,7 @@ export function loadDentalDataset(dir: string, planYear: number): DentalDataset 
         issuerName: ISSUER_NAMES[issuerId] ?? `Issuer ${issuerId}`,
         marketingName: (r["PLAN MARKETING NAME"] ?? "").trim(),
         planType: r["PLAN TYPE"] ?? "",
+        serviceAreaId: r["SERVICE AREA ID"] ?? "",
         deductibleIndividual: preferTotal(
           r,
           "TEHB DED INN TIER 1 INDIVIDUAL",
@@ -511,7 +512,7 @@ export function loadDentalDataset(dir: string, planYear: number): DentalDataset 
       };
     });
 
-  return { planYear, plans, rates };
+  return { planYear, plans, rates, serviceAreas: loadServiceAreas(dir, true) };
 }
 
 /**
@@ -606,7 +607,7 @@ export function loadPlanDataset(
     planYear,
     plans,
     rates: loadRates(dataDir),
-    serviceAreas: loadServiceAreas(dataDir),
+    serviceAreas: loadServiceAreas(dataDir, false),
     benefits,
   };
 }

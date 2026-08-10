@@ -18,6 +18,7 @@
  * having that conversation out loud anyway.
  */
 
+import { CHILD_RATING_AGE_CEILING, MAX_RATED_CHILDREN } from "./assumptions.ts";
 import { rateForAge } from "./dataset.ts";
 import type { DentalDataset, DentalPlan, Household, HouseholdMember } from "./types.ts";
 
@@ -29,13 +30,20 @@ export interface DentalQuote {
   /** Monthly premium for everyone this plan can cover in the household. */
   monthlyTotal: number;
   annualTotal: number;
-  /** One line per covered member, in household order. */
+  /** One line per rated member, adults first then children oldest first. */
   perMember: Array<{ age: number; monthly: number }>;
   /**
    * Members this plan cannot cover, by age. A pediatric only plan files no
    * adult rate, so quoting the adults on it would silently price them at zero.
    */
   uncoveredAges: number[];
+  /**
+   * Children covered by the plan but not charged for. NJBusinessRules files
+   * MAX CHILDREN IN POLICY = 3 for every dental issuer, the same cap
+   * premium.ts applies to medical, so children beyond the three oldest are on
+   * the policy at no extra premium rather than uncovered.
+   */
+  freeChildAges: number[];
 }
 
 /** Whether a member falls inside the pediatric dental benefit. */
@@ -60,8 +68,20 @@ export function quoteDentalPlan(
   const table = dataset.rates.get(plan.standardComponentId) ?? [];
   const perMember: DentalQuote["perMember"] = [];
   const uncoveredAges: number[] = [];
+  const freeChildAges: number[] = [];
 
-  for (const member of members) {
+  // Only the three oldest children are charged, mirroring monthlyListPremium
+  // in premium.ts. The filed source is NJBusinessRules, which sets MAX
+  // CHILDREN IN POLICY = 3 for every dental issuer; summing a fourth child
+  // would quote above the filed rating rule.
+  const adults = members.filter((m) => m.age > CHILD_RATING_AGE_CEILING);
+  const children = members
+    .filter((m) => m.age <= CHILD_RATING_AGE_CEILING)
+    .sort((a, b) => b.age - a.age);
+  const rated = [...adults, ...children.slice(0, MAX_RATED_CHILDREN)];
+  const capped = children.slice(MAX_RATED_CHILDREN);
+
+  for (const member of rated) {
     const monthly = rateForAge(table, member.age, false);
     // A zero is how the filings express "this plan does not cover this age",
     // on the pediatric only plans. Treating it as a free adult would be a
@@ -72,6 +92,13 @@ export function quoteDentalPlan(
     }
     perMember.push({ age: member.age, monthly });
   }
+  for (const member of capped) {
+    // Free under the cap only if the plan covers the age at all. The same
+    // zero-means-uncovered filing idiom applies to unrated children.
+    const monthly = rateForAge(table, member.age, false);
+    if (monthly === null || monthly === 0) uncoveredAges.push(member.age);
+    else freeChildAges.push(member.age);
+  }
 
   const monthlyTotal = perMember.reduce((sum, m) => sum + m.monthly, 0);
   return {
@@ -80,7 +107,29 @@ export function quoteDentalPlan(
     annualTotal: monthlyTotal * 12,
     perMember,
     uncoveredAges,
+    freeChildAges,
   };
+}
+
+/**
+ * Whether a plan is sold in the household's county.
+ *
+ * Checked per plan rather than per issuer, unlike the medical side: 8 of the
+ * 28 dental plans are county limited while sibling plans from the same issuer
+ * are statewide. No county given, or no filed area rows, means no restriction
+ * is invented: an unfiltered list beats an empty one built on a guess.
+ */
+export function dentalSoldIn(
+  dataset: DentalDataset,
+  plan: DentalPlan,
+  county: string | undefined,
+): boolean {
+  if (!county) return true;
+  const areas = dataset.serviceAreas.filter(
+    (a) => a.issuerId === plan.issuerId && a.serviceAreaId === plan.serviceAreaId,
+  );
+  if (areas.length === 0) return true;
+  return areas.some((a) => a.coversEntireState || a.countyName === county);
 }
 
 /**
@@ -94,8 +143,10 @@ export function quoteDentalPlan(
 export function quoteAllDental(
   dataset: DentalDataset,
   members: HouseholdMember[],
+  county?: string,
 ): DentalQuote[] {
   return dataset.plans
+    .filter((plan) => dentalSoldIn(dataset, plan, county))
     .map((plan) => quoteDentalPlan(dataset, plan, members))
     .filter((q) => q.perMember.length > 0)
     .sort((a, b) => a.monthlyTotal - b.monthlyTotal);
@@ -118,11 +169,15 @@ export function cheapestPediatricAnnual(
   if (children.length === 0) return null;
 
   let cheapest: number | null = null;
+  // Filtered to the household's county, because the floor is what this family
+  // can actually buy. A Camden only price is not a Bergen household's option.
   for (const plan of dataset.plans) {
+    if (!dentalSoldIn(dataset, plan, household.county)) continue;
     const quote = quoteDentalPlan(dataset, plan, children);
     // Only plans that can cover every child are candidates. A plan covering
-    // two of three children is not a substitute for the benefit.
-    if (quote.perMember.length !== children.length) continue;
+    // two of three children is not a substitute for the benefit. Children
+    // beyond the rated three count as covered, not missing.
+    if (quote.uncoveredAges.length > 0) continue;
     if (cheapest === null || quote.annualTotal < cheapest) cheapest = quote.annualTotal;
   }
   return cheapest;

@@ -807,8 +807,11 @@
       '<th class="n">Deductible</th><th class="n">Max out of pocket</th>' +
       '<th>Covers</th></tr></thead><tbody>';
     for (const q of d.quotes) {
+      // Free children count as covered: they are on the policy, just not
+      // charged, per the filed three-child rating cap.
+      const coveredCount = q.perMember.length + q.freeChildAges.length;
       const covers = q.uncoveredAges.length
-        ? q.perMember.length + ' of ' + (q.perMember.length + q.uncoveredAges.length) +
+        ? coveredCount + ' of ' + (coveredCount + q.uncoveredAges.length) +
           ' <span class="muted">(children only)</span>'
         : 'everyone';
       // Not split on the first word, unlike the medical table. One dental
@@ -824,6 +827,18 @@
         '<td>' + covers + '</td></tr>';
     }
     html += '</tbody></table></div>';
+    // Visible rather than agentonly: it explains a price the client is
+    // looking at, and the rule is good news for them.
+    if (d.quotes.some((q) => q.freeChildAges.length)) {
+      const free = d.quotes[0].freeChildAges.length;
+      html += '<p style="margin:12px 0 0;font-size:14px;color:var(--am-ink-soft)">New Jersey charges dental premium for at most the three oldest children on a policy, so ' +
+        (free === 1 ? 'the youngest child is' : 'the ' + free + ' youngest children are') +
+        ' covered at no extra charge. The prices above already reflect that.</p>';
+    }
+    if (d.excludedForCounty && d.excludedForCounty.length) {
+      html += '<p class="agentonly" style="margin:12px 0 0;font-size:13px;color:var(--am-muted)">Not sold in this household\'s county, so not listed: ' +
+        d.excludedForCounty.map(esc).join('; ') + '.</p>';
+    }
     html += '<p class="agentonly" style="margin:12px 0 0;font-size:13px;color:var(--am-muted)">Monthly is the sum of the filed per person rate for each age this plan covers. New Jersey files no family tier pricing and no tobacco loading on dental, so this is the filed price rather than an estimate.</p>';
     html += '</section>';
 
