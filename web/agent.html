@@ -540,6 +540,12 @@
       ["NJ Health Plan Savings", result.stateSubsidy.eligible ? usd(result.stateSubsidy.annualAmount) + "/yr" : "not eligible",
         result.stateSubsidy.eligible ? "estimated, " + usd(result.stateSubsidy.perMemberPerMonth) + " per person monthly" : ""],
     ];
+    // Their own guess sits beside the computed figures on purpose: the
+    // question's whole promise is that the gap gets shown, not hidden.
+    if (h.perceivedAnnualSpend) {
+      facts.push(["Their guess at last year's out of pocket", usd(h.perceivedAnnualSpend),
+        "compare with the estimates below"]);
+    }
     for (const [k, v, small] of facts) {
       html += '<div class="fact"><dt>' + esc(k) + '</dt><dd>' + esc(v) + (small ? '<small>' + esc(small) + '</small>' : '') + '</dd></div>';
     }
@@ -547,6 +553,29 @@
     if (h.preferredHealthSystems.length) {
       html += '<p style="margin:18px 0 0;font-size:14px;color:var(--am-ink-soft)">Wants to keep: <strong>' +
         esc(h.preferredHealthSystems.join(", ")) + '</strong></p>';
+    }
+    // The client's own doctors and how firmly they hold them. Verbatim names,
+    // because the tool holds no provider directory: this line is the agent's
+    // checklist for the directory lookup, not a claim about any network.
+    const doctors = [];
+    if (h.primaryCareDoctor) doctors.push(h.primaryCareDoctor);
+    if (h.specialists && h.specialists.length) doctors.push(...h.specialists);
+    if (doctors.length || (h.networkPriority && h.networkPriority !== "none")) {
+      const PRIORITY = {
+        must: "does not want to change doctors",
+        prefer: "would rather keep them, but would listen",
+        flexible: "would change doctors to save real money",
+      };
+      let line = doctors.length
+        ? 'Doctors to keep: <strong>' + doctors.map(esc).join("; ") + '</strong>'
+        : 'No doctors named';
+      if (h.networkPriority && PRIORITY[h.networkPriority]) {
+        line += ' &middot; ' + PRIORITY[h.networkPriority];
+      }
+      if (h.switchSavingsThreshold) {
+        line += ' (their switching number: ' + usd(h.switchSavingsThreshold) + ' a year)';
+      }
+      html += '<p style="margin:8px 0 0;font-size:14px;color:var(--am-ink-soft)">' + line + '</p>';
     }
     html += '<p style="margin:8px 0 0;font-size:14px;color:var(--am-ink-soft)">' +
       (result.baseline

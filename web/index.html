@@ -1138,28 +1138,28 @@
     <input class="field" type="text" id="primary_care_doctor" name="primary_care_doctor" />
     
     
-    <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag route-intake">intake</span></div></div>
+    <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag route-flag">flag</span></div></div>
   </div><div class="q" data-q="specialists">
     <label class="qlabel" id="specialists-label" for="specialists">Any specialists you want to keep seeing?</label>
     <p class="qhelp">Name and what they treat. Add as many as you need.</p>
     <div class="repeater"><input class="field" type="text" name="specialists_1" aria-label="Any specialists you want to keep seeing?, first entry" /><input class="field" type="text" name="specialists_2" aria-label="Any specialists you want to keep seeing?, second entry" /><button class="btn quiet addmore" type="button">Add another</button></div>
     
     
-    <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag route-intake">intake</span></div></div>
+    <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag route-flag">flag</span></div></div>
   </div><div class="q" data-q="network_priority">
     <label class="qlabel" id="network_priority-label" for="network_priority">How important is keeping these doctors?</label>
     
     <div class="choices" role="radiogroup" aria-labelledby="network_priority-label"><label class="choice"><input type="radio" name="network_priority" value="must" /><span class="dot"></span><span class="ctext">Very. I do not want to change doctors</span></label><label class="choice"><input type="radio" name="network_priority" value="prefer" /><span class="dot"></span><span class="ctext">I would rather keep them, but I would listen</span></label><label class="choice"><input type="radio" name="network_priority" value="flexible" /><span class="dot"></span><span class="ctext">I would change doctors to save real money</span></label><label class="choice"><input type="radio" name="network_priority" value="none" /><span class="dot"></span><span class="ctext">No strong feelings</span></label></div>
     
-    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Turns network from a hard filter into a weighting. Without it the engine cannot tell whether to exclude a plan or merely note the trade off.</p></details>
-    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Decides what your agent leads with. If keeping your doctors matters most, the meeting starts from who is in network rather than from price.</p></details>
+    <div class="meta"><div class="tags"><span class="tag route-flag">flag</span></div></div>
   </div><div class="q" data-q="network_price" data-showif-q="network_priority" data-showif-v="flexible|prefer" hidden>
     <label class="qlabel" id="network_price-label" for="network_price">How much would you need to save in a year to make changing worth it?</label>
     
     <div class="withunit"><span class="unit">$</span><input class="field short" type="number" inputmode="numeric" id="network_price" name="network_price" min="0" step="1" enterkeyhint="next" /></div>
     <label class="unsure"><input type="checkbox" name="network_price_unsure" /><span>I am not sure</span></label>
     
-    <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag cond">only if network priority is flexible or prefer</span><span class="tag route-intake">intake</span></div></div>
+    <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag cond">only if network priority is flexible or prefer</span><span class="tag route-flag">flag</span></div></div>
   </div><div class="q" data-q="medications">
     <label class="qlabel" id="medications-label" for="medications">Anything anyone takes regularly?</label>
     <p class="qhelp">Start typing a name and pick it from the list. Regularly means most months, not a one off course of antibiotics. Leave it blank if nobody takes anything.</p>
@@ -1272,7 +1272,7 @@
     <div class="withunit"><span class="unit">$</span><input class="field short" type="number" inputmode="numeric" id="perceived_spend" name="perceived_spend" min="0" step="1" enterkeyhint="next" /></div>
     <label class="unsure"><input type="checkbox" name="perceived_spend_unsure" /><span>I am not sure</span></label>
     <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>The anchor the client judges everything against. When our computed figure disagrees with their belief, that gap is worth showing rather than hiding, because it usually means they forgot something.</p></details>
-    <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag route-intake">intake</span></div></div>
+    <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag route-flag">flag</span></div></div>
   </div></div>
       <footer class="stepfoot">
         <button class="btn quiet later" type="button">Save and finish later</button>

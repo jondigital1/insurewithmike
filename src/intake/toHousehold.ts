@@ -257,6 +257,15 @@ export function toHousehold(answers: Answers, today = new Date()): Conversion {
     flags.push("Losing existing coverage, which opens a special enrolment period.");
   }
 
+  // The one network answer that changes how the meeting starts. The tool
+  // holds no provider directory, so a client who will not change doctors is
+  // a sale decided by facts the tool does not have.
+  if (answers.network_priority === "must") {
+    flags.push(
+      "Will not change doctors. Network fit decides this sale and the tool cannot verify networks, so check the named doctors against each shortlisted plan's directory before quoting.",
+    );
+  }
+
   // Life events. Outside open enrolment one of these is the only route to
   // coverage at all, and the window is short, so this is stated first and
   // plainly rather than left for the agent to infer.
@@ -371,6 +380,15 @@ export function toHousehold(answers: Answers, today = new Date()): Conversion {
     preferredHealthSystems: list(answers.health_system)
       .filter((v) => v !== "none" && v !== "other")
       .map((v) => HEALTH_SYSTEM_LABELS[v] ?? v),
+    primaryCareDoctor:
+      typeof answers.primary_care_doctor === "string" && answers.primary_care_doctor.trim()
+        ? answers.primary_care_doctor.trim()
+        : undefined,
+    specialists: list(answers.specialists).filter(Boolean),
+    networkPriority: (["must", "prefer", "flexible", "none"] as const).find(
+      (v) => v === answers.network_priority,
+    ),
+    switchSavingsThreshold: num(answers.network_price) || undefined,
     perceivedAnnualSpend: num(answers.perceived_spend) || undefined,
     hardshipExemption: false,
     expectedScenario: scenarioFrom(answers),

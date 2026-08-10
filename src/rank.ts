@@ -368,7 +368,7 @@ export function buildShortlist(
   if (context.currentInsurer && context.currentInsurerFeeling !== "leave") {
     const prefix = INSURER_SLUG_PREFIX[context.currentInsurer];
     const represented = picks.some((p) =>
-      p.evaluation.plan.issuerName.toLowerCase().startsWith(prefix ?? " "),
+      p.evaluation.plan.issuerName.toLowerCase().startsWith(prefix ?? "\u0000"),
     );
     if (prefix && !represented) {
       const own = byExpected.find((e) =>

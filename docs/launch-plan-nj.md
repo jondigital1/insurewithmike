@@ -58,20 +58,37 @@ constraints:
   one real-paper print of both agent sheets. Print CSS was fixed by
   emulation on 10 August; a physical printer confirms it.
 
-## Gate 3: the questionnaire's honesty. Decide now, cheap to do
+## Gate 3: the questionnaire's honesty. CLEARED 10 August
 
-The measurement in scripts/question-value.ts found five network questions
-(primary_care_doctor, specialists, network_priority, network_price,
-health_system) that are collected and never read, and they are the questions
-the product exists for. Launch cannot ship questions that are asked and
-ignored; that breaks the project's own copy rule in spirit.
+Resolved the day it was written, on Jon's "fix gate 3". The correction to the
+original claim first: health_system was never unread. It feeds
+preferredHealthSystems, shows on the agent's household card, and rank.ts
+raises a per-plan "network not yet verified against X" caveat from it. The
+other four network questions and perceived_spend were genuinely unread, and
+now are not:
 
-The pragmatic launch call to make: wire what has data, convert what the agent
-can use into explicit flags, and cut what neither. Provider-directory data
-(which doctors are in which network) is the expensive path and is not launch
-scope. Also decide perceived_spend (read into the household, used nowhere)
-and confirm visits_primary stays, since it starts mattering the moment copays
-land in the cost model.
+- primary_care_doctor and specialists reach the agent verbatim on the
+  household card as "Doctors to keep", the agent's checklist for a by-hand
+  directory lookup, never parsed or matched, because the tool holds no
+  provider directory and must not pretend to.
+- network_priority shows beside the doctors in the client's own words, and
+  the "must" answer raises a Before-you-quote flag: network fit decides that
+  sale and the tool cannot verify networks.
+- network_price shows as "their switching number", the client's own price for
+  changing doctors, which is the number the agent negotiates against.
+- perceived_spend joins the household facts as "their guess at last year's
+  out of pocket", beside the computed estimates, which is what its own
+  rationale always promised.
+- All five now carry routing "flag" in the questionnaire, which is the
+  taxonomy telling the truth: surfaced to the agent, not in the maths. The
+  aspirational network_priority rationale was rewritten to describe what
+  happens today. Nothing was cut.
+
+Re-measured after: questions touching nothing fell from 12 to 8, flag-backed
+questions rose to 11, and every remaining "touches nothing" entry is either
+application plumbing or awaits copays. Wiring provider-directory data stays
+out of launch scope, and the flag routing comment says not to promote these
+to intake until it exists.
 
 ## Gate 4: plan year 2027 data. Gates the open enrolment season, not launch
 

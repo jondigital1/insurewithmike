@@ -278,6 +278,22 @@ export interface Household {
   members: HouseholdMember[];
   /** Health systems the household wants to keep, e.g. ["Penn", "Jefferson"]. */
   preferredHealthSystems: string[];
+  /**
+   * The doctor the client sees most and wants to keep, verbatim as typed.
+   * Carried for the agent's directory check, never parsed or matched: the
+   * tool holds no provider directory and pretending otherwise would be a
+   * wrong answer wearing a confident face.
+   */
+  primaryCareDoctor?: string;
+  /** Specialists the client wants to keep seeing, verbatim entries. */
+  specialists?: string[];
+  /**
+   * How firmly the client holds those doctors. "must" is the answer that
+   * changes how the meeting starts, so it raises an agent flag as well.
+   */
+  networkPriority?: "must" | "prefer" | "flexible" | "none";
+  /** Dollars per year the client said would make changing doctors worth it. */
+  switchSavingsThreshold?: number;
   /** Plan id of the coverage they hold today, when known. */
   currentPlanId?: string;
   /**

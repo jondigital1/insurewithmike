@@ -572,12 +572,17 @@ export const QUESTIONNAIRE: Section[] = [
           "Some plans put a whole system in a worse tier rather than excluding it. On Horizon OMNIA Gold, a tier 2 hospital nearly quadruples the deductible.",
       },
       {
+        // Flag routing on the doctor questions is deliberate and load
+        // bearing: the tool holds no provider directory, so these answers
+        // reach the agent verbatim for a by-hand directory check and feed no
+        // maths. Do not promote them to intake until network data exists;
+        // the routing tag is the honesty.
         id: "primary_care_doctor",
         kind: "text",
         label: "Name of the doctor you see most",
         help: "First and last name is enough. Leave blank if you do not have one you want to keep.",
         required: false,
-        routing: "intake",
+        routing: "flag",
       },
       {
         id: "specialists",
@@ -585,7 +590,7 @@ export const QUESTIONNAIRE: Section[] = [
         label: "Any specialists you want to keep seeing?",
         help: "Name and what they treat. Add as many as you need.",
         required: false,
-        routing: "intake",
+        routing: "flag",
       },
       {
         id: "network_priority",
@@ -598,9 +603,9 @@ export const QUESTIONNAIRE: Section[] = [
           { value: "none", label: "No strong feelings" },
         ],
         required: true,
-        routing: "intake",
+        routing: "flag",
         rationale:
-          "Turns network from a hard filter into a weighting. Without it the engine cannot tell whether to exclude a plan or merely note the trade off.",
+          "Decides what your agent leads with. If keeping your doctors matters most, the meeting starts from who is in network rather than from price.",
       },
       {
         id: "network_price",
@@ -609,7 +614,7 @@ export const QUESTIONNAIRE: Section[] = [
         required: false,
         allowUnsure: true,
         showIf: { question: "network_priority", equals: ["flexible", "prefer"] },
-        routing: "intake",
+        routing: "flag",
       },
       {
         id: "medications",
@@ -733,7 +738,7 @@ export const QUESTIONNAIRE: Section[] = [
           "Not counting your monthly premium. Copays, deductibles, prescriptions. A guess is fine, and we will show you what our numbers say.",
         required: false,
         allowUnsure: true,
-        routing: "intake",
+        routing: "flag",
         rationale:
           "The anchor the client judges everything against. When our computed figure disagrees with their belief, that gap is worth showing rather than hiding, because it usually means they forgot something.",
       },
