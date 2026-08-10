@@ -12,6 +12,7 @@ import { monthlyListPremium } from "./premium.ts";
 import { netAnnualPremium, njHealthPlanSavings, type SubsidyResult } from "./subsidy.ts";
 import type {
   CostBreakdown,
+  CoverageScenario,
   Household,
   Plan,
   PlanDataset,
@@ -214,12 +215,124 @@ export function tierPenalty(plan: Plan): TierPenalty | null {
   };
 }
 
+/**
+ * The allowed charges behind each standardised SBC scenario, as set by CMS for
+ * the coverage example calculation. These are the x coordinates of the filed
+ * points: every issuer computed "the member pays" against these totals.
+ */
+const SCENARIO_ALLOWED: Record<CoverageScenario, number> = {
+  simpleFracture: 2800,
+  managingDiabetes: 5600,
+  havingABaby: 12700,
+};
+
+/**
+ * Out of pocket estimated from the issuer's own filed coverage examples,
+ * rather than from our simulation.
+ *
+ * Calibration against all standard variants (docs/research-2026-08.md) showed
+ * the simulation overstating members' costs by a mean of $725 on expanded
+ * bronze and $641 on silver, because the New Jersey filings carry no copay
+ * amounts and a visit we cannot price by copay falls into the deductible at
+ * full charge. The issuer's filed examples do not have that blindness: they
+ * were computed by the carrier with the plan's real copays, limits and
+ * exclusions in hand.
+ *
+ * So where a plan carries its examples, we treat them as three measured points
+ * on the plan's cost sharing curve, anchor the curve at zero, extend it toward
+ * the out of pocket maximum, and read our household's figure off it by linear
+ * interpolation on allowed charges.
+ *
+ * This is an approximation with a known wrinkle: the scenarios differ in mix,
+ * not just in size. Having a baby is inpatient heavy, managing diabetes is
+ * drug heavy, so the curve is not strictly a function of allowed charges. Two
+ * defences. The points are forced monotone before use, so a plan whose
+ * diabetes example exceeds its baby example cannot produce an out of pocket
+ * that falls as care rises. And the exact scenario match still wins upstream,
+ * so interpolation only ever fills the space between scenarios, where any
+ * error is bounded by the filed points on either side.
+ *
+ * Measured honestly (leave one out across the 39 base plans): a straight line
+ * from the fracture point to the baby point misses the held out diabetes
+ * point by a mean of $830, slightly worse than the simulation's $712 at that
+ * same point. That is the widest span the curve ever has to bridge; the real
+ * curve keeps the middle point, so its segments are half that width and the
+ * curvature error correspondingly smaller. The trade is: exact at three
+ * measured points and near them, roughly simulation grade at the middle of a
+ * segment, against a simulation that runs $500 to $750 hot on bronze and
+ * silver everywhere. See docs/research-2026-08.md for the calibration.
+ *
+ * Returns null when the plan has no usable examples, and the caller falls
+ * back to the simulation.
+ */
+export function interpolatedOutOfPocket(
+  plan: Plan,
+  allowedCharges: number,
+  isFamily: boolean,
+): number | null {
+  const points: Array<[number, number]> = [[0, 0]];
+  for (const [scenario, allowed] of Object.entries(SCENARIO_ALLOWED) as [
+    CoverageScenario,
+    number,
+  ][]) {
+    const example = plan.coverageExamples[scenario];
+    if (example) points.push([allowed, example.total]);
+  }
+  if (points.length < 3) return null; // one example is a point, not a curve
+
+  points.sort((a, b) => a[0] - b[0]);
+
+  // Force the curve monotone non decreasing: more care can not cost less.
+  // Differences between scenario mixes occasionally file that way, and letting
+  // it through would rank plans on an artefact.
+  for (let i = 1; i < points.length; i += 1) {
+    const prev = points[i - 1]!;
+    const here = points[i]!;
+    if (here[1] < prev[1]) here[1] = prev[1];
+  }
+
+  const moop =
+    (isFamily ? plan.moopFamily : plan.moopIndividual) ?? plan.moopIndividual ?? Infinity;
+
+  const last = points[points.length - 1]!;
+  if (allowedCharges >= last[0]) {
+    // Beyond the largest scenario, continue at the curve's final slope until
+    // the out of pocket maximum caps it. The slope past the deductible region
+    // is the coinsurance share, and the last segment is our best measure of it.
+    const prev = points[points.length - 2]!;
+    const slope = (last[1] - prev[1]) / (last[0] - prev[0]);
+    return Math.min(moop, last[1] + Math.max(0, slope) * (allowedCharges - last[0]));
+  }
+
+  for (let i = 1; i < points.length; i += 1) {
+    const [x1, y1] = points[i - 1]!;
+    const [x2, y2] = points[i]!;
+    if (allowedCharges <= x2) {
+      const t = x2 === x1 ? 0 : (allowedCharges - x1) / (x2 - x1);
+      return Math.min(moop, y1 + t * (y2 - y1));
+    }
+  }
+  return Math.min(moop, last[1]);
+}
+
 export function evaluateCost(
   dataset: PlanDataset,
   plan: Plan,
   household: Household,
   quotedMonthlyPremium: number | null = null,
   subsidy: SubsidyResult | null = null,
+  /**
+   * What standalone pediatric dental costs this household for the year, from
+   * dental.ts. Applied only to plans that do not already include children's
+   * dental, which is 152 of the 176 New Jersey plans.
+   *
+   * Passed in as a number rather than computed here because it is the same for
+   * every plan and depends only on the household, so pricing it once per
+   * household beats pricing it 176 times. Zero when there are no children, and
+   * zero when the dental filings are not loaded, which keeps every existing
+   * caller behaving exactly as it did.
+   */
+  pediatricDentalFloor = 0,
 ): CostBreakdown | null {
   const listMonthly = monthlyListPremium(dataset, plan, household);
   if (listMonthly === null) return null;
@@ -259,8 +372,21 @@ export function evaluateCost(
   const filed = household.expectedScenario
     ? plan.coverageExamples[household.expectedScenario]
     : null;
-  const outOfPocket = filed ? filed.total : sharing.outOfPocket;
-  const outOfPocketSource: "filed" | "simulated" = filed ? "filed" : "simulated";
+
+  // No exact scenario match: read the figure off the plan's own filed curve
+  // before falling back to the simulation. Calibration showed the simulation
+  // running $500 to $750 hot on bronze and silver for want of copay data; the
+  // filed points carry the copays we cannot see. The simulation still supplies
+  // the itemised workings below, which is fine, because they are shown as the
+  // route to a figure rather than being the figure.
+  const interpolated = filed ? null : interpolatedOutOfPocket(plan, allowed, isFamily);
+
+  const outOfPocket = filed ? filed.total : interpolated ?? sharing.outOfPocket;
+  const outOfPocketSource: "filed" | "interpolated" | "simulated" = filed
+    ? "filed"
+    : interpolated !== null
+      ? "interpolated"
+      : "simulated";
 
   const annualPremiumListed = listMonthly * months;
   const afterFederal = subsidy
@@ -284,6 +410,12 @@ export function evaluateCost(
   const moop =
     (isFamily ? plan.moopFamily : plan.moopIndividual) ?? plan.moopIndividual ?? 0;
 
+  // A plan that includes children's dental and one that does not are not the
+  // same purchase, and until this line existed the totals compared them as
+  // though they were. Only 24 New Jersey plans include it, all UnitedHealthcare,
+  // so the omission ran one way: against the only carrier that bundles it.
+  const pediatricDentalPremium = plan.embedsPediatricDental ? 0 : pediatricDentalFloor;
+
   return {
     tierTwoPenalty: tierPenalty(plan),
     annualPremiumListed,
@@ -295,14 +427,15 @@ export function evaluateCost(
     deductibleApplied: sharing.deductibleApplied,
     coinsuranceApplied: sharing.coinsuranceApplied,
     copayApplied: sharing.copayApplied,
-    // A filed coverage example already accounts for copays, so it is never in
-    // doubt. Only the simulation can be short of a copay amount.
-    copaysKnown: filed ? true : sharing.copaysKnown,
+    // A figure taken from the issuer's filing, exactly or by interpolation,
+    // already accounts for copays. Only the simulation can be short of one.
+    copaysKnown: filed || interpolated !== null ? true : sharing.copaysKnown,
     estimatedOutOfPocket: outOfPocket,
     outOfPocketSource,
     reachesMoop: sharing.reachesMoop,
-    estimatedAnnualTotal: effectivePremium + outOfPocket,
-    worstCaseAnnualTotal: effectivePremium + moop,
+    pediatricDentalPremium,
+    estimatedAnnualTotal: effectivePremium + outOfPocket + pediatricDentalPremium,
+    worstCaseAnnualTotal: effectivePremium + moop + pediatricDentalPremium,
   };
 }
 

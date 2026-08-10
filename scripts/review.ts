@@ -76,6 +76,79 @@ if (!reviews || reviews.n === 0) {
   }
 }
 
+rule("WHAT THE AGENT DID TO INDIVIDUAL PLANS");
+
+const acts = store.query<{ action: string; n: number }>(
+  `SELECT action, COUNT(*) AS n FROM plan_action GROUP BY action`,
+);
+if (!acts.length) {
+  console.log(
+    `\n  No plan level rulings yet.\n\n  The agent page records these as they happen and exports them as a file;\n  scripts/import-review.ts brings that file in here.`,
+  );
+} else {
+  for (const a of acts) console.log(`\n  ${a.action.padEnd(10)} ${a.n}`);
+
+  const withNote = store.query<{ n: number }>(
+    `SELECT COUNT(*) AS n FROM plan_action WHERE raw_note IS NOT NULL AND TRIM(raw_note) <> ''`,
+  )[0]?.n ?? 0;
+  const total = acts.reduce((s, a) => s + a.n, 0);
+  console.log(`\n  ${withNote} of ${total} carry a note (${Math.round((withNote / total) * 100)}%)`);
+  console.log(
+    `\n  That percentage is the health check on this whole mechanism. If it falls, the\n  asking is happening at the wrong moment, not the agents being unhelpful.`,
+  );
+
+  const flagged = store.query<{ n: number }>(
+    `SELECT COUNT(*) AS n FROM plan_action WHERE pii_suspected = 1`,
+  )[0]?.n ?? 0;
+  if (flagged) {
+    console.log(`\n  ${flagged} note(s) flagged to read before this data goes anywhere.`);
+  }
+
+  // Broker economics is excluded here on purpose. "I hold no appointment with
+  // that carrier" is a fact about the agent, and letting it sit in the same
+  // table as the client reasons would teach the ranking to avoid a carrier for
+  // a reason no client ever had.
+  const reasons = store.query<{ kind: string; topic: string; detail: string; n: number }>(
+    `SELECT l.kind, l.topic, l.detail, COUNT(*) AS n
+       FROM plan_action_label l JOIN plan_action a ON a.id = l.action_id
+      WHERE a.action = 'ruled_out' AND l.kind <> 'broker_economics'
+      GROUP BY l.kind, l.topic, l.detail ORDER BY n DESC`,
+  );
+  if (reasons.length) {
+    console.log(`\n  Why plans were ruled out:\n`);
+    for (const r of reasons) {
+      console.log(`    ${String(r.n).padStart(3)}x  ${r.kind.padEnd(17)} ${r.topic.padEnd(12)} ${r.detail}`);
+    }
+  }
+
+  const excluded = store.query<{ detail: string; n: number }>(
+    `SELECT l.detail, COUNT(*) AS n
+       FROM plan_action_label l WHERE l.kind = 'broker_economics'
+      GROUP BY l.detail ORDER BY n DESC`,
+  );
+  if (excluded.length) {
+    console.log(`\n  Held apart from the ranking, about the agent rather than the client:\n`);
+    for (const e of excluded) console.log(`    ${String(e.n).padStart(3)}x  ${e.detail}`);
+  }
+
+  // The one thing here a competitor cannot get by reading the same public
+  // filings. Two independent reports before it is worth acting on: one agent
+  // can be wrong, and we should not assert a network fact we cannot stand up.
+  const corrections = store.query<{ subject: string; detail: string; n: number }>(
+    `SELECT l.subject, l.detail, COUNT(DISTINCT a.agent_name) AS n
+       FROM plan_action_label l JOIN plan_action a ON a.id = l.action_id
+      WHERE l.kind = 'data_error' AND l.subject IS NOT NULL AND TRIM(l.subject) <> ''
+      GROUP BY l.subject, l.detail ORDER BY n DESC`,
+  );
+  if (corrections.length) {
+    console.log(`\n  Claims about our data being wrong:\n`);
+    for (const c of corrections) {
+      const stands = c.n >= 2 ? "corroborated" : "one agent only";
+      console.log(`    ${c.subject.padEnd(28)} ${c.detail.padEnd(26)} ${stands}`);
+    }
+  }
+}
+
 rule("SUBSIDY CLIFF, OBSERVED");
 
 const cliff = store.query<{ notes: string; fpl_percentage: number; federal_subsidy: number }>(

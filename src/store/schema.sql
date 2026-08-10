@@ -60,7 +60,23 @@ CREATE TABLE IF NOT EXISTS recommendation_run (
   agency_id             TEXT NOT NULL REFERENCES agency(id),
   created_at            TEXT NOT NULL,
   plan_year             INTEGER NOT NULL,
+  -- Which state's rules produced these figures, and which version of them.
+  --
+  -- Here for the same reason agency_id is: it is free to add to a table
+  -- nobody is reading yet, and awful to backfill later, because a stored
+  -- recommendation cannot be checked if you cannot tell which rules made it.
+  -- State differences are not all parameters. New York and Vermont do not age
+  -- rate at all, and the states that did not expand Medicaid have a coverage
+  -- gap below the poverty line that simply does not exist in New Jersey, so
+  -- "which ruleset" is a real question about a run, not bookkeeping.
+  state                 TEXT NOT NULL DEFAULT 'NJ',
+  -- New Jersey is a single statewide rating area, so this is constant here and
+  -- county affects which plans are available rather than what they cost. Most
+  -- states have several, and a premium cannot be reproduced without knowing
+  -- which one applied.
+  rating_area           TEXT,
   engine_version        TEXT NOT NULL,   -- hash of the cost, rank and subsidy code
+  state_rules_version   TEXT,            -- hash of the per state rules, kept apart from the engine
   plan_data_version     TEXT NOT NULL,   -- hash of the PUF files it ran against
   assumptions_version   TEXT NOT NULL,   -- hash of assumptions.ts
   fpl_percentage        REAL,
@@ -110,6 +126,59 @@ CREATE TABLE IF NOT EXISTS agent_review (
 );
 
 CREATE INDEX IF NOT EXISTS review_run_idx ON agent_review(run_id);
+
+-- What the agent did to one plan on one shortlist: led with it, or ruled it
+-- out. Finer grained than agent_review, which is one row per shortlist. This
+-- is the table that answers "which plan, and why not".
+--
+-- raw_note holds the agent's own words, verbatim, and is never rewritten. The
+-- categories we sort those words into will change, probably several times. If
+-- the category were the only thing stored, every revision would orphan the
+-- history; storing the utterance and deriving the label separately means the
+-- whole back catalogue can be relabelled whenever the taxonomy improves.
+CREATE TABLE IF NOT EXISTS plan_action (
+  id            TEXT PRIMARY KEY,
+  run_id        TEXT NOT NULL REFERENCES recommendation_run(id),
+  agency_id     TEXT NOT NULL REFERENCES agency(id),
+  agent_name    TEXT NOT NULL,
+  acted_at      TEXT NOT NULL,
+  plan_id       TEXT NOT NULL,
+  rank          INTEGER,                 -- position on the shortlist, null if off it
+  action        TEXT NOT NULL,           -- led_with | ruled_out
+  raw_note      TEXT,                    -- the agent's words, never rewritten
+  note_source   TEXT,                    -- voice | typed
+  note_ms       INTEGER,                 -- how long they spent saying it
+  pii_suspected INTEGER NOT NULL DEFAULT 0  -- flagged for a human to read, never auto-erased
+);
+
+CREATE INDEX IF NOT EXISTS plan_action_run_idx ON plan_action(run_id, acted_at);
+CREATE INDEX IF NOT EXISTS plan_action_plan_idx ON plan_action(plan_id, action);
+
+-- The label derived from raw_note. Separate table because it is an opinion
+-- about the note rather than part of it: re-running the classifier writes new
+-- rows and the old ones stay, so a taxonomy change is auditable rather than
+-- destructive.
+--
+-- kind is the split that decides what happens next. A data error raises a
+-- ticket against the plan data. A client fit teaches the ranking. Broker
+-- economics is logged and then excluded from anything that touches a
+-- recommendation, because "I am not appointed with that carrier" says nothing
+-- about whether the plan was right.
+CREATE TABLE IF NOT EXISTS plan_action_label (
+  id               TEXT PRIMARY KEY,
+  action_id        TEXT NOT NULL REFERENCES plan_action(id),
+  labelled_at      TEXT NOT NULL,
+  taxonomy_version TEXT NOT NULL,
+  kind             TEXT,                 -- data_error | client_fit | broker_economics
+  topic            TEXT,                 -- network | drugs | cost | preference | carrier | eligibility
+  detail           TEXT,                 -- fine grained code within the topic
+  subject          TEXT,                 -- the provider, drug or hospital named, when there is one
+  confidence       REAL,
+  labelled_by      TEXT NOT NULL         -- model:<id> or human:<who>
+);
+
+CREATE INDEX IF NOT EXISTS label_action_idx ON plan_action_label(action_id, labelled_at);
+CREATE INDEX IF NOT EXISTS label_kind_idx ON plan_action_label(kind, topic);
 
 -- What the client chose, and eventually what it cost them. Closing this loop
 -- is the only true accuracy measure available.

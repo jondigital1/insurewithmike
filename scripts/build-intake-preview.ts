@@ -13,6 +13,7 @@ import { writeFileSync, mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 import { QUESTIONNAIRE, allQuestions } from "../src/intake/questionnaire.ts";
 import type { Question, Section } from "../src/intake/questionnaire.ts";
+import { AGENCY } from "../src/web/agency.ts";
 
 // ---------------------------------------------------------------- validation
 
@@ -92,8 +93,6 @@ function renderInput(q: Question, suffix = ""): string {
   switch (q.kind) {
     // inputmode decides which keyboard a phone raises. Without it a client
     // types a dollar figure on a full qwerty and hunts for the number row.
-    case "code":
-      return `<input class="field code" type="text" id="${name}" name="${name}" placeholder="K7M4QX" maxlength="6" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="next" />`;
     case "number":
       return `<div class="withunit"><input class="field short" type="number" inputmode="numeric" id="${name}" name="${name}" min="0" enterkeyhint="next" />${q.unit ? `<span class="unit">${esc(q.unit)}</span>` : ""}</div>`;
     case "currency":
@@ -254,7 +253,7 @@ function renderSection(s: Section, n: number): string {
   return `<section class="step" data-step="${n}">
     <div class="card">
       <header class="stephead">
-        <p class="eyebrow">Step ${n} of ${QUESTIONNAIRE.length}</p>
+        <p class="eyebrow">Section ${n} of ${QUESTIONNAIRE.length}</p>
         <h2>${esc(s.title)}</h2>
         ${s.blurb ? `<p class="blurb">${esc(s.blurb)}</p>` : ""}
       </header>
@@ -465,22 +464,43 @@ const html = `<title>Ask Mike, client intake</title>
   .hero p { margin: 0 0 12px; color: var(--am-ink-soft); }
   .hero .hlede { font-size: 19px; line-height: 1.55; color: var(--am-ink); }
 
+  /* The journey, before the first question. The counts strip below answers
+     "how much is this going to hurt"; this answers "what is happening here",
+     and the closing line ties honest answers to the shorter shortlist they
+     buy. Three beats because that is what actually happens, not because
+     three sounds friendly. */
+  .howworks {
+    list-style: none; counter-reset: hw; margin: 22px 0 0; padding: 0;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .howworks li {
+    counter-increment: hw; position: relative; padding-left: 42px;
+    font-size: 15px; line-height: 1.55; color: var(--am-ink-soft); max-width: 62ch;
+  }
+  .howworks li b { color: var(--am-ink); font-weight: 600; }
+  .howworks li::before {
+    content: counter(hw); position: absolute; left: 0; top: 1px;
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--display); font-size: 16px;
+    background: var(--am-blue-100); color: var(--am-blue-700);
+  }
+  .howpay {
+    margin: 14px 0 0; padding-left: 42px; font-size: 15px;
+    color: var(--am-ink); font-weight: 500; max-width: 62ch;
+  }
+
   /* Three numbers instead of a paragraph of reassurance. The last one is the
      answer to the question people are actually holding. */
-  .facts {
-    list-style: none; margin: 26px 0 0; padding: 22px 0 0;
+  /* One sentence, not a stat strip. This carried big display numerals for a
+     while, and they never sat well: a marketing pattern on a page that talks
+     to the client in prose, wrong wrapped and wrong stacked. The counts still
+     matter, so they live in a line that reads instead of poses. */
+  .factline {
+    margin: 22px 0 0; padding: 18px 0 0;
     border-top: 1px solid var(--am-line);
-    display: flex; flex-wrap: wrap; gap: 14px 40px;
+    font-size: 14px; line-height: 1.6; color: var(--am-muted); max-width: 62ch;
   }
-  .facts li { display: flex; align-items: baseline; gap: 10px; }
-  /* These were 38px, which is where the h1 starts on a narrow screen. Three
-     figures reassuring you about the length of a form should not be able to
-     tie with the sentence that says what the form is for. */
-  .facts .fnum {
-    font-family: var(--display); font-size: 27px; line-height: .95;
-    color: var(--am-blue-700); letter-spacing: -0.02em;
-  }
-  .facts .flabel { font-size: 13px; line-height: 1.35; color: var(--am-muted); }
 
   .helpful {
     background: var(--am-amber-100); color: var(--am-amber-text);
@@ -961,8 +981,7 @@ const html = `<title>Ask Mike, client intake</title>
     .notice { padding: 10px 14px; font-size: 13px; }
 
     .hero { padding: 0 16px; margin-bottom: 28px; }
-    .facts { gap: 12px 26px; }
-    .facts .fnum { font-size: 23px; }
+    .factline { font-size: 13px; }
 
     /* Edge to edge. A frame around content that already fills the screen
        is a border drawn for its own sake. */
@@ -1071,7 +1090,7 @@ const html = `<title>Ask Mike, client intake</title>
       <div class="fill" id="progress-fill"></div>
       <div class="pips">${QUESTIONNAIRE.map((s, i) => `<span class="pip" data-pip="${i}" title="${esc(s.title)}"></span>`).join("")}</div>
     </div>
-    <span class="count" id="progress-count">Step 1 of ${QUESTIONNAIRE.length}</span>
+    <span class="count" id="progress-count">Section 1 of ${QUESTIONNAIRE.length}</span>
   </div>
 </div>
 
@@ -1079,13 +1098,14 @@ const html = `<title>Ask Mike, client intake</title>
   <div class="hero">
     <h1>Before we meet,<br />tell us about <em>your year</em></h1>
     <p class="hlede">Your agent uses this to work out which plans are actually worth your time, so the meeting can be about the decision rather than the paperwork.</p>
-    <p>Rough answers are fine. Where you are not sure, say so rather than guessing, and your agent will pick it up.</p>
-    <ul class="facts">
-      <li><span class="fnum">${QUESTIONNAIRE.length}</span><span class="flabel">short steps,<br />one screen each</span></li>
-      <li><span class="fnum">10</span><span class="flabel">minutes,<br />give or take</span></li>
-      <li><span class="fnum">0</span><span class="flabel">of it sent until<br />you press send</span></li>
-    </ul>
-    <div class="helpful">${MARK_SMALL(19, "#C67E32")}<span><b>Worth having to hand:</b> your insurance card if you have one, and the bottles for anything you take regularly. Neither is essential, but they make a few of the questions much quicker to answer.</span></div>
+    <ol class="howworks" aria-label="How this works">
+      <li><b>Answer what you know.</b> Your household, your income, the care your family actually uses. Most of it you know cold, and the exact bits are usually within arm's reach of wherever you are sitting. Where nothing is, &ldquo;not sure&rdquo; is always an answer.</li>
+      <li><b>Get your code.</b> It appears when you finish. It is the only thing that connects these answers to you, because your name is never asked.</li>
+      <li><b>Hand it to ${esc(AGENCY.agentName.split(" ")[0] ?? AGENCY.agentName)}.</b> He matches the code to your file and walks into your meeting with the plans already narrowed to your situation.</li>
+    </ol>
+    <p class="howpay">The clearer the picture you give, the shorter the list he brings.</p>
+    <p class="factline">${QUESTIONNAIRE.length} short sections, one screen each. About 10 minutes, and nothing is sent until you press send.</p>
+    <div class="helpful">${MARK_SMALL(19, "#C67E32")}<span><b>Worth having to hand:</b> your insurance card if you have one, last year's tax return, and the bottles for anything you take regularly. None of them are essential, but they make a few of the questions much quicker to answer.</span></div>
   </div>
 
   ${sections}
@@ -1306,7 +1326,7 @@ const html = `<title>Ask Mike, client intake</title>
       const all = [...document.querySelectorAll(".q")];
       const done = all.filter(isAnswered).length;
       fill.style.width = (all.length ? (done / all.length) * 100 : 0).toFixed(1) + "%";
-      count.textContent = "All " + steps.length + " steps";
+      count.textContent = "All " + steps.length + " sections";
       return;
     }
     const shown = Math.min(stepIndex + 1, steps.length);
@@ -1324,7 +1344,7 @@ const html = `<title>Ask Mike, client intake</title>
     // arithmetic here would quietly contradict the front page.
     const mins = Math.max(1, steps.length - stepIndex);
     count.innerHTML =
-      "<b>Step " + shown + " of " + steps.length + "<\\/b> &middot; about " + mins + " min left";
+      "<b>Section " + shown + " of " + steps.length + "<\\/b> &middot; about " + mins + " min left";
   }
 
   function isAnswered(q) {
@@ -1818,8 +1838,39 @@ const html = `<title>Ask Mike, client intake</title>
     return answers;
   }
 
+  /**
+   * The client's code, minted at submission rather than carried in.
+   *
+   * The system invents it, the client hands it to their agent, and the
+   * agent's own CRM holds the join between code and person. Nothing about
+   * the client is encoded in it.
+   *
+   * Eight characters from an alphabet with the confusable letters removed:
+   * no O against 0, no I or L against 1. Two groups of four because the code
+   * is read off a phone screen or a photograph, and XXXX-XXXX survives that
+   * better than an unbroken run. crypto.getRandomValues because Math.random
+   * is not for identifiers, even low stakes ones.
+   */
+  function mintClientCode() {
+    const ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+    const buf = new Uint32Array(8);
+    crypto.getRandomValues(buf);
+    let code = "";
+    for (let i = 0; i < 8; i += 1) {
+      if (i === 4) code += "-";
+      code += ALPHABET[buf[i] % ALPHABET.length];
+    }
+    return code;
+  }
+
   document.getElementById("submit").addEventListener("click", () => {
     const answers = collect();
+    // A resubmission keeps its code. The second pass through the form is a
+    // correction to the same conversation, not a new client, and the agent
+    // has probably written the first code down already.
+    const code = localStorage.getItem("askmike:clientCode") || mintClientCode();
+    localStorage.setItem("askmike:clientCode", code);
+    answers.client_code = code;
     localStorage.setItem(
       "askmike:submission",
       JSON.stringify({ answers, submittedAt: new Date().toISOString() }),

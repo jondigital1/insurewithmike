@@ -11,9 +11,18 @@ import type { Household, Plan, PlanDataset } from "./types.ts";
  * Monthly premium for the household at the filed list rate, before subsidy.
  *
  * Marketplace premiums are built by summing each member's age rated premium.
- * New Jersey uses a single statewide rating area, so county does not affect
- * price, only whether the carrier sells there at all. Children beyond the
- * third under age 21 are not charged.
+ *
+ * Geography does not enter this figure, but not because New Jersey has one
+ * rating area. The 2026 filing declares six. Every medical plan is filed in
+ * Rating Area 1 alone, so there is a single rate per age and nothing to pick
+ * between; loadRates refuses the file if that ever stops being true.
+ *
+ * Nor does that make county irrelevant to what a household pays. County
+ * decides which carriers may sell to them, which decides the silver plans
+ * available, which sets the benchmark in subsidy.ts, which sets the credit.
+ * List price is flat statewide. The net is not.
+ *
+ * Children beyond the third under age 21 are not charged.
  */
 export function monthlyListPremium(
   dataset: PlanDataset,

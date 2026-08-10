@@ -35,7 +35,25 @@ export const ALLOWED_AMOUNTS: Record<ServiceCategory, number> = {
   mentalHealthVisit: 180,
   physicalTherapy: 130,
   genericDrugMonths: 25,
-  preferredBrandDrugMonths: 350,
+  /**
+   * Was 350, raised August 2026 after sensitivity testing showed this single
+   * number is 54 percent of the moderate utilisation basket and the one
+   * assumption whose error flips shortlists (docs/research-2026-08.md).
+   *
+   * Checked against 2026 retail prices of the brands a marketplace population
+   * actually fills: Eliquis $485 to $800 retail with a $342 discount card
+   * price, Jardiance $472 to $556, Trelegy $580 to $900. Insurance negotiated
+   * allowed runs somewhat below retail, and the average is pulled down by
+   * capped insulins and by brands that just genericised out of the tier
+   * (Xarelto, Symbicort). Point of sale allowed for a preferred brand month
+   * centres around $450 to $500; 350 was the low edge of plausible.
+   *
+   * Note the figure that matters here is point of sale allowed, what the
+   * pharmacy transaction charges against the deductible, NOT the net of
+   * rebate price quoted in industry reporting. Rebates flow back to the plan
+   * later and never touch the member's deductible.
+   */
+  preferredBrandDrugMonths: 450,
   specialtyDrugMonths: 3800,
 };
 

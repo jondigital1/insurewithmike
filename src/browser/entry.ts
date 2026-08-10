@@ -14,13 +14,21 @@ import { computeSubsidy, njHealthPlanSavings } from "../subsidy.ts";
 import { CATEGORY_LABELS, federalPovertyLevel, fplPercentage } from "../assumptions.ts";
 import { coverageTimeline } from "../planyear.ts";
 import { checkDrugs, type FormularyIndex } from "../formulary.ts";
-import type { PlanDataset, RateRow } from "../types.ts";
+import { quoteAllDental, orderedBenefits, isChild } from "../dental.ts";
+import type { DentalDataset, Household, PlanDataset, RateRow } from "../types.ts";
 
 interface SerialisedDataset {
   planYear: number;
   plans: PlanDataset["plans"];
   rates: Record<string, RateRow[]>;
   serviceAreas: PlanDataset["serviceAreas"];
+  /**
+   * The standalone dental plans. Their rate tables live in the same `rates`
+   * map as the medical ones, keyed the same way, because the filings put them
+   * in one file and splitting them here would invent a distinction the source
+   * does not have.
+   */
+  dentalPlans?: DentalDataset["plans"];
 }
 
 function hydrate(raw: SerialisedDataset): PlanDataset {
@@ -30,6 +38,15 @@ function hydrate(raw: SerialisedDataset): PlanDataset {
     rates: new Map(Object.entries(raw.rates)),
     serviceAreas: raw.serviceAreas,
     benefits: new Map(),
+  };
+}
+
+function hydrateDental(raw: SerialisedDataset): DentalDataset | null {
+  if (!raw.dentalPlans?.length) return null;
+  return {
+    planYear: raw.planYear,
+    plans: raw.dentalPlans,
+    rates: new Map(Object.entries(raw.rates)),
   };
 }
 
@@ -69,9 +86,13 @@ export function recommend(
       : [];
   const drugs = checkDrugs(medications.filter(Boolean), formulary);
 
+  const dental = hydrateDental(raw);
   const subsidy = computeSubsidy(dataset, household);
-  const evaluations = evaluateAllPlans(dataset, household, new Map(), subsidy);
-  const shortlist = buildShortlist(evaluations);
+  const evaluations = evaluateAllPlans(dataset, household, new Map(), subsidy, dental);
+  const shortlist = buildShortlist(evaluations, 2, {
+    currentInsurer: household.currentInsurer,
+    currentInsurerFeeling: household.currentInsurerFeeling,
+  });
   const eligible = evaluations.filter((e) => e.disqualifiers.length === 0);
   // Reported against silver, which is what most households enrol in. The
   // per plan figure varies with metal level and is applied inside the cost
@@ -116,6 +137,39 @@ export function recommend(
       label: CATEGORY_LABELS[c.category],
       units: c.units,
       allowed: c.allowed,
+    })),
+    dental: dentalView(dental, household),
+  };
+}
+
+/**
+ * Everything the dental view needs, priced for this household.
+ *
+ * Deliberately not a shortlist. Every plan the household can buy is returned,
+ * cheapest first, with its filed benefit lines, and the agent picks. Dental is
+ * a capped benefit product with a few hundred dollars of exposure, so there is
+ * no cost model worth running and no ranking worth implying.
+ */
+function dentalView(dental: DentalDataset | null, household: Household) {
+  if (!dental) return null;
+  const children = household.members.filter(isChild);
+  return {
+    hasChildren: children.length > 0,
+    childCount: children.length,
+    adultCount: household.members.length - children.length,
+    quotes: quoteAllDental(dental, household.members).map((q) => ({
+      planId: q.plan.planId,
+      issuerName: q.plan.issuerName,
+      marketingName: q.plan.marketingName,
+      planType: q.plan.planType,
+      pediatricOnly: q.plan.pediatricOnly,
+      deductibleIndividual: q.plan.deductibleIndividual,
+      moopIndividual: q.plan.moopIndividual,
+      monthlyTotal: q.monthlyTotal,
+      annualTotal: q.annualTotal,
+      perMember: q.perMember,
+      uncoveredAges: q.uncoveredAges,
+      benefits: orderedBenefits(q.plan),
     })),
   };
 }

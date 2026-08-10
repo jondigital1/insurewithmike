@@ -13,12 +13,15 @@ import type {
   BenefitRow,
   CoverageExample,
   CsrVariant,
+  DentalDataset,
+  DentalPlan,
   MetalLevel,
   Plan,
   PlanDataset,
   RateRow,
   ServiceArea,
 } from "./types.ts";
+import { rateForAge } from "./dataset.ts";
 
 type Row = Record<string, string>;
 
@@ -34,6 +37,17 @@ const ISSUER_NAMES: Record<string, string> = {
   "37777": "UnitedHealthcare / Oxford",
   "91661": "Horizon Blue Cross Blue Shield of New Jersey",
   "91762": "AmeriHealth New Jersey",
+
+  // Dental-only issuers. Horizon and UnitedHealthcare sell both and are named
+  // above. These three are identified from the network and service area names
+  // in the same filings: "Dentegra PPO Individual", "DentalGuard Preferred"
+  // and "GLIC Individual PPO" for Guardian Life, and "Delta Dental PPO".
+  "48608": "Dentegra Insurance Company",
+  "93627": "Guardian Life",
+  "99708": "Delta Dental",
+  // 35152 sells "Choice PPO" and "Select Plan" and is not named anywhere in
+  // the filings, so it falls through to the issuer id rather than a guess. Its
+  // marketing names are what an agent recognises anyway.
 };
 
 const CSR_VARIANTS: Record<string, CsrVariant> = {
@@ -183,6 +197,8 @@ function loadPlans(dir: string): Plan[] {
         serviceAreaId: r["SERVICE AREA ID"] ?? "",
         hsaEligible: yesNo(r["IS HSA ELIGIBLE"]),
         actuarialValue: percent(r["ISSUER ACTUARIAL VALUE"]),
+        // Set from the benefits file once it is loaded, in applyPediatricDental.
+        embedsPediatricDental: false,
 
         deductibleIndividual: preferTotal(
           r,
@@ -282,6 +298,7 @@ function loadRates(dir: string): Map<string, RateRow[]> {
     const row: RateRow = {
       planId,
       age: (r["AGE"] ?? "").trim(),
+      ratingArea: (r["RATING AREA ID"] ?? "").trim(),
       individualRate,
       individualTobaccoRate: money(r["INDIVIDUAL TOBACCO RATE"]),
     };
@@ -289,7 +306,60 @@ function loadRates(dir: string): Map<string, RateRow[]> {
     if (existing) existing.push(row);
     else byPlan.set(planId, [row]);
   }
+  assertOneRatePerAge(byPlan);
   return byPlan;
+}
+
+/**
+ * Refuses to load a rate file this engine cannot price correctly.
+ *
+ * The 2026 New Jersey file declares six rating areas, and it is tempting to
+ * read that as six prices. It is not: every medical plan is filed in Rating
+ * Area 1 alone, and the only plans reaching areas 2 to 6 are three Horizon
+ * dental products that are filtered out before ranking and carry identical
+ * rates in every area anyway. So there is exactly one rate per age and
+ * geography does not enter the premium.
+ *
+ * Nothing in this file guarantees that stays true. Rates are keyed on plan id
+ * with no rating area in the key, so a plan filed at genuinely different
+ * prices per area would leave several rows for the same age and rateForAge
+ * would take whichever came first. That is a wrong premium with no error,
+ * which is the worst failure this codebase can have, and it is precisely what
+ * would happen the first time this engine is pointed at a state where rating
+ * areas mean something.
+ *
+ * Hence a hard failure rather than a warning. If we cannot tell which rate
+ * applies, guessing is not an option worth having.
+ */
+function assertOneRatePerAge(byPlan: Map<string, RateRow[]>): void {
+  const conflicts: string[] = [];
+  for (const [planId, rows] of byPlan) {
+    const seen = new Map<string, RateRow>();
+    for (const row of rows) {
+      const key = `${row.age}|${row.individualTobaccoRate === null ? "n" : "t"}`;
+      const first = seen.get(key);
+      if (!first) {
+        seen.set(key, row);
+        continue;
+      }
+      if (first.individualRate !== row.individualRate) {
+        conflicts.push(
+          `${planId} age ${row.age}: ${first.ratingArea} $${first.individualRate} vs ` +
+            `${row.ratingArea} $${row.individualRate}`,
+        );
+      }
+    }
+  }
+  if (conflicts.length) {
+    throw new Error(
+      `Rates differ by rating area, which this engine cannot yet price.\n` +
+        `It keys rates on plan id alone, so it has no way to pick the row for a\n` +
+        `household's area and would silently use whichever was read first.\n` +
+        `Teach premium.ts about rating areas before loading this file.\n\n` +
+        conflicts.slice(0, 10).map((c) => `  ${c}`).join("\n") +
+        (conflicts.length > 10 ? `\n  ... and ${conflicts.length - 10} more` : ""),
+    );
+  }
 }
 
 function loadServiceAreas(dir: string): ServiceArea[] {
@@ -323,6 +393,7 @@ function loadBenefits(dir: string): Map<string, BenefitRow[]> {
         ? yesNo(r["IS EXCLUDED FROM INN MOOP"])
         : null,
       quantityLimit: r["LIMIT QUANTITY"] || null,
+      quantityLimitUnit: r["LIMIT UNIT"] || null,
       exclusions: r["EXCLUSIONS"] || null,
     };
     const existing = byPlan.get(planId);
@@ -330,6 +401,117 @@ function loadBenefits(dir: string): Map<string, BenefitRow[]> {
     else byPlan.set(planId, [row]);
   }
   return byPlan;
+}
+
+/**
+ * The benefit line that decides whether a medical plan covers children's dental.
+ *
+ * The filings carry three child dental lines, check-up, basic and major, and on
+ * every New Jersey plan they move together: a plan covering one covers all
+ * three. The check-up is used as the discriminator because it is the one a
+ * family notices first, and it is the one the issuer summaries name.
+ *
+ * Verified against Horizon's own Summary of Benefits for OMNIA Silver Value
+ * 2026, which prints "Children's dental check-up: Not Covered" while listing
+ * children's eye exam and glasses as covered. The filings and the published
+ * summary agree, which is why this reads a single column rather than guessing
+ * from the pediatric dental apportionment quantity, a field New Jersey leaves
+ * blank on all 176 medical plans.
+ */
+const CHILD_DENTAL_BENEFIT = "Dental Check-Up for Children";
+
+/**
+ * Marks the medical plans whose own benefit schedule covers children's dental.
+ *
+ * Applied here, alongside the copay overlay, so that every consumer of a plan
+ * object sees the same answer. A household with a child on a plan that is not
+ * marked has to buy standalone dental, and the cost model has to say so or its
+ * totals compare unlike things.
+ */
+function applyPediatricDental(plans: Plan[], benefits: Map<string, BenefitRow[]>): void {
+  for (const plan of plans) {
+    const rows = benefits.get(plan.planId) ?? [];
+    plan.embedsPediatricDental = rows.some(
+      (b) => b.benefitName === CHILD_DENTAL_BENEFIT && b.isCovered,
+    );
+  }
+}
+
+/**
+ * Loads the standalone dental plans, which loadPlans deliberately excludes.
+ *
+ * These are filed in the same files as the medical plans and are rated
+ * identically: one individual rate per age band, tobacco recorded as "No
+ * Preference" throughout, every family tier column blank, and the three plans
+ * filed in more than one rating area carrying the same price in all six. So
+ * pricing a household is the sum of one lookup per member, exactly as it is on
+ * the medical side, and loadRates already holds their rate tables because it
+ * never filtered them out.
+ */
+export function loadDentalDataset(dir: string, planYear: number): DentalDataset {
+  const benefits = loadBenefits(dir);
+  const rates = loadRates(dir);
+
+  const plans: DentalPlan[] = readCsv(dir, "NJPlans")
+    .filter((r) => r["DENTAL ONLY PLAN"] === "Yes")
+    .map((r): DentalPlan => {
+      const planId = r["PLAN ID"] ?? "";
+      const issuerId = r["ISSUER ID"] ?? "";
+      const rows = benefits.get(planId) ?? [];
+      // A plan filing no adult rate covers children only. Read off the rate
+      // table rather than the name, because "Horizon Young Grins" says nothing
+      // a machine can rely on and the Delta pediatric plans are named for the
+      // benefit rather than the age.
+      const table = rates.get(r["STANDARD COMPONENT ID"] ?? "") ?? [];
+      const adult = rateForAge(table, 40, false);
+      return {
+        planId,
+        standardComponentId: r["STANDARD COMPONENT ID"] ?? "",
+        issuerId,
+        issuerName: ISSUER_NAMES[issuerId] ?? `Issuer ${issuerId}`,
+        marketingName: (r["PLAN MARKETING NAME"] ?? "").trim(),
+        planType: r["PLAN TYPE"] ?? "",
+        deductibleIndividual: preferTotal(
+          r,
+          "TEHB DED INN TIER 1 INDIVIDUAL",
+          "MEHB DED INN TIER1 INDIVIDUAL",
+          money,
+        ),
+        deductibleFamily: preferTotal(
+          r,
+          "TEHB DED INN TIER 1 FAMILY",
+          "MEHB DED INN TIER1 FAMILY",
+          familyPerGroup,
+        ),
+        moopIndividual: preferTotal(
+          r,
+          "TEHB INN TIER 1 INDIVIDUAL MOOP",
+          "MEHB INN TIER 1 INDIVIDUAL MOOP",
+          money,
+        ),
+        moopFamily: preferTotal(
+          r,
+          "TEHB INN TIER 1 FAMILY MOOP",
+          "MEHB INN TIER 1 FAMILY MOOP",
+          familyPerGroup,
+        ),
+        pediatricOnly: adult === null || adult === 0,
+        benefits: rows.map((b) => ({
+          name: b.benefitName,
+          isCovered: b.isCovered,
+          // The number and its unit are filed separately and neither means
+          // anything alone. "1" is not a limit; "1 Visit(s) per 6 Months" is.
+          limit: [b.quantityLimit, b.quantityLimitUnit].filter(Boolean).join(" "),
+          // Reproduced exactly as filed, including where the issuer's own text
+          // is cut short. "Orthodontia require medical" is what one carrier
+          // filed; completing it to "medical necessity" would be us writing
+          // policy language on their behalf.
+          exclusions: b.exclusions ?? "",
+        })),
+      };
+    });
+
+  return { planYear, plans, rates };
 }
 
 /**
@@ -418,12 +600,14 @@ export function loadPlanDataset(
 ): PlanDataset {
   const plans = loadPlans(dataDir);
   applyCopayIndex(plans, copayIndexPath);
+  const benefits = loadBenefits(dataDir);
+  applyPediatricDental(plans, benefits);
   return {
     planYear,
     plans,
     rates: loadRates(dataDir),
     serviceAreas: loadServiceAreas(dataDir),
-    benefits: loadBenefits(dataDir),
+    benefits,
   };
 }
 

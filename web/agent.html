@@ -73,6 +73,35 @@
   }
   .forwhom { font-size: 14px; color: var(--am-muted); margin-left: auto; }
 
+  /* Medical against dental. A segmented switch rather than two buttons,
+     because these are two views of one meeting and not two destinations. It
+     never prints: the client's sheet is one purchase at a time. */
+  .viewswitch { display: inline-flex; flex: none; }
+  .viewswitch .btn {
+    padding: 8px 15px; font-size: 14px; min-height: 36px; border-radius: 0;
+    border: 1.5px solid #C6DDEE; color: var(--am-ink-soft); background: var(--am-white);
+  }
+  .viewswitch .btn:first-child { border-radius: 8px 0 0 8px; }
+  .viewswitch .btn:last-child { border-radius: 0 8px 8px 0; margin-left: -1.5px; }
+  .viewswitch .btn:hover { background: var(--am-blue-50); color: var(--am-ink); }
+  .viewswitch .is-current {
+    background: var(--am-blue-600); color: #fff; border-color: var(--am-blue-600);
+    cursor: default; z-index: 1;
+  }
+  .viewswitch .is-current:hover { background: var(--am-blue-600); color: #fff; }
+
+  /* One collapsed block per dental plan. Nine benefit lines across 28 plans is
+     250 rows, which is a reference table rather than something to read, so it
+     opens on demand. */
+  .dentalplan { border-top: 1px solid var(--am-line); padding: 10px 0; }
+  .dentalplan:first-of-type { border-top: none; }
+  .dentalplan > summary { cursor: pointer; padding: 4px 0; }
+  .dentalplan > summary:focus-visible { outline: 2px solid var(--am-blue-600); outline-offset: 2px; }
+  .dentalplan .muted { color: var(--am-muted); font-weight: 400; }
+  .dentalplan td.yes { color: var(--am-ink); }
+  .dentalplan td.no { color: var(--am-muted); }
+  .dentalplan td.muted { color: var(--am-muted); font-size: 14px; }
+
   /* Until there is an agent login, both sides of the product are reachable
      from either page, so the two can be checked against each other. It sits in
      the draft band rather than the header, which already carries the document's
@@ -194,6 +223,13 @@
   .pick h3 { margin: 0 0 4px; font-size: 21px; line-height: 1.3; font-weight: 500; }
   .pick .meta { color: var(--am-muted); font-size: 14px; margin: 0 0 12px; }
   .pick .why { color: var(--am-ink-soft); font-size: 15px; margin: 0 0 16px; }
+  .pick .tie {
+    max-width: 76ch; font-size: 14px; line-height: 1.55; color: var(--am-ink-soft);
+    background: var(--am-blue-50); border-left: 3px solid var(--am-blue-300);
+    border-radius: 0 var(--r-control) var(--r-control) 0;
+    padding: 10px 14px; margin: 0 0 16px;
+  }
+  .pick .tie strong { color: var(--am-ink); font-weight: 600; }
 
   .figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 14px; }
   /* Two figures on a 1140px page would stretch to half the width each and read
@@ -226,11 +262,74 @@
     color: var(--am-muted); font-weight: 600; padding: 8px 10px;
     border-bottom: 1.5px solid var(--am-line); white-space: nowrap;
   }
+  /* Sorting is a working-screen affordance. The header reads as clickable,
+     the active column says which way it is sorted, and none of this survives
+     onto paper because the arrow renders in a pseudo element the print
+     stylesheet leaves alone. */
+  th[data-sort] { cursor: pointer; -webkit-user-select: none; user-select: none; }
+  th[data-sort]:hover { color: var(--am-ink); }
+  th.sorted::after { content: " \2193"; color: var(--am-blue-600); }
+  th.sorted.desc::after { content: " \2191"; }
   td { padding: 8px 10px; border-bottom: 1px solid var(--am-line-soft); vertical-align: top; }
   td.n { text-align: right; white-space: nowrap; }
   td.planname { min-width: 250px; }
   td.carrier { white-space: nowrap; }
   tbody tr:nth-child(even) td { background: var(--am-paper); }
+
+  /* ------------------------------------------------- what the agent did
+     Two buttons per plan. Picking one is on the happy path, so the ruling
+     matters more than the note and the note is never required. Nothing here
+     blocks: the action lands the moment it is pressed and the reason, if it
+     comes at all, arrives afterwards. */
+  .acts {
+    display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+    margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--am-line-soft);
+  }
+  .acts .btn { font-size: 14px; padding: 8px 15px; min-height: 38px; }
+  .acts .btn.act { background: var(--am-white); color: var(--am-ink-soft); border: 1.5px solid var(--am-line); }
+  .acts .btn.act:hover { border-color: var(--am-blue-300); color: var(--am-ink); }
+  .acts .btn.act.on { background: var(--am-blue-600); border-color: var(--am-blue-600); color: #fff; }
+  .acts .btn.act.on.out { background: var(--am-ink-soft); border-color: var(--am-ink-soft); }
+  .acts .undo {
+    background: none; border: 0; padding: 6px 4px; font: inherit; font-size: 13px;
+    color: var(--am-muted); text-decoration: underline; cursor: pointer;
+  }
+
+  /* Inline, never a modal. A dialog in the middle of a client call is where
+     feedback goes to die. */
+  .ruling { margin-top: 14px; display: none; }
+  .ruling.open { display: block; }
+  .ruling .q { font-size: 14px; color: var(--am-ink); margin: 0 0 10px; }
+  .ruling .q b { font-weight: 600; }
+  .ruling .row { display: flex; gap: 10px; align-items: flex-start; }
+  .ruling textarea {
+    flex: 1; font: inherit; font-size: 15px; line-height: 1.5; padding: 10px 12px;
+    border: 1.5px solid var(--am-line); border-radius: var(--r-control);
+    background: var(--am-white); color: var(--am-ink); resize: vertical; min-height: 68px;
+  }
+  .ruling textarea:focus { outline: none; border-color: var(--am-blue-300); box-shadow: 0 0 0 3px var(--am-blue-100); }
+  .mic {
+    flex: none; width: 68px; min-height: 68px; border-radius: var(--r-control);
+    border: 1.5px solid var(--am-line); background: var(--am-white); cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px; font: inherit; font-size: 11px; color: var(--am-ink-soft);
+    -webkit-user-select: none; user-select: none; touch-action: none;
+  }
+  .mic:hover { border-color: var(--am-blue-300); }
+  .mic.live { background: var(--am-alert-100); border-color: var(--am-alert); color: var(--am-alert); }
+  .mic.live .dot { animation: pulse 1.1s ease-in-out infinite; }
+  .mic .dot { width: 11px; height: 11px; border-radius: 50%; background: currentColor; }
+  @keyframes pulse { 50% { opacity: .3; } }
+  .ruling .hint { font-size: 12px; color: var(--am-muted); margin: 8px 0 0; }
+  .ruling .saved { font-size: 13px; color: var(--am-green); margin: 8px 0 0; display: none; }
+  .ruling .saved.on { display: block; }
+
+  /* Sits in the header because it is about the whole session, not one plan. */
+  .tray {
+    display: none; align-items: center; gap: 10px; font-size: 13px; color: var(--am-ink-soft);
+  }
+  .tray.on { display: flex; }
+  .tray .count { font-weight: 600; color: var(--am-ink); }
 
   .empty { text-align: center; padding: 64px 24px; color: var(--am-ink-soft); }
   .empty h1 { font-size: 30px; }
@@ -244,13 +343,25 @@
 
   /* ------------------------------------------------------------- print
      Mike puts paper in front of clients. This is the deliverable, not a
-     fallback: chrome off, borders kept, nothing split across a page break. */
+     fallback: chrome off, borders kept, nothing split across a page break.
+
+     Two documents come off this page, and the difference between them is not
+     cosmetic. The file copy carries what we are unsure about: which figures
+     are estimated, which formularies we hold nothing for, what the client
+     marked unsure and Mike still has to confirm. Those are the honest notes a
+     working document should carry and exactly the wrong thing to hand to
+     someone across a desk, who would read our caveats about our own data as
+     doubt about their coverage.
+
+     So elements marked agentonly print on the file copy and not on the
+     client's. Nothing is rephrased for the client: it is the same figures,
+     with our internal workings left off. */
+  .printhead { display: none; }
   @page { margin: 14mm; }
   @media print {
     body { background: #fff; font-size: 11pt; }
-    .topbar { position: static; border-bottom: 1px solid #ccc; padding: 0 0 8pt; }
-    .topbar .btn, .topbar .viewtoggle, .notice { display: none; }
-    main { max-width: none; padding: 12pt 0 0; }
+    .topbar, .notice, .tray, .acts, .ruling { display: none !important; }
+    main { max-width: none; padding: 0; }
     .card { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; page-break-inside: avoid; margin-bottom: 10pt; padding: 12pt 14pt; }
     h1 { font-size: 22pt; }
     h2 { font-size: 15pt; }
@@ -259,8 +370,54 @@
     .scroll { overflow: visible; }
     table { min-width: 0; font-size: 9pt; }
     .printfoot { display: block !important; margin-top: 10pt; font-size: 8pt; color: #666; }
+
+    /* Identifies the sheet once it is off the screen and on a desk: which of
+       the two documents it is, whose it is, and when it was produced. Paper
+       outlives the tab it came from. */
+    .printhead {
+      display: flex; align-items: baseline; gap: 12pt; flex-wrap: wrap;
+      border-bottom: 1pt solid #ccc; padding-bottom: 6pt; margin-bottom: 14pt;
+      font-size: 9pt; color: #444;
+    }
+    .printhead .who { font-family: var(--display); font-size: 15pt; color: #14304A; }
+    .printhead .code { font-weight: 600; letter-spacing: .04em; }
+    .printhead .when { margin-left: auto; }
+
+    body.print-client .agentonly { display: none !important; }
+    body.print-client .fileonly { display: none !important; }
   }
   .printfoot { display: none; }
+  .fileonly { display: none; }
+
+  /* --------------------------------------------------------- present mode
+     A virtual appointment is the printed client sheet, live. Same page, same
+     figures, same agentonly line already drawn for paper, applied on screen so
+     Mike can share his window without the client reading our warnings to him.
+
+     It reuses agentonly rather than inventing a second classification. A third
+     rendering of these figures would be a third thing to keep true, and the
+     way it fails is a client looking at a number Mike is not.
+
+     Deliberately not the print-client class: printing adds and removes that
+     one as the dialog opens and closes, so a print during a call would tear
+     down the presentation. */
+  body.presenting .agentonly { display: none !important; }
+  body.presenting .fileonly { display: none !important; }
+  /* The draft band is scaffolding aimed at us. It is not marked agentonly
+     because on paper the whole header is dropped anyway, so it has to be named
+     here. */
+  body.presenting .notice,
+  body.presenting .tray,
+  body.presenting #reload,
+  body.presenting #printFile { display: none !important; }
+  /* Kept: Mike still switches between medical and dental mid call, and a
+     client seeing a Dental tab is harmless. */
+  body.presenting .viewswitch { display: inline-flex !important; }
+  body.presenting .topbar { background: var(--am-blue-50); }
+
+  .presentbtn.is-on { background: var(--am-blue-600); color: #fff; border-color: var(--am-blue-600); }
+  .presentbtn.is-on:hover { background: var(--am-blue-700); border-color: var(--am-blue-700); }
+  @media print { .presentbtn { display: none !important; } }
 </style>
 
 <div class="notice">
@@ -273,10 +430,22 @@
 
 <div class="topbar">
   <a class="lockup" href="/" aria-label="Ask Mike, back to the start"><svg class="mark" width="32" height="32" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M6 17a11 11 0 0 1 11-11h14a11 11 0 0 1 11 11v7a11 11 0 0 1-11 11h-8l-9 6.5V35A11 11 0 0 1 6 24z" fill="#0F7CC0"/><circle cx="24" cy="20.5" r="5.5" fill="#F2A65A"/></svg><span class="word">Ask Mike</span></a>
+  <span class="viewswitch agentonly" id="viewswitch" role="group" aria-label="Rates to show">
+    <button type="button" class="btn secondary is-current" data-view="medical" aria-pressed="true">Medical</button>
+    <button type="button" class="btn secondary" data-view="dental" aria-pressed="false">Dental</button>
+  </span>
   <span class="forwhom" id="forwhom"></span>
+  <span class="tray" id="tray">
+    <span><span class="count" id="trayCount">0</span> noted</span>
+    <button class="btn secondary" type="button" id="export">Export notes</button>
+  </span>
+  <button class="btn secondary presentbtn" type="button" id="present" aria-pressed="false">Present</button>
   <button class="btn secondary" type="button" id="reload">Reload answers</button>
-  <button class="btn primary" type="button" id="print">Print</button>
+  <button class="btn secondary" type="button" id="printFile">Print file copy</button>
+  <button class="btn primary" type="button" id="printClient">Print for client</button>
 </div>
+
+<div class="printhead" id="printhead"></div>
 
 <main id="out"></main>
 
@@ -305,7 +474,39 @@
       (pct >= 5 ? ', ' + pct + '%' : '') + '<\/div>';
   }
 
+  /* ------------------------------------------------------ medical or dental
+
+     One meeting, two purchases. The client buys medical and dental in the same
+     sitting from the same agent, so switching between them is a view change on
+     one set of answers rather than a second tool. Nothing is re-asked and
+     nothing is recomputed: both sides are priced off the ages already given.
+
+     Medical is the default because it is the decision worth thousands and the
+     one the shortlist exists for. Dental is a table rather than a ranking, for
+     reasons set out in src/dental.ts. */
+  var lastResult = null;
+  var lastSubmittedAt = null;
+  var view = "medical";
+
+  function draw() {
+    if (!lastResult) return;
+    if (view === "dental") renderDental(lastResult, lastSubmittedAt);
+    else render(lastResult, lastSubmittedAt);
+    const sw = document.getElementById("viewswitch");
+    if (sw) {
+      for (const b of sw.querySelectorAll("button")) {
+        const on = b.getAttribute("data-view") === view;
+        b.classList.toggle("is-current", on);
+        b.setAttribute("aria-pressed", on ? "true" : "false");
+      }
+    }
+  }
+
   function render(result, submittedAt) {
+    // Keys the notes to this submission. Once there is a server this becomes
+    // the recommendation run id; until then the submission timestamp is the
+    // only stable handle the browser has.
+    runKey = String(submittedAt);
     document.getElementById("forwhom").textContent =
       "Submitted " + new Date(submittedAt).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" });
 
@@ -367,7 +568,7 @@
 
     // ---- things Mike must check
     if (result.flags.length || result.unsure.length) {
-      html += '<section class="card"><p class="eyebrow">Before you quote</p><ul class="flags">';
+      html += '<section class="card agentonly"><p class="eyebrow">Before you quote</p><ul class="flags">';
       for (const f of result.flags) html += '<li>' + AMBER_MARK + '<span>' + esc(f) + '</span></li>';
       if (result.unsure.length) {
         html += '<li>' + AMBER_MARK + '<span>The client marked these as unsure: <strong>' +
@@ -404,23 +605,39 @@
           '<td>' + (flagBits.join(' ') || '&mdash;') + '</td></tr>';
       }
       html += '</tbody></table></div>';
-      html += '<p style="margin:16px 0 0;font-size:13px;color:var(--am-muted)">Formulary data covers ' +
+      html += '<p class="agentonly" style="margin:16px 0 0;font-size:13px;color:var(--am-muted)">Formulary data covers ' +
         dr.coveredPlanIds.length + ' plans, all Ambetter. For the other four carriers we hold nothing, so a blank here means no data rather than no coverage.</p>';
       for (const n of dr.notes) {
-        html += '<p style="margin:10px 0 0;font-size:14px;line-height:1.55;color:var(--am-ink-soft)">' + esc(n) + '</p>';
+        html += '<p class="agentonly" style="margin:10px 0 0;font-size:14px;line-height:1.55;color:var(--am-ink-soft)">' + esc(n) + '</p>';
       }
       html += '</section>';
     }
 
     // ---- the shortlist
     const TIER_LABEL = { good: "Good, lowest cost", better: "Better, balanced", best: "Best, most protection" };
+    const topName = picks.length ? picks[0].evaluation.plan.marketingName : "";
+    let pickRank = 0;
     for (const p of picks) {
+      pickRank += 1;
       const e = p.evaluation, c = e.cost, plan = e.plan;
       html += '<section class="card pick ' + p.tier + '">';
       html += '<p class="tier">' + esc(TIER_LABEL[p.tier] || p.tier) + '</p>';
       html += '<h3>' + esc(plan.marketingName) + '</h3>';
       html += '<p class="meta">' + esc(plan.issuerName) + ' &middot; ' + esc(plan.metalLevel) + ' &middot; ' + esc(plan.planType) + '</p>';
       html += '<p class="why">' + esc(p.rationale) + '</p>';
+      // A gap smaller than the model's own error bar is not a ranking, and
+      // pretending otherwise hands the client false precision. Shown to both
+      // sides on purpose: naming the real difference is what moves the
+      // conversation to networks and design, which is where it belongs.
+      for (const t of p.ties || []) {
+        const gapWord = t.gapAnnual === 0
+          ? "the same expected cost"
+          : Math.abs(t.gapAnnual) + " dollars a year " + (t.gapAnnual > 0 ? "more" : "less");
+        html += '<p class="tie"><strong>Effectively tied</strong> with ' + esc(t.label) +
+          (t.onShortlist ? ", also on this list" : "") +
+          ', at ' + gapWord + '. Too close for the numbers to decide. The real difference: ' +
+          esc(t.differences.join("; ")) + '.</p>';
+      }
       // Two figures. The monthly premium is what the client is deciding to
       // pay, and the expected out of pocket is what that does not cover. The
       // worst case is a real number and the agent still needs it, but it is a
@@ -435,42 +652,494 @@
       html += '<li>Deductible ' + (plan.deductibleFamily === null ? "not filed" : usd(h.householdSize > 1 ? plan.deductibleFamily : plan.deductibleIndividual)) +
         ', out of pocket max ' + (plan.moopFamily === null ? "not filed" : usd(h.householdSize > 1 ? plan.moopFamily : plan.moopIndividual)) +
         (plan.coinsurance === null ? "" : ', coinsurance ' + Math.round(plan.coinsurance * 100) + '%') + '</li>';
-      html += '<li>Out of pocket figure is ' + (c.outOfPocketSource === "filed"
+      html += '<li class="agentonly">Out of pocket figure is ' + (c.outOfPocketSource === "filed"
         ? "the issuer's own filed coverage example for this client's situation"
+        : c.outOfPocketSource === "interpolated"
+        ? "read off the issuer's three filed coverage examples, interpolated to this client's expected care. Carrier computed figures, our positioning between them"
         : c.copayApplied > 0
           ? "estimated from this plan's copays, deductible and coinsurance. " + usd(c.copayApplied) + " of it is office visit copays, which sit outside the deductible"
           : c.copaysKnown
             ? "estimated from the deductible and coinsurance. This plan charges no copay before the deductible is met, so office visits count against it at full price"
             : "estimated from the deductible and coinsurance only. We hold no copay amount for this plan, so office visits are priced at full charge and this figure is high") + '</li>';
       for (const n of e.notes) html += '<li>' + esc(n) + '</li>';
-      html += '</ul></section>';
+      html += '</ul>';
+      html += actionBar(plan.planId, pickRank, plan.marketingName, topName);
+      html += '</section>';
     }
 
     // ---- everything else
-    html += '<section class="card"><h2>Every plan available to them</h2><div class="scroll"><table class="plans">';
-    // No worst case column. The table gets printed and read across the desk
-    // alongside the cards, so leaving it here would have undone taking it off
-    // them. The figure is still computed and still ranked on; it is out of the
-    // client's eyeline, not out of the maths.
-    html += '<thead><tr><th>Carrier</th><th>Plan</th><th>Metal</th><th class="n">Premium/mo</th><th class="n">Out of pocket</th><th class="n">Expected total</th></tr></thead><tbody>';
+    html += '<section class="card"><h2>Every plan available to them</h2><div class="scroll"><table class="plans" id="planTable">';
+    // The worst case column was taken off this table when it printed for the
+    // client, because a bronze plan's largest figure belongs in a conversation
+    // rather than in a box on paper across a desk. That decision stands: the
+    // column is agentonly, so it lives on the screen and on the file copy and
+    // never reaches the client's print. It returns at all because a client who
+    // pivots to protection mid conversation needs the long list re-sortable by
+    // exactly this number.
+    //
+    // Sorting is screen furniture. Print keeps whatever order is on screen at
+    // the time, which the printhead's date makes traceable, but the client
+    // document is designed around the default expected-total order.
+    html += '<thead><tr>' +
+      '<th data-sort="carrier">Carrier</th>' +
+      '<th data-sort="plan">Plan</th>' +
+      '<th data-sort="metal">Metal</th>' +
+      '<th class="n" data-sort="premium">Premium/mo</th>' +
+      '<th class="n" data-sort="oop">Out of pocket</th>' +
+      '<th class="n" data-sort="total">Expected total</th>' +
+      '<th class="n agentonly" data-sort="worst">Worst case</th>' +
+      '</tr></thead><tbody>';
     for (const e of result.allEligible) {
-      html += '<tr><td class="carrier">' + esc(e.plan.issuerName.split(" ")[0]) + '</td><td class="planname">' + esc(e.plan.marketingName) + '</td><td>' + esc(e.plan.metalLevel) + '</td>' +
+      const metalRank = { Catastrophic: 0, "Expanded Bronze": 1, Bronze: 1, Silver: 2, Gold: 3, Platinum: 4 };
+      html += '<tr data-carrier="' + attr(e.plan.issuerName.split(" ")[0]) + '"' +
+        ' data-plan="' + attr(e.plan.marketingName) + '"' +
+        ' data-metal="' + (metalRank[e.plan.metalLevel] ?? 9) + '"' +
+        ' data-premium="' + (e.cost.annualPremiumNet / 12) + '"' +
+        ' data-oop="' + e.cost.estimatedOutOfPocket + '"' +
+        ' data-total="' + e.cost.estimatedAnnualTotal + '"' +
+        ' data-worst="' + e.cost.worstCaseAnnualTotal + '">' +
+        '<td class="carrier">' + esc(e.plan.issuerName.split(" ")[0]) + '</td><td class="planname">' + esc(e.plan.marketingName) + '</td><td>' + esc(e.plan.metalLevel) + '</td>' +
         '<td class="n">' + usd(e.cost.annualPremiumNet / 12) + '</td>' +
         '<td class="n">' + usd(e.cost.estimatedOutOfPocket) + '</td>' +
-        '<td class="n">' + usd(e.cost.estimatedAnnualTotal) + '</td></tr>';
+        '<td class="n">' + usd(e.cost.estimatedAnnualTotal) + '</td>' +
+        '<td class="n agentonly">' + usd(e.cost.worstCaseAnnualTotal) + '</td></tr>';
     }
     html += '</tbody></table></div>';
+    html += '<p class="agentonly" style="margin:12px 0 0;font-size:13px;color:var(--am-muted)">Click a column to sort. The worst case column stays off the client\'s printed copy.</p>';
     if (result.excluded.length) {
-      html += '<p style="margin:16px 0 0;font-size:13px;color:var(--am-muted)">Excluded: ' +
+      html += '<p class="agentonly" style="margin:16px 0 0;font-size:13px;color:var(--am-muted)">Excluded: ' +
         result.excluded.map(([r, n]) => esc(r) + " (" + n + ")").join("; ") + '</p>';
     }
     html += '</section>';
 
+    // ---- what medical does and does not include
+    //
+    // Both halves are true of all 176 New Jersey plans, checked against the
+    // filings and against Horizon's own Summary of Benefits. It sits on the
+    // medical view rather than the dental one because this is where someone
+    // forms the belief that the plan covers everything.
+    html += '<section class="card"><p class="eyebrow">Dental and vision on this plan</p>';
+    const dental = result.dental;
+    if (dental && dental.hasChildren) {
+      const withDental = result.shortlist.filter((s) => s.evaluation.plan.embedsPediatricDental).length;
+      html += '<p style="margin:0 0 10px">Children\'s dental is <strong>not</strong> included on most New Jersey plans. ' +
+        'Only UnitedHealthcare covers it in the premium; every other carrier means buying a standalone dental plan. ' +
+        'The totals above already add the cheapest standalone cover for ' +
+        (dental.childCount === 1 ? 'the child' : 'the ' + dental.childCount + ' children') +
+        ' on the plans that do not include it, so the comparison is like for like.</p>';
+      if (withDental === 0) {
+        html += '<p class="agentonly" style="margin:0 0 10px;font-size:14px;color:var(--am-muted)">None of the shortlisted plans include it.</p>';
+      }
+    } else {
+      html += '<p style="margin:0 0 10px">Adult dental is not covered by any New Jersey medical plan beyond accidental injury, and is bought separately.</p>';
+    }
+    // Led differently depending on who is in the household. A single adult does
+    // not need to hear about children's eye exams, and the adult vision gap is
+    // the only part of this that opens a conversation.
+    if (dental && dental.hasChildren) {
+      html += '<p style="margin:0"><strong>Children\'s vision is already included</strong> on every plan here: routine eye exam and glasses, no deductible, so there is nothing to buy for ' +
+        (dental.childCount === 1 ? 'the child' : 'the children') + '. ' +
+        '<strong>Adult vision is covered by none of them.</strong> There is no adult vision plan on the exchange to price, so it is bought outside the marketplace.</p>';
+    } else {
+      html += '<p style="margin:0"><strong>Adult vision is covered by none of these plans.</strong> ' +
+        'There is no adult vision plan on the exchange to price either, so it is bought outside the marketplace.</p>';
+    }
+    html += '<p class="agentonly" style="margin:12px 0 0;font-size:13px;color:var(--am-muted)">Switch to <strong>Dental</strong> in the header for standalone dental prices for this household.</p>';
+    html += '</section>';
+
     html += '<div class="printfoot">Prepared by Ask Mike from the client\'s own answers. Reviewed and presented by a licensed agent, who owns the recommendation.</div>';
+    // File copy only. Enough to reproduce this sheet's figures later, or to
+    // work out why they no longer match.
+    html += '<div class="fileonly printfoot">Plan year ' + 2026 +
+      ', New Jersey filings ' + "dbd671a030c7" +
+      ', engine built ' + "2026-08-10" + '.</div>';
+
+    out.innerHTML = html;
+    wireActions();
+    updateTray();
+    document.getElementById("colophon").textContent =
+      "Plan year " + 2026 + ", New Jersey individual marketplace. Premiums are the filed list rate less the federal credit and an estimate of New Jersey Health Plan Savings. The state does not publish its subsidy schedule, so that part is the published average rather than this household's exact entitlement, and the agent's quoted premium remains the real figure.";
+  }
+
+  /**
+   * The dental view.
+   *
+   * A priced list, not a shortlist. Every plan the household can buy, cheapest
+   * first, with the filed benefit lines beside it. No ranking, no top pick, no
+   * good/better/best, because a capped benefit product with a few hundred
+   * dollars of exposure does not support one and pretending otherwise would
+   * lend arithmetic the authority of a recommendation.
+   *
+   * The benefit grid leads on orthodontia. It is the largest sum a family
+   * spends on dental and the one most often assumed covered when it is not,
+   * and several plans that list it as covered qualify it as requiring medical
+   * necessity, which is the difference between paying for a child's braces and
+   * not. The issuer's own wording is printed rather than a flag of ours.
+   */
+  function renderDental(result, submittedAt) {
+    runKey = String(submittedAt);
+    document.getElementById("forwhom").textContent =
+      "Submitted " + new Date(submittedAt).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" });
+
+    const d = result.dental;
+    let html = '<h1>Dental</h1>';
+    if (!d || !d.quotes.length) {
+      html += '<p class="sub">No standalone dental plan in the New Jersey filings can cover this household.</p>';
+      out.innerHTML = html;
+      return;
+    }
+
+    const who = [];
+    if (d.adultCount) who.push(d.adultCount + (d.adultCount === 1 ? ' adult' : ' adults'));
+    if (d.childCount) who.push(d.childCount + (d.childCount === 1 ? ' child' : ' children'));
+    html += '<p class="sub">' + d.quotes.length + ' standalone dental plans, priced for ' + who.join(' and ') +
+      ' at the ages given. Cheapest first. These are prices and filed benefits, not a recommendation: dental caps out in the hundreds, so there is no cost model worth running.</p>';
+
+    if (d.hasChildren) {
+      html += '<section class="card"><p class="eyebrow">Why this matters on the medical side</p>' +
+        '<p style="margin:0">Only UnitedHealthcare includes children\'s dental in its medical premium. On every other carrier the cost below is real and additional, and the medical totals already include the cheapest option here so the two carriers compare fairly.</p></section>';
+    }
+
+    html += '<section class="card"><h2>Priced for this household</h2><div class="scroll"><table class="plans">';
+    html += '<thead><tr>' +
+      '<th>Carrier</th><th>Plan</th>' +
+      '<th class="n">Monthly</th><th class="n">Yearly</th>' +
+      '<th class="n">Deductible</th><th class="n">Max out of pocket</th>' +
+      '<th>Covers</th></tr></thead><tbody>';
+    for (const q of d.quotes) {
+      const covers = q.uncoveredAges.length
+        ? q.perMember.length + ' of ' + (q.perMember.length + q.uncoveredAges.length) +
+          ' <span class="muted">(children only)</span>'
+        : 'everyone';
+      // Not split on the first word, unlike the medical table. One dental
+      // issuer is not named anywhere in the filings and falls back to its HIOS
+      // id, which "Issuer 35152" renders traceably and "Issuer" does not.
+      html += '<tr>' +
+        '<td class="carrier">' + esc(q.issuerName.replace(/ .*(Blue Cross|Insurance Company|Life).*$/, "")) + '</td>' +
+        '<td class="planname">' + esc(q.marketingName) + '</td>' +
+        '<td class="n">' + usd(q.monthlyTotal) + '</td>' +
+        '<td class="n">' + usd(q.annualTotal) + '</td>' +
+        '<td class="n">' + (q.deductibleIndividual === null ? '&mdash;' : usd(q.deductibleIndividual)) + '</td>' +
+        '<td class="n">' + (q.moopIndividual === null ? '&mdash;' : usd(q.moopIndividual)) + '</td>' +
+        '<td>' + covers + '</td></tr>';
+    }
+    html += '</tbody></table></div>';
+    html += '<p class="agentonly" style="margin:12px 0 0;font-size:13px;color:var(--am-muted)">Monthly is the sum of the filed per person rate for each age this plan covers. New Jersey files no family tier pricing and no tobacco loading on dental, so this is the filed price rather than an estimate.</p>';
+    html += '</section>';
+
+    // ---- what each plan actually covers
+    html += '<section class="card"><h2>What they cover</h2>';
+    html += '<p style="margin:0 0 14px;font-size:14px;color:var(--am-ink-soft)">Filed benefit lines, in the issuer\'s own words. Frequency limits and exclusions are printed as filed.</p>';
+    for (const q of d.quotes) {
+      html += '<details class="dentalplan"><summary><strong>' + esc(q.marketingName) + '</strong> <span class="muted">' +
+        usd(q.monthlyTotal) + '/mo</span></summary><div class="scroll"><table class="plans"><tbody>';
+      for (const b of q.benefits) {
+        const detail = [b.limit, b.exclusions].filter(Boolean).join(' &middot; ');
+        html += '<tr><td>' + esc(b.name) + '</td>' +
+          '<td class="' + (b.isCovered ? 'yes' : 'no') + '">' + (b.isCovered ? 'Covered' : 'Not covered') + '</td>' +
+          '<td class="muted">' + (detail ? esc(detail.replace(/&middot;/g, '·')) : '') + '</td></tr>';
+      }
+      html += '</tbody></table></div></details>';
+    }
+    html += '</section>';
+
+    html += '<section class="card"><p class="eyebrow">Vision</p>' +
+      '<p style="margin:0">There is no adult vision plan in the New Jersey filings, so there is nothing here to price. Children\'s eye exams and glasses are already covered on every medical plan. Adult vision is bought outside the marketplace.</p></section>';
+
+    html += '<div class="printfoot">Prepared by Ask Mike from the client\'s own answers. Reviewed and presented by a licensed agent, who owns the recommendation.</div>';
+    html += '<div class="fileonly printfoot">Plan year ' + 2026 +
+      ', New Jersey filings ' + "dbd671a030c7" +
+      ', engine built ' + "2026-08-10" + '.</div>';
 
     out.innerHTML = html;
     document.getElementById("colophon").textContent =
-      "Plan year " + 2026 + ", New Jersey individual marketplace. Premiums are the filed list rate less the federal credit and an estimate of New Jersey Health Plan Savings. The state does not publish its subsidy schedule, so that part is the published average rather than this household's exact entitlement, and the agent's quoted premium remains the real figure.";
+      "Standalone dental, plan year " + 2026 + ", New Jersey individual marketplace. Rates are the filed individual rate for each age, summed across the household. Dental carries no subsidy.";
+  }
+
+  /* ---------------------------------------------------- what the agent did
+
+     Two buttons and, when the agent disagrees with us, one sentence. Nothing
+     is asked when they take our top pick, because a question at the moment of
+     agreement teaches us nothing and costs them a beat on a live call.
+
+     The sentence is stored exactly as given. Sorting it into categories
+     happens later and elsewhere: the categories will be wrong at least twice
+     before they are right, and only the raw sentence survives that.
+
+     There is no server yet, so this accumulates in the browser and leaves as
+     a file. That is the same testing arrangement the band at the top of the
+     page already admits to, not a design for the finished product. */
+
+  const ACT_KEY = "askmike:actions";
+  const WHO_KEY = "askmike:agent";
+  var runKey = "";
+  // Carried onto the printed sheets so a page on a desk can be matched back to
+  // a record without a name on it.
+  var clientCode = "";
+  var submittedOn = "";
+
+  const attr = (s) => esc(s).replace(/"/g, "&quot;");
+  const readActs = () => { try { return JSON.parse(localStorage.getItem(ACT_KEY) || "[]"); } catch (e) { return []; } };
+  const writeActs = (a) => { localStorage.setItem(ACT_KEY, JSON.stringify(a)); updateTray(); };
+  const actsHere = () => readActs().filter((a) => a.runKey === runKey);
+  const actFor = (planId) => actsHere().filter((a) => a.planId === planId)[0] || null;
+
+  function whoIsReviewing() {
+    let who = localStorage.getItem(WHO_KEY);
+    if (!who) {
+      who = (window.prompt("Who is reviewing? First name is enough.", "Mike") || "").trim();
+      if (who) localStorage.setItem(WHO_KEY, who);
+    }
+    return who || "unknown";
+  }
+
+  function upsertAct(planId, rank, action) {
+    const all = readActs();
+    const i = all.findIndex((a) => a.runKey === runKey && a.planId === planId);
+    const now = new Date().toISOString();
+    if (i >= 0) {
+      // Switching the ruling keeps the note: they are still talking about the
+      // same plan, and re-typing it would be a tax on changing their mind.
+      all[i].action = action;
+      all[i].rank = rank;
+      all[i].at = now;
+    } else {
+      all.push({
+        id: (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2) + now),
+        runKey: runKey, planId: planId, rank: rank, action: action,
+        note: "", noteSource: null, noteMs: 0, at: now, agent: whoIsReviewing(),
+      });
+    }
+    writeActs(all);
+  }
+
+  function dropAct(planId) {
+    writeActs(readActs().filter((a) => !(a.runKey === runKey && a.planId === planId)));
+  }
+
+  function noteAct(planId, note, source, ms) {
+    const all = readActs();
+    const i = all.findIndex((a) => a.runKey === runKey && a.planId === planId);
+    if (i < 0) return;
+    all[i].note = note;
+    if (source) all[i].noteSource = source;
+    if (ms) all[i].noteMs = (all[i].noteMs || 0) + ms;
+    writeActs(all);
+  }
+
+  function actionBar(planId, rank, name, topName) {
+    const a = actFor(planId);
+    const chosen = a ? a.action : null;
+    let h = '<div class="acts" data-plan="' + attr(planId) + '" data-rank="' + rank +
+      '" data-name="' + attr(name) + '" data-top="' + attr(topName) + '">';
+    h += '<button type="button" class="btn act' + (chosen === "led_with" ? " on" : "") +
+      '" data-act="led_with">This is the one</button>';
+    h += '<button type="button" class="btn act out' + (chosen === "ruled_out" ? " on out" : "") +
+      '" data-act="ruled_out">Rule this out</button>';
+    if (chosen) h += '<button type="button" class="undo" data-act="undo">Undo</button>';
+    h += '</div>';
+
+    h += '<div class="ruling' + (chosen ? " open" : "") + '" data-for="' + attr(planId) + '">';
+    h += '<p class="q"></p>';
+    h += '<div class="row">';
+    h += '<textarea rows="2" placeholder="In your own words. One sentence is plenty."></textarea>';
+    h += '<button type="button" class="mic" title="Hold to talk"><span class="dot"></span><span>hold</span></button>';
+    h += '</div>';
+    h += '<p class="hint">No client names, please. Provider and hospital names are welcome and useful.</p>';
+    h += '<p class="saved">Saved</p>';
+    h += '</div>';
+    return h;
+  }
+
+  /** The question, which depends entirely on whether they disagreed with us. */
+  function questionFor(box) {
+    const wrap = box.previousElementSibling;
+    const rank = Number(wrap.getAttribute("data-rank"));
+    const name = wrap.getAttribute("data-name");
+    const top = wrap.getAttribute("data-top");
+    const a = actFor(wrap.getAttribute("data-plan"));
+    if (!a) return "";
+    if (a.action === "ruled_out") return "Why not this one?";
+    if (rank === 1) return "Anything worth noting? Optional.";
+    return "Ask Mike put <b>" + esc(top) + "</b> first. What made you go with <b>" + esc(name) + "</b>?";
+  }
+
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  // Everything about the note in progress, held together so that releasing
+  // the button somewhere else on the page still ends the right session.
+  var live = null;
+
+  function startTalking(mic, area, planId) {
+    if (!SR || live) return;
+    const rec = new SR();
+    rec.lang = "en-US";
+    rec.continuous = true;
+    rec.interimResults = true;
+    const before = area.value ? area.value.replace(/\s+$/, "") + " " : "";
+    let settled = "";
+    rec.onresult = (ev) => {
+      let interim = "";
+      for (let i = ev.resultIndex; i < ev.results.length; i += 1) {
+        const t = ev.results[i][0].transcript;
+        if (ev.results[i].isFinal) settled += t; else interim += t;
+      }
+      area.value = before + settled + interim;
+    };
+    rec.onerror = stopTalking;
+    rec.onend = stopTalking;
+    live = { rec: rec, mic: mic, area: area, planId: planId, started: Date.now() };
+    mic.classList.add("live");
+    mic.lastChild.textContent = "listening";
+    try { rec.start(); } catch (e) { stopTalking(); }
+  }
+
+  function stopTalking() {
+    if (!live) return;
+    const s = live;
+    live = null;
+    try { s.rec.stop(); } catch (e) {}
+    s.mic.classList.remove("live");
+    s.mic.lastChild.textContent = "hold";
+    const said = s.area.value.trim();
+    if (said) {
+      noteAct(s.planId, said, "voice", Date.now() - s.started);
+      flashSaved(s.area);
+    }
+  }
+
+  function flashSaved(area) {
+    const saved = area.closest(".ruling").querySelector(".saved");
+    saved.classList.add("on");
+    clearTimeout(saved._t);
+    saved._t = setTimeout(() => saved.classList.remove("on"), 1600);
+  }
+
+  function paintWhy(box) {
+    const q = box.querySelector(".q");
+    q.innerHTML = questionFor(box);
+    const planId = box.getAttribute("data-for");
+    const a = actFor(planId);
+    box.querySelector("textarea").value = a ? (a.note || "") : "";
+    if (!SR) {
+      box.querySelector(".mic").style.display = "none";
+      box.querySelector(".hint").textContent =
+        "This browser cannot take a spoken note. Typing works. No client names, please.";
+    }
+  }
+
+  var wired = false;
+
+  function wireActions() {
+    out.querySelectorAll(".ruling").forEach(paintWhy);
+    // Delegated to the container, which outlives every re-render, so bind once
+    // rather than once per recommendation.
+    if (wired) return;
+    wired = true;
+
+    out.addEventListener("click", (ev) => {
+      const btn = ev.target.closest("[data-act]");
+      if (!btn) return;
+      const wrap = btn.closest(".acts");
+      const planId = wrap.getAttribute("data-plan");
+      const rank = Number(wrap.getAttribute("data-rank"));
+      const box = wrap.nextElementSibling;
+
+      if (btn.getAttribute("data-act") === "undo") {
+        dropAct(planId);
+        wrap.querySelectorAll(".act").forEach((b) => b.classList.remove("on", "out"));
+        wrap.querySelectorAll(".act")[1].classList.add("out");
+        btn.remove();
+        box.classList.remove("open");
+        return;
+      }
+
+      const action = btn.getAttribute("data-act");
+      upsertAct(planId, rank, action);
+      wrap.querySelectorAll(".act").forEach((b) => b.classList.remove("on"));
+      btn.classList.add("on");
+      if (!wrap.querySelector(".undo")) {
+        const u = document.createElement("button");
+        u.type = "button"; u.className = "undo"; u.setAttribute("data-act", "undo");
+        u.textContent = "Undo";
+        wrap.appendChild(u);
+      }
+      box.classList.add("open");
+      paintWhy(box);
+      // Asking is only worth a beat of their attention when they disagreed
+      // with us. On agreement the box is there but nothing pulls focus.
+      if (!(action === "led_with" && rank === 1)) box.querySelector("textarea").focus();
+    });
+
+    out.addEventListener("input", (ev) => {
+      const area = ev.target.closest(".ruling textarea");
+      if (!area) return;
+      clearTimeout(area._t);
+      area._t = setTimeout(() => {
+        noteAct(area.closest(".ruling").getAttribute("data-for"), area.value.trim(), "typed", 0);
+        flashSaved(area);
+      }, 500);
+    });
+
+    out.addEventListener("pointerdown", (ev) => {
+      const mic = ev.target.closest(".mic");
+      if (!mic) return;
+      ev.preventDefault();
+      const box = mic.closest(".ruling");
+      startTalking(mic, box.querySelector("textarea"), box.getAttribute("data-for"));
+    });
+
+    // Column sorting on the full plan table. A conversation that pivots to
+    // protection re-sorts on worst case; the default expected-total order
+    // comes back with a fresh render. Numbers sort ascending first, because
+    // the question behind every numeric sort here is "what is the least".
+    out.addEventListener("click", (ev) => {
+      const th = ev.target.closest("th[data-sort]");
+      if (!th) return;
+      const key = th.getAttribute("data-sort");
+      const numeric = key !== "carrier" && key !== "plan";
+      const desc = th.classList.contains("sorted") && !th.classList.contains("desc");
+      const table = th.closest("table");
+      table.querySelectorAll("th").forEach((h) => h.classList.remove("sorted", "desc"));
+      th.classList.add("sorted");
+      if (desc) th.classList.add("desc");
+      const body = table.querySelector("tbody");
+      const rows = [...body.querySelectorAll("tr")];
+      rows.sort((a, b) => {
+        const va = a.getAttribute("data-" + key), vb = b.getAttribute("data-" + key);
+        const cmp = numeric ? Number(va) - Number(vb) : String(va).localeCompare(String(vb));
+        return desc ? -cmp : cmp;
+      });
+      for (const r of rows) body.appendChild(r);
+    });
+  }
+
+  // Release anywhere ends the note. Releasing off the button is normal when
+  // someone is holding a phone and talking at the same time.
+  document.addEventListener("pointerup", stopTalking);
+  document.addEventListener("pointercancel", stopTalking);
+
+  function updateTray() {
+    const n = readActs().length;
+    const tray = document.getElementById("tray");
+    document.getElementById("trayCount").textContent = String(n);
+    tray.classList.toggle("on", n > 0);
+  }
+
+  function exportActs() {
+    const all = readActs();
+    if (!all.length) return;
+    const payload = {
+      exportedAt: new Date().toISOString(),
+      planYear: 2026,
+      actions: all,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "ask-mike-notes-" + new Date().toISOString().slice(0, 10) + ".json";
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
   function load() {
@@ -480,22 +1149,91 @@
       return;
     }
     const parsed = JSON.parse(raw);
+    clientCode = String((parsed.answers && parsed.answers.client_code) || "");
+    submittedOn = new Date(parsed.submittedAt).toLocaleDateString("en-US", { dateStyle: "long" });
     Promise.all([
       fetch("plans.json").then((r) => r.json()),
       // The formulary is optional. If it is missing the recommendation still
       // works and simply says nothing about drugs, rather than failing.
       fetch("formulary.json").then((r) => (r.ok ? r.json() : null)).catch(() => null),
     ])
-      .then(([plans, formulary]) =>
-        render(window.AskMike.recommend(parsed.answers, plans, formulary), parsed.submittedAt),
-      )
+      .then(([plans, formulary]) => {
+        lastResult = window.AskMike.recommend(parsed.answers, plans, formulary);
+        lastSubmittedAt = parsed.submittedAt;
+        draw();
+      })
       .catch((err) => {
         out.innerHTML = '<div class="empty"><h1>Could not produce a recommendation</h1><p>' + esc(err && err.message ? err.message : err) + '</p></div>';
       });
   }
 
-  document.getElementById("print").addEventListener("click", () => window.print());
+  /**
+   * Prints one of the two documents.
+   *
+   * Same page, same figures, different amount of our own working shown. The
+   * class goes on before the dialog opens and comes off after it closes, so
+   * the screen never sits in a print state if someone cancels.
+   */
+  function printAs(target) {
+    const head = document.getElementById("printhead");
+    const forClient = target === "client";
+    // Named for the view being printed, because there is no prompt: the toggle
+    // is the choice and the page prints what is on screen. Two sheets on a desk
+    // have to say which is which without being read.
+    const what = view === "dental"
+      ? (forClient ? "Your dental options" : "Working file, dental")
+      : (forClient ? "Your plan options" : "Working file");
+    head.innerHTML =
+      '<span class="who">' + what + '</span>' +
+      (clientCode ? '<span class="code">' + esc(clientCode) + '</span>' : '') +
+      '<span>' + (submittedOn ? "Answers given " + submittedOn : "") + '</span>' +
+      '<span class="when">Printed ' +
+      new Date().toLocaleDateString("en-US", { dateStyle: "long" }) + '</span>';
+    document.body.classList.add(forClient ? "print-client" : "print-file");
+    const clear = () => {
+      document.body.classList.remove("print-client", "print-file");
+      window.removeEventListener("afterprint", clear);
+    };
+    window.addEventListener("afterprint", clear);
+    window.print();
+    // Safari does not always fire afterprint. Belt and braces, because a page
+    // stuck in client mode would quietly hide Mike's own warnings from him.
+    setTimeout(clear, 1000);
+  }
+
+  document.getElementById("printClient").addEventListener("click", () => printAs("client"));
+  document.getElementById("printFile").addEventListener("click", () => printAs("file"));
   document.getElementById("reload").addEventListener("click", load);
+
+  /* Present mode. Shows the client exactly what the printed client sheet
+     shows, on screen, for a virtual appointment.
+
+     Escape leaves it, because the one moment this must not fail is Mike
+     needing his own notes back while a client is watching, and hunting for a
+     button is worse than a keystroke he already knows. */
+  const presentBtn = document.getElementById("present");
+  function setPresenting(on) {
+    document.body.classList.toggle("presenting", on);
+    presentBtn.classList.toggle("is-on", on);
+    presentBtn.setAttribute("aria-pressed", on ? "true" : "false");
+    presentBtn.textContent = on ? "Presenting" : "Present";
+  }
+  presentBtn.addEventListener("click", () =>
+    setPresenting(!document.body.classList.contains("presenting")),
+  );
+  document.addEventListener("keydown", (ev) => {
+    if (ev.key === "Escape" && document.body.classList.contains("presenting")) setPresenting(false);
+  });
+
+  document.getElementById("viewswitch").addEventListener("click", (ev) => {
+    const btn = ev.target.closest("button[data-view]");
+    if (!btn || btn.getAttribute("data-view") === view) return;
+    view = btn.getAttribute("data-view");
+    draw();
+    window.scrollTo(0, 0);
+  });
+  document.getElementById("export").addEventListener("click", exportActs);
+  updateTray();
   window.addEventListener("storage", (e) => { if (e.key === "askmike:submission") load(); });
   load();
 })();

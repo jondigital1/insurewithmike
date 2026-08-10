@@ -30,6 +30,32 @@ export class Store {
       "utf8",
     );
     this.db.exec(schema);
+    this.migrate();
+  }
+
+  /**
+   * Adds columns that arrived after a database was first created.
+   *
+   * CREATE TABLE IF NOT EXISTS does nothing to a table that already exists, so
+   * a column added to schema.sql never reaches an older file. SQLite has no
+   * ADD COLUMN IF NOT EXISTS, hence the read of the existing shape first.
+   *
+   * Only additive, nullable or defaulted columns belong here. Anything that
+   * needs data moved wants a real migration with a version table, and if that
+   * day comes before the move to Postgres this should be replaced rather than
+   * extended.
+   */
+  private migrate(): void {
+    const added: Array<[string, string, string]> = [
+      ["recommendation_run", "state", "TEXT NOT NULL DEFAULT 'NJ'"],
+      ["recommendation_run", "rating_area", "TEXT"],
+      ["recommendation_run", "state_rules_version", "TEXT"],
+    ];
+    for (const [table, column, definition] of added) {
+      const existing = this.db.prepare(`PRAGMA table_info(${table})`).all() as Array<{ name: string }>;
+      if (existing.some((c) => c.name === column)) continue;
+      this.db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+    }
   }
 
   close(): void {
@@ -131,6 +157,9 @@ export class Store {
     shortlist: ShortlistEntry[];
     silverVariant: string;
     flags: string[];
+    /** Defaults to New Jersey, the only state whose rules exist. */
+    state?: string;
+    ratingArea?: string;
   }): string {
     const runId = randomUUID();
     const eligible = input.evaluations.filter((e) => e.disqualifiers.length === 0);
@@ -138,10 +167,11 @@ export class Store {
     this.db
       .prepare(
         `INSERT INTO recommendation_run
-           (id, submission_id, agency_id, created_at, plan_year, engine_version,
+           (id, submission_id, agency_id, created_at, plan_year, state, rating_area,
+            engine_version, state_rules_version,
             plan_data_version, assumptions_version, fpl_percentage, silver_variant,
             federal_subsidy, plans_evaluated, plans_eligible, flags, full_result)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
       .run(
         runId,
@@ -149,7 +179,10 @@ export class Store {
         input.agencyId,
         this.now(),
         input.planYear,
+        input.state ?? "NJ",
+        input.ratingArea ?? null,
         input.versions.engine,
+        input.versions.stateRules ?? null,
         input.versions.planData,
         input.versions.assumptions,
         input.subsidy.fplPercentage,
@@ -270,6 +303,209 @@ export class Store {
         input.notes ?? null,
       );
     return id;
+  }
+
+  /**
+   * Records what the agent did to one plan, and what they said about it.
+   *
+   * raw_note goes in exactly as spoken or typed. Nothing here interprets it:
+   * the classifier runs later and writes to plan_action_label, so a note is
+   * never overwritten by our reading of it.
+   */
+  recordPlanAction(input: {
+    runId: string;
+    agencyId: string;
+    agentName: string;
+    planId: string;
+    action: "led_with" | "ruled_out";
+    rank?: number | null;
+    rawNote?: string;
+    noteSource?: "voice" | "typed";
+    noteMs?: number;
+    piiSuspected?: boolean;
+    actedAt?: string;
+  }): string {
+    const id = randomUUID();
+    this.db
+      .prepare(
+        `INSERT INTO plan_action
+           (id, run_id, agency_id, agent_name, acted_at, plan_id, rank, action,
+            raw_note, note_source, note_ms, pii_suspected)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      )
+      .run(
+        id,
+        input.runId,
+        input.agencyId,
+        input.agentName,
+        input.actedAt ?? this.now(),
+        input.planId,
+        input.rank ?? null,
+        input.action,
+        input.rawNote ?? null,
+        input.noteSource ?? null,
+        input.noteMs ?? null,
+        input.piiSuspected ? 1 : 0,
+      );
+    return id;
+  }
+
+  /**
+   * Records one reading of one note. Re-running the classifier under a new
+   * taxonomy adds rows rather than replacing them, so which codes were in
+   * force when a note was labelled stays answerable.
+   */
+  recordActionLabel(input: {
+    actionId: string;
+    taxonomyVersion: string;
+    labelledBy: string;
+    kind?: string;
+    topic?: string;
+    detail?: string;
+    subject?: string;
+    confidence?: number;
+  }): string {
+    const id = randomUUID();
+    this.db
+      .prepare(
+        `INSERT INTO plan_action_label
+           (id, action_id, labelled_at, taxonomy_version, kind, topic, detail,
+            subject, confidence, labelled_by)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      )
+      .run(
+        id,
+        input.actionId,
+        this.now(),
+        input.taxonomyVersion,
+        input.kind ?? null,
+        input.topic ?? null,
+        input.detail ?? null,
+        input.subject ?? null,
+        input.confidence ?? null,
+        input.labelledBy,
+      );
+    return id;
+  }
+
+  /**
+   * Notes with no label under the current taxonomy. Feeds the classifier, and
+   * is the whole work queue after a taxonomy revision.
+   */
+  unlabelledActions(taxonomyVersion: string): Array<{
+    id: string;
+    plan_id: string;
+    action: string;
+    rank: number | null;
+    raw_note: string;
+  }> {
+    return this.query(
+      `SELECT a.id, a.plan_id, a.action, a.rank, a.raw_note
+         FROM plan_action a
+        WHERE a.raw_note IS NOT NULL AND TRIM(a.raw_note) <> ''
+          AND NOT EXISTS (
+            SELECT 1 FROM plan_action_label l
+             WHERE l.action_id = a.id AND l.taxonomy_version = ?
+          )
+        ORDER BY a.acted_at`,
+      taxonomyVersion,
+    );
+  }
+
+  /**
+   * Finds the run the browser was looking at, keyed on the submission's own
+   * timestamp, which is the only handle a page with no server can hold.
+   */
+  findRunBySubmittedAt(submittedAt: string): string | null {
+    const row = this.query<{ id: string }>(
+      `SELECT r.id FROM recommendation_run r
+         JOIN submission s ON s.id = r.submission_id
+        WHERE s.submitted_at = ?
+        ORDER BY r.created_at DESC LIMIT 1`,
+      submittedAt,
+    )[0];
+    return row?.id ?? null;
+  }
+
+  /**
+   * A run to hang notes off when the real one is not in this database.
+   *
+   * The browser and this file are not yet connected, so a note taken on the
+   * hosted page has no run here to point at. Losing the note would be the
+   * worse outcome, so it lands against a placeholder that is marked synthetic
+   * and carries no figures, and the numbers stay honestly absent rather than
+   * being invented.
+   */
+  placeholderRun(input: {
+    agencyId: string;
+    submittedAt: string;
+    planYear: number;
+    state?: string;
+  }): string {
+    const existing = this.findRunBySubmittedAt(input.submittedAt);
+    if (existing) return existing;
+
+    const submissionId = randomUUID();
+    this.db
+      .prepare(
+        `INSERT INTO submission
+           (id, agency_id, client_code, submitted_at, questionnaire_version, answers, is_synthetic, notes)
+         VALUES (?, ?, ?, ?, ?, ?, 1, ?)`,
+      )
+      .run(
+        submissionId,
+        input.agencyId,
+        "unlinked",
+        input.submittedAt,
+        "unknown",
+        "{}",
+        "Placeholder. Created on import so an agent note had somewhere to live; the engine run itself happened in a browser and was never recorded here.",
+      );
+
+    const runId = randomUUID();
+    this.db
+      .prepare(
+        `INSERT INTO recommendation_run
+           (id, submission_id, agency_id, created_at, plan_year, state, engine_version,
+            plan_data_version, assumptions_version, fpl_percentage, silver_variant,
+            federal_subsidy, plans_evaluated, plans_eligible, flags, full_result)
+         VALUES (?, ?, ?, ?, ?, ?, 'unlinked', 'unlinked', 'unlinked', NULL, 'unknown', NULL, 0, 0, '[]', '{}')`,
+      )
+      .run(runId, submissionId, input.agencyId, this.now(), input.planYear, input.state ?? "NJ");
+
+    return runId;
+  }
+
+  /** True when this action was already imported, keyed on the browser's own id. */
+  hasPlanAction(id: string): boolean {
+    return this.query(`SELECT 1 AS n FROM plan_action WHERE id = ?`, id).length > 0;
+  }
+
+  /** Inserts with a caller supplied id, so re-importing an export is a no op. */
+  recordPlanActionWithId(id: string, input: Parameters<Store["recordPlanAction"]>[0]): boolean {
+    if (this.hasPlanAction(id)) return false;
+    this.db
+      .prepare(
+        `INSERT INTO plan_action
+           (id, run_id, agency_id, agent_name, acted_at, plan_id, rank, action,
+            raw_note, note_source, note_ms, pii_suspected)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      )
+      .run(
+        id,
+        input.runId,
+        input.agencyId,
+        input.agentName,
+        input.actedAt ?? this.now(),
+        input.planId,
+        input.rank ?? null,
+        input.action,
+        input.rawNote ?? null,
+        input.noteSource ?? null,
+        input.noteMs ?? null,
+        input.piiSuspected ? 1 : 0,
+      );
+    return true;
   }
 
   query<T = Record<string, unknown>>(sql: string, ...params: unknown[]): T[] {

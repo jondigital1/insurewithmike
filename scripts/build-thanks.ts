@@ -346,6 +346,31 @@ ${TOKENS}
   }
   footer a { color: var(--am-blue-700); }
 
+  /* The code the client carries to their agent. Large because it will be
+     photographed, and monospace because 4 and A must not be mistakable. */
+  .codecard h2 { margin-bottom: 8px; }
+  .codelead { margin: 0 0 16px; color: var(--am-ink-soft); }
+  .coderow { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .codeval {
+    font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+    font-size: clamp(26px, 7vw, 38px); letter-spacing: 0.08em;
+    color: var(--am-ink); background: var(--am-blue-50);
+    border: 1.5px dashed var(--am-blue-300); border-radius: var(--r-control);
+    padding: 10px 18px;
+  }
+  .codebtn {
+    font: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
+    border-radius: var(--r-control); padding: 11px 20px; min-height: 44px;
+    background: var(--am-white); color: var(--am-blue-700);
+    border: 1.5px solid #C6DDEE;
+  }
+  .codebtn:hover { border-color: var(--am-blue-600); background: var(--am-blue-50); }
+  .codehint { margin: 14px 0 0; font-size: 14px; color: var(--am-muted); }
+  .afternote {
+    margin: 18px 0 0; padding-top: 14px; border-top: 1px solid var(--am-line-soft);
+    font-size: 14px; line-height: 1.55; color: var(--am-ink-soft);
+  }
+
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 
@@ -368,10 +393,18 @@ ${TOKENS}
 <main>
   <div class="hero">
     <h1>Thank you</h1>
-    <p class="first">You have just saved yourself the most tedious part of this, and you have given ${esc(AGENCY.agentName)} something far better to work with than a blank page.</p>
-    <p>Choosing health coverage is a genuinely difficult decision, and most people are asked to make it with almost nothing to go on. What you have written means the conversation can be about which plan actually suits your family, rather than an hour of paperwork before anyone gets to the point.</p>
-    <p>It is a privilege to be asked to help with this. Thank you for the opportunity.</p>
+    <p class="first">You have given ${esc(AGENCY.agentName)} something far better to start from than a blank page. The meeting can now be about which plan suits your family, not an hour of paperwork.</p>
   </div>
+
+  <section class="card codecard" id="codecard" hidden>
+    <h2>Your code</h2>
+    <p class="codelead">Give this to ${esc(AGENCY.agentName)}. It is the only thing that connects these answers to you; your name was never asked.</p>
+    <div class="coderow">
+      <span class="codeval" id="codeval"></span>
+      <button class="codebtn" type="button" id="codecopy">Copy</button>
+    </div>
+    <p class="codehint">Screenshot it, or copy it into the message you send him. Your browser also remembers it on this page.</p>
+  </section>
 
   ${videoBlock()}
 
@@ -380,15 +413,11 @@ ${TOKENS}
   <section class="card">
     <h2>What happens now</h2>
     <ul class="next">
-      <li><span class="n">1</span><span><b>${esc(AGENCY.agentName)} reads your answers before you meet.</b> Nothing you wrote goes to an insurer, and no application has been started.</span></li>
-      <li><span class="n">2</span><span><b>He works through the plans available to you.</b> Every plan sold in New Jersey, checked against what you told us about your doctors, your prescriptions and the year you have had.</span></li>
-      <li><span class="n">3</span><span><b>You meet, and he talks you through what he found.</b> The recommendation is his, made by a licensed agent who is accountable for it. Software only did the arithmetic.</span></li>
+      <li><span class="n">1</span><span><b>${esc(AGENCY.agentName)} reads your answers before you meet.</b> Nothing goes to an insurer; no application has started.</span></li>
+      <li><span class="n">2</span><span><b>He checks every plan sold in New Jersey</b> against your doctors, your prescriptions and the year you described.</span></li>
+      <li><span class="n">3</span><span><b>You meet, and he walks you through what he found.</b> The recommendation is his, made by a licensed agent accountable for it.</span></li>
     </ul>
-  </section>
-
-  <section class="card">
-    <h2>If something was wrong</h2>
-    <p class="lede">If you realise you gave the wrong figure, or you forgot a prescription, do not worry about it. Mention it when you meet and it can be corrected then. Nothing here is binding.</p>
+    <p class="afternote">Gave a wrong figure, or forgot a prescription? Mention it when you meet. Nothing here is binding.</p>
   </section>
 </main>
 
@@ -397,6 +426,35 @@ ${TOKENS}
     ? `Need to reach ${esc(AGENCY.agentName)} sooner? ${AGENCY.phone ? `Call <a href="tel:${esc(AGENCY.phone.replace(/[^\d+]/g, ""))}">${esc(AGENCY.phone)}</a>` : ""}${AGENCY.phone && AGENCY.email ? " or " : ""}${AGENCY.email ? `email <a href="mailto:${esc(AGENCY.email)}">${esc(AGENCY.email)}</a>` : ""}.`
     : `${esc(AGENCY.agencyName)} will be in touch.`}
 </footer>
+
+<script>
+(function () {
+  // The code was minted when the form was submitted and lives in this
+  // browser. Showing it again on every return visit is recovery layer one:
+  // the common loss case is someone who never took the screenshot but is
+  // still on the phone they filled the form in on.
+  var code = localStorage.getItem("askmike:clientCode");
+  if (!code) return;
+  document.getElementById("codeval").textContent = code;
+  document.getElementById("codecard").hidden = false;
+  var btn = document.getElementById("codecopy");
+  btn.addEventListener("click", function () {
+    navigator.clipboard.writeText(code).then(function () {
+      btn.textContent = "Copied";
+      setTimeout(function () { btn.textContent = "Copy"; }, 1600);
+    }, function () {
+      // Clipboard can be refused. Select the code so a long press finishes
+      // the job instead of the button silently doing nothing.
+      var range = document.createRange();
+      range.selectNodeContents(document.getElementById("codeval"));
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      btn.textContent = "Press and hold to copy";
+    });
+  });
+})();
+</script>
 `;
 
 writeFileSync(join(outDir, "thanks.html"), html, "utf8");

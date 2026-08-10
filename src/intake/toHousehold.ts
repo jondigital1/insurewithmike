@@ -234,6 +234,25 @@ export function toHousehold(answers: Answers, today = new Date()): Conversion {
       "Takes regular medication. Formulary placement cannot be checked from the public plan data, so confirm the drugs are covered before recommending.",
     );
   }
+
+  // Dental and vision interest changes what the agent brings to the meeting,
+  // never what the engine computes. The vision message splits by household
+  // shape because the facts split: children have eye exams and glasses on
+  // every marketplace plan, adults on none, and no standalone vision plan is
+  // filed in New Jersey at all.
+  const extras = list(answers.dental_vision_interest);
+  if (extras.includes("dental")) {
+    flags.push(
+      "Asked about dental. The Dental view in the header is already priced for this household from the ages given.",
+    );
+  }
+  if (extras.includes("vision")) {
+    flags.push(
+      members.some((m) => m.age <= 18)
+        ? "Asked about vision. The children already have eye exams and glasses on every plan here, whichever one is picked. Adult vision is on none of them and nothing standalone is filed in New Jersey, so that half is an off-marketplace conversation."
+        : "Asked about vision. No plan here covers adult vision and nothing standalone is filed in New Jersey, so this is an off-marketplace conversation.",
+    );
+  }
   if (answers.coverage_situation === "losing") {
     flags.push("Losing existing coverage, which opens a special enrolment period.");
   }
@@ -290,7 +309,7 @@ export function toHousehold(answers: Answers, today = new Date()): Conversion {
     }
     if (events.includes("moved")) {
       flags.push(
-        "Change of address. Confirm the county, since it decides which carriers can sell to them even though it does not change the price.",
+        "Change of address. Confirm the county. New Jersey is one rating area so the list price of a plan is the same everywhere, but county decides which carriers can sell to them, and that changes the benchmark silver plan the federal credit is calculated from. A move can therefore change what they actually pay without any plan changing its price.",
       );
     }
     if (events.includes("lost_coverage")) {
@@ -321,6 +340,29 @@ export function toHousehold(answers: Answers, today = new Date()): Conversion {
     );
   }
 
+  // The questionnaire lists Aetna because it left the New Jersey market for
+  // 2026. Anyone still on it is moving carriers whether they want to or not,
+  // and the conversation goes better when the agent opens with that.
+  if (answers.current_insurer === "aetna") {
+    flags.push(
+      "Currently with Aetna, which left the New Jersey individual market for 2026. There is no staying put: every option is a carrier change, so lead with that rather than letting them discover it.",
+    );
+  }
+
+  // Aversion is a hard constraint more often than a preference, and the
+  // reason behind it decides the meeting: bad claims handling argues for a
+  // carrier change, one bad billing episode might not. The form deliberately
+  // does not ask why. That conversation belongs to the agent.
+  if (
+    answers.current_insurer_feeling === "leave" &&
+    typeof answers.current_insurer === "string" &&
+    !["other", "aetna"].includes(answers.current_insurer)
+  ) {
+    flags.push(
+      "They want out of their current carrier. Open by asking what went wrong: a claims or network problem argues for the move, a one-off billing fight might not justify losing a better-priced plan. Their carrier's plans still appear in the ranking on purpose, priced, so the cost of the aversion is a number rather than a guess.",
+    );
+  }
+
   const household: Household = {
     county: countyFromSlug(answers.county),
     annualIncome: num(answers.expected_income),
@@ -333,6 +375,27 @@ export function toHousehold(answers: Answers, today = new Date()): Conversion {
     hardshipExemption: false,
     expectedScenario: scenarioFrom(answers),
     monthsOfCoverage: months,
+    // "other" carries no information and Aetna left the market for 2026, so
+    // neither can anchor a staying-put option. The Aetna case already gets its
+    // own flag: that client is moving whether they like it or not.
+    currentInsurer:
+      typeof answers.current_insurer === "string" &&
+      !["other", "aetna"].includes(answers.current_insurer)
+        ? answers.current_insurer
+        : undefined,
+    // Guarded on the carrier being one we can act on, not just on the feeling
+    // being present. A browser keeps hidden answers around, so someone who
+    // picked a carrier, said they hated it, then went back and switched to
+    // "not sure" would otherwise submit a feeling about nobody, and the agent
+    // would get a "wants out" flag with no carrier to want out of.
+    currentInsurerFeeling:
+      typeof answers.current_insurer === "string" &&
+      !["other", "aetna"].includes(answers.current_insurer) &&
+      (answers.current_insurer_feeling === "keep" ||
+        answers.current_insurer_feeling === "neutral" ||
+        answers.current_insurer_feeling === "leave")
+        ? answers.current_insurer_feeling
+        : undefined,
   };
 
   return { household, flags, unsure };

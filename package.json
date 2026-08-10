@@ -6,9 +6,13 @@
   "type": "module",
   "scripts": {
     "demo": "tsx scripts/demo.ts",
+    "review": "tsx scripts/review.ts",
+    "import-review": "tsx scripts/import-review.ts",
+    "classify-notes": "tsx scripts/classify-notes.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.116.0",
     "csv-parse": "^6.1.0"
   },
   "devDependencies": {

@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "web",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "-e",
+        "const h=require('http'),f=require('fs'),p=require('path');const T={'.html':'text/html','.js':'text/javascript','.json':'application/json','.svg':'image/svg+xml'};const PORT=Number(process.env.PORT)||5055;h.createServer((q,s)=>{let u=decodeURIComponent(q.url.split('?')[0]);if(u==='/')u='/index.html';const fp=p.join('web',u);f.readFile(fp,(e,d)=>{if(e){s.writeHead(404);return s.end('not found')}s.writeHead(200,{'content-type':T[p.extname(fp)]||'text/plain'});s.end(d)})}).listen(PORT,()=>console.log('web on '+PORT))"
+      ],
+      "port": 5188,
+      "autoPort": true
+    },
+    {
+      "name": "askmike-attach",
+      "url": "http://localhost:4178"
+    }
+  ]
+}

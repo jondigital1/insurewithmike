@@ -9,9 +9,11 @@
 import { fplPercentage } from "./assumptions.ts";
 import { evaluateCost, tierPenalty } from "./cost.ts";
 import { issuerCounties } from "./dataset.ts";
+import { pediatricDentalGap } from "./dental.ts";
 import type { SubsidyResult } from "./subsidy.ts";
 import type {
   CsrVariant,
+  DentalDataset,
   Household,
   Plan,
   PlanDataset,
@@ -156,7 +158,20 @@ export function evaluateAllPlans(
   household: Household,
   quotedPremiums: Map<string, number> = new Map(),
   subsidy: SubsidyResult | null = null,
+  /**
+   * The dental filings, when loaded. Used only to price the pediatric dental a
+   * household must buy separately on the plans that do not include it. Omitting
+   * it leaves every total exactly as it was before dental existed, which is
+   * what every caller that does not care about dental should get.
+   */
+  dentalDataset: DentalDataset | null = null,
 ): PlanEvaluation[] {
+  // Priced once for the household rather than once per plan: the figure depends
+  // on the children's ages and the length of the plan year, neither of which
+  // varies across the 176 plans. Which plans it is then applied to does vary.
+  const pediatricFloor =
+    dentalDataset === null ? 0 : pediatricDentalGap(dentalDataset, household, false);
+
   const results: PlanEvaluation[] = [];
   for (const plan of dataset.plans) {
     const cost = evaluateCost(
@@ -165,6 +180,7 @@ export function evaluateAllPlans(
       household,
       quotedPremiums.get(plan.planId) ?? null,
       subsidy,
+      pediatricFloor,
     );
     if (!cost) continue;
     results.push({
@@ -179,11 +195,65 @@ export function evaluateAllPlans(
 
 export type ShortlistTier = "good" | "better" | "best";
 
+/**
+ * Another plan close enough to this pick that the ranking between them is
+ * arithmetic noise rather than a finding.
+ */
+export interface TieNote {
+  planId: string;
+  label: string;
+  /** Dollars per year separating the two. Positive means the other plan costs more. */
+  gapAnnual: number;
+  /** What actually differs, since the money does not: network, metal, design. */
+  differences: string[];
+  /** True when the tied plan also appears on the shortlist. */
+  onShortlist: boolean;
+}
+
 export interface ShortlistEntry {
   tier: ShortlistTier;
   label: string;
   rationale: string;
   evaluation: PlanEvaluation;
+  /**
+   * Plans within TIE_THRESHOLD of this pick on the measure that earned it its
+   * slot. Sensitivity testing (docs/research-2026-08.md) found gaps under a
+   * few hundred dollars a year inside the honest error bar of everything
+   * upstream: interpolated cost curves, estimated utilisation, an averaged
+   * state subsidy. Presenting such a gap as a ranking implies a confidence
+   * the engine does not have, so the tie is surfaced and the real
+   * differences, which are about networks and plan design, are named.
+   */
+  ties: TieNote[];
+}
+
+/**
+ * Two plans within this many dollars a year are presented as equivalent.
+ *
+ * From the fragility measurement: 7 of 48 tested households had a first to
+ * second gap under $250, and the measured model error at the filed points it
+ * interpolates between runs to several hundred dollars. A gap smaller than
+ * the model's own error bar is not a preference.
+ */
+export const TIE_THRESHOLD = 250;
+
+/** The differences worth naming when the money cannot decide. */
+function tiebreakDifferences(a: Plan, b: Plan): string[] {
+  const out: string[] = [];
+  if (a.issuerName !== b.issuerName) {
+    out.push(`${b.issuerName.split(" ")[0]} network instead of ${a.issuerName.split(" ")[0]}`);
+  }
+  if (a.metalLevel !== b.metalLevel) out.push(`${b.metalLevel} instead of ${a.metalLevel}`);
+  if (a.planType !== b.planType) out.push(`${b.planType} instead of ${a.planType}`);
+  if (a.hsaEligible !== b.hsaEligible) {
+    out.push(b.hsaEligible ? "HSA eligible where this one is not" : "not HSA eligible where this one is");
+  }
+  const da = a.deductibleIndividual, db = b.deductibleIndividual;
+  if (da !== null && db !== null && Math.abs(da - db) >= 500) {
+    out.push(`a ${db > da ? "higher" : "lower"} deductible (${money(db)} against ${money(da)})`);
+  }
+  if (!out.length) out.push("nearly identical designs; check the drug list and the client's providers");
+  return out;
 }
 
 /**
@@ -193,9 +263,29 @@ export interface ShortlistEntry {
  * better  best balance of expected cost against exposure if the year goes badly
  * best    lowest worst case total, meaning the most protection money can buy
  */
+/**
+ * The intake slugs for carriers against how their issuer names begin, which
+ * is stable across the marketing suffixes ("from WellCare", "/ Oxford").
+ */
+const INSURER_SLUG_PREFIX: Record<string, string> = {
+  horizon: "horizon",
+  amerihealth: "amerihealth",
+  oscar: "oscar",
+  unitedhealthcare: "unitedhealthcare",
+  ambetter: "ambetter",
+};
+
+export interface ShortlistContext {
+  /** Intake slug of the carrier insuring the household today. */
+  currentInsurer?: string;
+  /** How they feel about that carrier. Absent reads as neutral. */
+  currentInsurerFeeling?: "keep" | "neutral" | "leave";
+}
+
 export function buildShortlist(
   evaluations: PlanEvaluation[],
   maxAlternates = 2,
+  context: ShortlistContext = {},
 ): ShortlistEntry[] {
   const eligible = evaluations.filter((e) => e.disqualifiers.length === 0);
   if (eligible.length === 0) return [];
@@ -226,6 +316,7 @@ export function buildShortlist(
       label: `${entry.plan.issuerName} ${entry.plan.marketingName}`,
       rationale,
       evaluation: entry,
+      ties: [],
     });
   };
 
@@ -261,6 +352,63 @@ export function buildShortlist(
       candidate,
       `Alternative from ${candidate.plan.issuerName}, included so the client sees a different network.`,
     );
+  }
+
+  // The staying-put slot. Many renewal conversations open with "can I just
+  // keep what I have?", and the answer should already be on the page: the
+  // best plan from the carrier they hold today, labelled as exactly that.
+  //
+  // Sentiment decides whether the slot exists, not whether the carrier is
+  // ranked. A client who wants out suppresses the card, because leading with
+  // the carrier they are leaving wastes the page's scarcest space; their
+  // carrier's plans still compete for every other slot and sit in the full
+  // table, priced, so the cost of the aversion stays visible. A client who
+  // wants to stay gets the card even when the carrier placed nowhere, which
+  // is precisely when the conversation needs it most.
+  if (context.currentInsurer && context.currentInsurerFeeling !== "leave") {
+    const prefix = INSURER_SLUG_PREFIX[context.currentInsurer];
+    const represented = picks.some((p) =>
+      p.evaluation.plan.issuerName.toLowerCase().startsWith(prefix ?? " "),
+    );
+    if (prefix && !represented) {
+      const own = byExpected.find((e) =>
+        e.plan.issuerName.toLowerCase().startsWith(prefix),
+      );
+      add(
+        "better",
+        own,
+        context.currentInsurerFeeling === "keep"
+          ? "What staying with their current carrier looks like. They said they would rather stay if the numbers work, so this is the plan those numbers describe."
+          : "What staying with their current carrier looks like: their carrier's strongest option for this household, here because the renewal conversation usually starts from it.",
+      );
+    }
+  }
+
+  // Ties are computed once the shortlist is settled, and only for the two
+  // slots that claim superiority: "good" claims cheapest and "best" claims
+  // safest, each on its own measure. The alternates claim nothing except
+  // being a different network, so a near neighbour is not evidence against
+  // them and gets no banner. One tie per pick, the closest; in a market of
+  // nearly forty plans most of them have some neighbour within the
+  // threshold, and a banner on every card would say nothing on any of them.
+  for (const pick of picks) {
+    if (pick.tier === "better") continue;
+    const measure = (e: PlanEvaluation) =>
+      pick.tier === "best" ? e.cost.worstCaseAnnualTotal : e.cost.estimatedAnnualTotal;
+    const mine = measure(pick.evaluation);
+    pick.ties = eligible
+      .filter((e) => e.plan.planId !== pick.evaluation.plan.planId)
+      .map((e) => ({ e, gap: measure(e) - mine }))
+      .filter(({ gap }) => Math.abs(gap) < TIE_THRESHOLD)
+      .sort((a, b) => Math.abs(a.gap) - Math.abs(b.gap))
+      .slice(0, 1)
+      .map(({ e, gap }) => ({
+        planId: e.plan.planId,
+        label: `${e.plan.issuerName.split(" ")[0]} ${e.plan.marketingName}`,
+        gapAnnual: Math.round(gap),
+        differences: tiebreakDifferences(pick.evaluation.plan, e.plan),
+        onShortlist: seen.has(e.plan.planId),
+      }));
   }
 
   return picks;

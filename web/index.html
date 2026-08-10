@@ -185,22 +185,43 @@
   .hero p { margin: 0 0 12px; color: var(--am-ink-soft); }
   .hero .hlede { font-size: 19px; line-height: 1.55; color: var(--am-ink); }
 
+  /* The journey, before the first question. The counts strip below answers
+     "how much is this going to hurt"; this answers "what is happening here",
+     and the closing line ties honest answers to the shorter shortlist they
+     buy. Three beats because that is what actually happens, not because
+     three sounds friendly. */
+  .howworks {
+    list-style: none; counter-reset: hw; margin: 22px 0 0; padding: 0;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .howworks li {
+    counter-increment: hw; position: relative; padding-left: 42px;
+    font-size: 15px; line-height: 1.55; color: var(--am-ink-soft); max-width: 62ch;
+  }
+  .howworks li b { color: var(--am-ink); font-weight: 600; }
+  .howworks li::before {
+    content: counter(hw); position: absolute; left: 0; top: 1px;
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--display); font-size: 16px;
+    background: var(--am-blue-100); color: var(--am-blue-700);
+  }
+  .howpay {
+    margin: 14px 0 0; padding-left: 42px; font-size: 15px;
+    color: var(--am-ink); font-weight: 500; max-width: 62ch;
+  }
+
   /* Three numbers instead of a paragraph of reassurance. The last one is the
      answer to the question people are actually holding. */
-  .facts {
-    list-style: none; margin: 26px 0 0; padding: 22px 0 0;
+  /* One sentence, not a stat strip. This carried big display numerals for a
+     while, and they never sat well: a marketing pattern on a page that talks
+     to the client in prose, wrong wrapped and wrong stacked. The counts still
+     matter, so they live in a line that reads instead of poses. */
+  .factline {
+    margin: 22px 0 0; padding: 18px 0 0;
     border-top: 1px solid var(--am-line);
-    display: flex; flex-wrap: wrap; gap: 14px 40px;
+    font-size: 14px; line-height: 1.6; color: var(--am-muted); max-width: 62ch;
   }
-  .facts li { display: flex; align-items: baseline; gap: 10px; }
-  /* These were 38px, which is where the h1 starts on a narrow screen. Three
-     figures reassuring you about the length of a form should not be able to
-     tie with the sentence that says what the form is for. */
-  .facts .fnum {
-    font-family: var(--display); font-size: 27px; line-height: .95;
-    color: var(--am-blue-700); letter-spacing: -0.02em;
-  }
-  .facts .flabel { font-size: 13px; line-height: 1.35; color: var(--am-muted); }
 
   .helpful {
     background: var(--am-amber-100); color: var(--am-amber-text);
@@ -681,8 +702,7 @@
     .notice { padding: 10px 14px; font-size: 13px; }
 
     .hero { padding: 0 16px; margin-bottom: 28px; }
-    .facts { gap: 12px 26px; }
-    .facts .fnum { font-size: 23px; }
+    .factline { font-size: 13px; }
 
     /* Edge to edge. A frame around content that already fills the screen
        is a border drawn for its own sake. */
@@ -791,7 +811,7 @@
       <div class="fill" id="progress-fill"></div>
       <div class="pips"><span class="pip" data-pip="0" title="Let's get started"></span><span class="pip" data-pip="1" title="Who needs covering"></span><span class="pip" data-pip="2" title="Income"></span><span class="pip" data-pip="3" title="What you have now"></span><span class="pip" data-pip="4" title="Your doctors and prescriptions"></span><span class="pip" data-pip="5" title="Last year"></span><span class="pip" data-pip="6" title="The year ahead"></span><span class="pip" data-pip="7" title="What matters to you"></span></div>
     </div>
-    <span class="count" id="progress-count">Step 1 of 8</span>
+    <span class="count" id="progress-count">Section 1 of 8</span>
   </div>
 </div>
 
@@ -799,30 +819,24 @@
   <div class="hero">
     <h1>Before we meet,<br />tell us about <em>your year</em></h1>
     <p class="hlede">Your agent uses this to work out which plans are actually worth your time, so the meeting can be about the decision rather than the paperwork.</p>
-    <p>Rough answers are fine. Where you are not sure, say so rather than guessing, and your agent will pick it up.</p>
-    <ul class="facts">
-      <li><span class="fnum">8</span><span class="flabel">short steps,<br />one screen each</span></li>
-      <li><span class="fnum">10</span><span class="flabel">minutes,<br />give or take</span></li>
-      <li><span class="fnum">0</span><span class="flabel">of it sent until<br />you press send</span></li>
-    </ul>
-    <div class="helpful"><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span><b>Worth having to hand:</b> your insurance card if you have one, and the bottles for anything you take regularly. Neither is essential, but they make a few of the questions much quicker to answer.</span></div>
+    <ol class="howworks" aria-label="How this works">
+      <li><b>Answer what you know.</b> Your household, your income, the care your family actually uses. Most of it you know cold, and the exact bits are usually within arm's reach of wherever you are sitting. Where nothing is, &ldquo;not sure&rdquo; is always an answer.</li>
+      <li><b>Get your code.</b> It appears when you finish. It is the only thing that connects these answers to you, because your name is never asked.</li>
+      <li><b>Hand it to Mike.</b> He matches the code to your file and walks into your meeting with the plans already narrowed to your situation.</li>
+    </ol>
+    <p class="howpay">The clearer the picture you give, the shorter the list he brings.</p>
+    <p class="factline">8 short sections, one screen each. About 10 minutes, and nothing is sent until you press send.</p>
+    <div class="helpful"><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span><b>Worth having to hand:</b> your insurance card if you have one, last year's tax return, and the bottles for anything you take regularly. None of them are essential, but they make a few of the questions much quicker to answer.</span></div>
   </div>
 
   <section class="step" data-step="1">
     <div class="card">
       <header class="stephead">
-        <p class="eyebrow">Step 1 of 8</p>
+        <p class="eyebrow">Section 1 of 8</p>
         <h2>Let's get started</h2>
-        <p class="blurb">Your agent gave you a code when they sent you here. It links your answers back to your file.</p>
+        <p class="blurb">First, the situation you are shopping from.</p>
       </header>
-      <div class="qs"><div class="q" data-q="client_code">
-    <label class="qlabel" id="client_code-label" for="client_code">Enter the code your agent gave you</label>
-    <p class="qhelp">Six characters, letters and numbers. Not case sensitive.</p>
-    <input class="field code" type="text" id="client_code" name="client_code" placeholder="K7M4QX" maxlength="6" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="next" />
-    
-    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Randomly generated per agency. Opens a blank form and locks on submission, so a leaked code exposes nothing.</p></details>
-    <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
-  </div><div class="q" data-q="coverage_situation">
+      <div class="qs"><div class="q" data-q="coverage_situation">
     <label class="qlabel" id="coverage_situation-label" for="coverage_situation">Which of these sounds like you?</label>
     
     <div class="choices" role="radiogroup" aria-labelledby="coverage_situation-label"><label class="choice"><input type="radio" name="coverage_situation" value="renewing" /><span class="dot"></span><span class="ctext">I have a health plan now and I am looking at next year</span></label><label class="choice"><input type="radio" name="coverage_situation" value="new" /><span class="dot"></span><span class="ctext">I do not have a health plan and I need one</span></label><label class="choice"><input type="radio" name="coverage_situation" value="losing" /><span class="dot"></span><span class="ctext">I am about to lose the coverage I have</span></label></div>
@@ -862,7 +876,7 @@
   </section><section class="step" data-step="2">
     <div class="card">
       <header class="stephead">
-        <p class="eyebrow">Step 2 of 8</p>
+        <p class="eyebrow">Section 2 of 8</p>
         <h2>Who needs covering</h2>
         <p class="blurb">Include everyone on your tax return, even people who already have insurance. The number of people in your household affects the help you can get, so leaving someone out can cost you money. Answer no to needs covering for anyone who already has Medicare, military coverage or their own plan.</p>
       </header>
@@ -956,7 +970,7 @@
   </section><section class="step" data-step="3">
     <div class="card">
       <header class="stephead">
-        <p class="eyebrow">Step 3 of 8</p>
+        <p class="eyebrow">Section 3 of 8</p>
         <h2>Income</h2>
         <p class="blurb">This decides how much help you get paying for coverage, and it is the single biggest factor in what you will actually pay. Answer the boxes however is easiest and we will add it up for you at the end. We do not ask where you work.</p>
       </header>
@@ -1046,7 +1060,7 @@
   </section><section class="step" data-step="4">
     <div class="card">
       <header class="stephead">
-        <p class="eyebrow">Step 4 of 8</p>
+        <p class="eyebrow">Section 4 of 8</p>
         <h2>What you have now</h2>
         
       </header>
@@ -1057,6 +1071,13 @@
     <label class="unsure"><input type="checkbox" name="current_insurer_unsure" /><span>I am not sure</span></label>
     <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Sets the renewal baseline. Aetna is listed because it left the market for 2026, and anyone answering Aetna is a forced move.</p></details>
     <div class="meta"><div class="tags"><span class="tag cond">only if coverage situation is renewing or losing</span><span class="tag route-intake">intake</span></div></div>
+  </div><div class="q" data-q="current_insurer_feeling" data-showif-q="current_insurer" data-showif-v="horizon|amerihealth|oscar|unitedhealthcare|ambetter" hidden>
+    <label class="qlabel" id="current_insurer_feeling-label" for="current_insurer_feeling">How do you feel about them?</label>
+    
+    <div class="choices" role="radiogroup" aria-labelledby="current_insurer_feeling-label"><label class="choice"><input type="radio" name="current_insurer_feeling" value="keep" /><span class="dot"></span><span class="ctext">Happy. I would rather stay if the numbers work</span></label><label class="choice"><input type="radio" name="current_insurer_feeling" value="neutral" /><span class="dot"></span><span class="ctext">No strong feelings either way</span></label><label class="choice"><input type="radio" name="current_insurer_feeling" value="leave" /><span class="dot"></span><span class="ctext">Unhappy. I want to look elsewhere</span></label></div>
+    
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Unlike asking what someone will prioritise, which people guess at, this asks what they already experienced, which they know. Carrier loyalty and carrier aversion are both among the likeliest reasons an agent overrides a ranking, and the answer changes what the shortlist leads with: happy anchors a staying-put option, unhappy suppresses it and tells the agent to open by asking what went wrong. It never hides the carrier's plans. If the disliked carrier is $4,000 cheaper, that belongs in the conversation, priced.</p></details>
+    <div class="meta"><div class="tags"><span class="tag">optional</span><span class="tag cond">only if current insurer is horizon or amerihealth or oscar or unitedhealthcare or ambetter</span><span class="tag route-intake">intake</span></div></div>
   </div><div class="q" data-q="current_plan_name" data-showif-q="coverage_situation" data-showif-v="renewing|losing" hidden>
     <label class="qlabel" id="current_plan_name-label" for="current_plan_name">What is the plan called?</label>
     <p class="qhelp">It is printed on your insurance card. Something like OMNIA Silver or Bronze Classic.</p>
@@ -1100,7 +1121,7 @@
   </section><section class="step" data-step="5">
     <div class="card">
       <header class="stephead">
-        <p class="eyebrow">Step 5 of 8</p>
+        <p class="eyebrow">Section 5 of 8</p>
         <h2>Your doctors and prescriptions</h2>
         <p class="blurb">This is the part that usually decides which plan is right. Every plan sold in New Jersey has its own network and its own drug list, and a plan that looks cheaper is a bad deal if it drops your doctor or your medication.</p>
       </header>
@@ -1178,7 +1199,7 @@
   </section><section class="step" data-step="6">
     <div class="card">
       <header class="stephead">
-        <p class="eyebrow">Step 6 of 8</p>
+        <p class="eyebrow">Section 6 of 8</p>
         <h2>Last year</h2>
         <p class="blurb">Rough numbers are genuinely fine. We are working out the shape of your year, not auditing you. Answer for everyone on the plan combined.</p>
       </header>
@@ -1264,7 +1285,7 @@
   </section><section class="step" data-step="7">
     <div class="card">
       <header class="stephead">
-        <p class="eyebrow">Step 7 of 8</p>
+        <p class="eyebrow">Section 7 of 8</p>
         <h2>The year ahead</h2>
         
       </header>
@@ -1301,7 +1322,7 @@
   </section><section class="step" data-step="8">
     <div class="card">
       <header class="stephead">
-        <p class="eyebrow">Step 8 of 8</p>
+        <p class="eyebrow">Section 8 of 8</p>
         <h2>What matters to you</h2>
         
       </header>
@@ -1312,6 +1333,13 @@
     
     <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Decides which of good, better or best to lead with. Without it the engine has to guess, and the honest answer is that this is a values question, not a maths question.</p></details>
     <div class="meta"><div class="tags"><span class="tag route-intake">intake</span></div></div>
+  </div><div class="q" data-q="dental_vision_interest">
+    <label class="qlabel" id="dental_vision_interest-label" for="dental_vision_interest">Are you interested in dental or vision coverage as well?</label>
+    
+    <div class="choices"><label class="choice multi"><input type="checkbox" name="dental_vision_interest" value="dental" /><span class="dot"></span><span class="ctext">Dental</span></label><label class="choice multi"><input type="checkbox" name="dental_vision_interest" value="vision" /><span class="dot"></span><span class="ctext">Vision</span></label><label class="choice multi"><input type="checkbox" name="dental_vision_interest" value="none" /><span class="dot"></span><span class="ctext">Not right now</span></label></div>
+    
+    <details class="why"><summary><svg width="19" height="19" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M5 16.5a11.5 11.5 0 0 1 11.5-11.5h15A11.5 11.5 0 0 1 43 16.5v8A11.5 11.5 0 0 1 31.5 36h-8l-9 7v-7.3A11.5 11.5 0 0 1 5 24.5z" fill="#C67E32"/><circle cx="24" cy="20.5" r="6" fill="#FBEEDD"/></svg><span>Why we ask</span></summary><p>Saying yes adds no extra questions. Dental plans here are priced from ages alone, children's vision is already part of every marketplace plan, and adult vision is something your agent can walk through with you.</p></details>
+    <div class="meta"><div class="tags"><span class="tag route-flag">flag</span></div></div>
   </div><div class="q" data-q="anything_else">
     <label class="qlabel" id="anything_else-label" for="anything_else">Anything else your agent should know before you meet?</label>
     <p class="qhelp">Anything at all. This goes straight to them.</p>
@@ -1546,7 +1574,7 @@
       const all = [...document.querySelectorAll(".q")];
       const done = all.filter(isAnswered).length;
       fill.style.width = (all.length ? (done / all.length) * 100 : 0).toFixed(1) + "%";
-      count.textContent = "All " + steps.length + " steps";
+      count.textContent = "All " + steps.length + " sections";
       return;
     }
     const shown = Math.min(stepIndex + 1, steps.length);
@@ -1564,7 +1592,7 @@
     // arithmetic here would quietly contradict the front page.
     const mins = Math.max(1, steps.length - stepIndex);
     count.innerHTML =
-      "<b>Step " + shown + " of " + steps.length + "<\/b> &middot; about " + mins + " min left";
+      "<b>Section " + shown + " of " + steps.length + "<\/b> &middot; about " + mins + " min left";
   }
 
   function isAnswered(q) {
@@ -2058,8 +2086,39 @@
     return answers;
   }
 
+  /**
+   * The client's code, minted at submission rather than carried in.
+   *
+   * The system invents it, the client hands it to their agent, and the
+   * agent's own CRM holds the join between code and person. Nothing about
+   * the client is encoded in it.
+   *
+   * Eight characters from an alphabet with the confusable letters removed:
+   * no O against 0, no I or L against 1. Two groups of four because the code
+   * is read off a phone screen or a photograph, and XXXX-XXXX survives that
+   * better than an unbroken run. crypto.getRandomValues because Math.random
+   * is not for identifiers, even low stakes ones.
+   */
+  function mintClientCode() {
+    const ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+    const buf = new Uint32Array(8);
+    crypto.getRandomValues(buf);
+    let code = "";
+    for (let i = 0; i < 8; i += 1) {
+      if (i === 4) code += "-";
+      code += ALPHABET[buf[i] % ALPHABET.length];
+    }
+    return code;
+  }
+
   document.getElementById("submit").addEventListener("click", () => {
     const answers = collect();
+    // A resubmission keeps its code. The second pass through the form is a
+    // correction to the same conversation, not a new client, and the agent
+    // has probably written the first code down already.
+    const code = localStorage.getItem("askmike:clientCode") || mintClientCode();
+    localStorage.setItem("askmike:clientCode", code);
+    answers.client_code = code;
     localStorage.setItem(
       "askmike:submission",
       JSON.stringify({ answers, submittedAt: new Date().toISOString() }),

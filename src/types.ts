@@ -85,6 +85,18 @@ export interface Plan {
    */
   copaysCoinsuredInstead: boolean;
 
+  /**
+   * True when the plan's own benefit schedule covers children's dental.
+   *
+   * Only 24 of the 176 New Jersey medical plans do, and all 24 are
+   * UnitedHealthcare. On the other 152 a household with a child under 19 has to
+   * buy a standalone dental plan to get the same cover, which is real money the
+   * premium does not show. Carried on the plan so the cost model can put the
+   * two on the same footing instead of comparing a premium that includes
+   * children's dental against one that does not.
+   */
+  embedsPediatricDental: boolean;
+
   /** True when the plan files a distinct second network tier. */
   hasSecondNetworkTier: boolean;
   deductibleIndividualTier2: number | null;
@@ -115,6 +127,15 @@ export interface RateRow {
   planId: string;
   /** Age band label as filed, e.g. "0-14", "21", "64 and over" */
   age: string;
+  /**
+   * The rating area the rate was filed against, e.g. "Rating Area 1".
+   *
+   * Carried but not selected on. Every New Jersey medical plan is filed in
+   * Rating Area 1 alone, so there is exactly one row per age and nothing to
+   * choose between. It is kept so loadRates can detect the day that stops
+   * being true rather than silently pricing off whichever row came first.
+   */
+  ratingArea: string;
   individualRate: number;
   individualTobaccoRate: number | null;
 }
@@ -136,6 +157,12 @@ export interface BenefitRow {
   subjectToDeductibleTier1: boolean | null;
   excludedFromInnMoop: boolean | null;
   quantityLimit: string | null;
+  /**
+   * The unit the quantity is counted in, e.g. "Visit(s) per 6 Months". Filed as
+   * a separate column from the number, and meaningless without it: a limit of
+   * "1" says nothing, "1 Visit(s) per 6 Months" is the benefit.
+   */
+  quantityLimitUnit: string | null;
   exclusions: string | null;
 }
 
@@ -145,6 +172,60 @@ export interface PlanDataset {
   rates: Map<string, RateRow[]>;
   serviceAreas: ServiceArea[];
   benefits: Map<string, BenefitRow[]>;
+}
+
+/**
+ * A standalone dental plan, filed in the same public use files as the medical
+ * plans and rated the same way: one rate per person per age band, no tobacco
+ * loading, no family tier pricing, and no variation by rating area.
+ *
+ * Kept as its own type rather than folded into Plan because almost nothing
+ * transfers. There is no metal level, no subsidy, no network tier and no
+ * meaningful catastrophic exposure: the filed out of pocket maximum is a few
+ * hundred dollars. What decides a dental plan is which categories it covers and
+ * how often, so that is what this carries.
+ */
+export interface DentalPlan {
+  planId: string;
+  standardComponentId: string;
+  issuerId: string;
+  issuerName: string;
+  marketingName: string;
+  planType: string;
+  deductibleIndividual: number | null;
+  deductibleFamily: number | null;
+  moopIndividual: number | null;
+  moopFamily: number | null;
+  /**
+   * True when the plan files no adult rate, meaning it covers children only.
+   * These exist to satisfy the pediatric essential health benefit and pricing
+   * an adult on one would produce a zero rather than an answer.
+   */
+  pediatricOnly: boolean;
+  benefits: DentalBenefit[];
+}
+
+/**
+ * One filed benefit line on a dental plan, in the issuer's own categories.
+ *
+ * The limit and exclusion text is carried verbatim rather than parsed into
+ * flags. "Orthodontia require medical necessity" is the difference between a
+ * plan that pays for a child's braces and one that does not, and no boolean
+ * we invent would survive contact with the next issuer's phrasing.
+ */
+export interface DentalBenefit {
+  name: string;
+  isCovered: boolean;
+  /** Filed frequency limit, e.g. "1 Visit(s) per 6 Months". Empty when none. */
+  limit: string;
+  /** Filed exclusion text. Empty when none. */
+  exclusions: string;
+}
+
+export interface DentalDataset {
+  planYear: number;
+  plans: DentalPlan[];
+  rates: Map<string, RateRow[]>;
 }
 
 /**
@@ -186,6 +267,26 @@ export interface Household {
   preferredHealthSystems: string[];
   /** Plan id of the coverage they hold today, when known. */
   currentPlanId?: string;
+  /**
+   * The carrier insuring them today, as the intake slug: "horizon",
+   * "amerihealth", "oscar", "unitedhealthcare", "ambetter".
+   *
+   * Carried so the shortlist can always answer "can I just keep what I
+   * have?", which is how many renewal conversations open. Absent for new
+   * entrants, for carriers that left the market, and when the client did not
+   * know.
+   */
+  currentInsurer?: string;
+  /**
+   * How they feel about that carrier, reported rather than predicted.
+   *
+   * keep anchors a staying-put option on the shortlist. leave suppresses it
+   * and flags the agent to ask what went wrong. Neither ever removes the
+   * carrier's plans from the ranking itself: an averse client with a $4,000
+   * cheaper option at the carrier they hate deserves to weigh that with the
+   * agent, priced, rather than have the choice made silently.
+   */
+  currentInsurerFeeling?: "keep" | "neutral" | "leave";
   /** What the client believes they spent out of pocket last year. */
   perceivedAnnualSpend?: number;
   /**
@@ -254,10 +355,22 @@ export interface CostBreakdown {
    * already accounts for copays, limits and exclusions. "simulated" means it
    * was computed from the deductible and coinsurance, which cannot see copays.
    */
-  outOfPocketSource: "filed" | "simulated";
+  outOfPocketSource: "filed" | "interpolated" | "simulated";
   /** True when estimated spending reaches the out of pocket maximum. */
   reachesMoop: boolean;
-  /** Premium plus out of pocket. Uses the quoted premium when available. */
+  /**
+   * Standalone pediatric dental premium this household has to buy on top of
+   * this plan, dollars for the year. Zero when the plan already covers
+   * children's dental, and zero when there is no child under 19.
+   *
+   * Priced at the cheapest standalone plan in the filings rather than an
+   * average, so it is the floor of what the gap costs rather than a guess at
+   * what they would choose. Included in the annual total, because a comparison
+   * that leaves it out is not comparing the same cover.
+   */
+  pediatricDentalPremium: number;
+
+  /** Premium plus out of pocket, plus any pediatric dental bought separately. */
   estimatedAnnualTotal: number;
   /** Worst realistic year: premium plus the full out of pocket maximum. */
   worstCaseAnnualTotal: number;

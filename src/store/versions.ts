@@ -63,6 +63,20 @@ export interface Versions {
   assumptions: string;
   questionnaire: string;
   planData: string;
+  /**
+   * Hash of the rules for one state, once those live somewhere of their own.
+   *
+   * Deliberately absent today rather than faked. New Jersey's rules are still
+   * entangled with the engine: the statewide rating area sits in premium.ts,
+   * the Health Plan Savings estimate in subsidy.ts, and hashing those files
+   * again under a second name would produce a stamp that looks meaningful and
+   * moves in lockstep with engineVersion.
+   *
+   * The field and its column exist now because a run recorded before the split
+   * should read as null, which is true, rather than needing a backfill that
+   * invents an answer.
+   */
+  stateRules?: string;
 }
 
 export function currentVersions(dataDir: string, root = "."): Versions {
