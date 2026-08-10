@@ -7,11 +7,15 @@ from his CRM, his name, his number, per the decision in
 a sender the prospect recognises, because an unknown number asking someone to
 click a link and enter health details reads as a scam even when it is not.
 
-`[SURVEY LINK]` is a placeholder. The only address that exists today is a
-temporary preview URL. When the permanent address exists, paste it in
-directly. Do not run it through a link shortener: a shortened link in an
-email about health insurance looks exactly like phishing, and the whole point
-of sending from Mike's CRM is that nothing about the message smells wrong.
+`[SURVEY LINK]` is a placeholder. The permanent address is decided:
+**https://beforewequote.com**, bought 10 August 2026 and not yet pointed at
+the site. Keep the placeholder until the domain actually serves the form,
+then paste the address in directly. Do not run it through a link shortener: a
+shortened link in an email about health insurance looks exactly like
+phishing, and the whole point of sending from Mike's CRM is that nothing
+about the message smells wrong. The domain is also the message: "before we
+quote" is the sentence Mike is already saying, so the link reads as his own
+words rather than a product name.
 
 Every claim in this copy was checked against the form as built on 10 August:
 it asks no name, no birthdate, no Social Security number; it takes about 10
@@ -20,7 +24,7 @@ showing a short code. If the form changes, re-check this copy against it.
 
 ## Email version
 
-Subject: A 10 minute head start on your health insurance
+Subject: Before we quote you: a 10 minute head start
 
 > Good afternoon [First name],
 >
@@ -52,10 +56,10 @@ Subject: A 10 minute head start on your health insurance
 ## Text message version
 
 > Hi [First name], it's Mike Kachur. Thanks for the chance to earn your
-> business. Before we meet, this 10 minute survey lets me narrow the plans to
-> the ones worth your time: [SURVEY LINK]. It never asks your name or Social
-> Security number. When you finish it shows a short code. Text that code back
-> to me and we're set.
+> business. Before I quote you anything, this 10 minute survey lets me narrow
+> the plans to the ones worth your time: [SURVEY LINK]. It never asks your
+> name or Social Security number. When you finish it shows a short code. Text
+> that code back to me and we're set.
 
 ## Notes for whoever maintains these
 

@@ -1,0 +1,3 @@
+# Never ship the local environment file. The CLI excludes .env* by default,
+# and this makes the exclusion explicit rather than an assumption.
+.env.local
