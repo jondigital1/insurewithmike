@@ -421,6 +421,16 @@ ${TOKENS}
     .fig { background: #f6f6f4; }
     .scroll { overflow: visible; }
     table { min-width: 0; font-size: 9pt; }
+    /* On screen the table scrolls sideways; on paper there is no sideways.
+       Measured at letter width the medical table ran 899px of content on a
+       740px page and dental 886px, clipping the rightmost column at the paper
+       edge, almost all of it held in nowrap headers and carrier names. Letting
+       those wrap is the whole fix; the money cells keep their nowrap so no
+       figure ever breaks across lines. */
+    th { white-space: normal; padding: 4pt 6pt; }
+    td { padding: 5pt 6pt; }
+    td.carrier { white-space: normal; }
+    td.planname { min-width: 0; }
     .printfoot { display: block !important; margin-top: 10pt; font-size: 8pt; color: #666; }
 
     /* Identifies the sheet once it is off the screen and on a desk: which of
@@ -1257,8 +1267,18 @@ ${TOKENS}
       '<span class="when">Printed ' +
       new Date().toLocaleDateString("en-US", { dateStyle: "long" }) + '</span>';
     document.body.classList.add(forClient ? "print-client" : "print-file");
+    // The file copy is the record, and a record of collapsed fold-outs
+    // records nothing: closed details print as bare summary lines. Every
+    // dental benefit block prints open on the file copy and is put back
+    // after. The client copy keeps them collapsed, because the client sheet
+    // is the priced list, not the archive.
+    const opened = forClient
+      ? []
+      : Array.from(document.querySelectorAll("details.dentalplan:not([open])"));
+    for (const d of opened) d.open = true;
     const clear = () => {
       document.body.classList.remove("print-client", "print-file");
+      for (const d of opened) d.open = false;
       window.removeEventListener("afterprint", clear);
     };
     window.addEventListener("afterprint", clear);
