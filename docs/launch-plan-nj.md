@@ -1,8 +1,18 @@
-# Launch plan: New Jersey, plan year 2027
+# Launch plan: New Jersey
 
-Written 10 August 2026. Launch means real prospects filling the survey at
-beforewequote.com and real agent meetings running on the output, through open
-enrolment, 1 November 2026 to 31 January 2027 on GetCoveredNJ.
+Written 10 August 2026, corrected the same day by Jon: launch does not wait
+for open enrolment. Special enrolment runs year round, job loss, marriage,
+divorce, birth, moves, aging off a parent's plan, each opening a 60 day
+window, and the engine was built for it: the life events section exists for
+exactly this, the conversion flags the special enrolment window and whether
+it is still open, and pricing already scales to months of coverage
+remaining. A special enrolment client today buys a 2026 plan, which is
+precisely the data on disk and verified.
+
+So launch means real special-enrolment prospects at beforewequote.com as
+soon as the gates below clear, with the steady trickle of special enrolment
+serving as a natural soft launch months before the open enrolment flood,
+1 November 2026 to 31 January 2027 on GetCoveredNJ.
 
 Explicitly out of scope here, at Jon's direction: the validation sessions with
 Mike. They are tracked in [mike-session-runbook.md](mike-session-runbook.md)
@@ -63,10 +73,11 @@ scope. Also decide perceived_spend (read into the household, used nowhere)
 and confirm visits_primary stays, since it starts mattering the moment copays
 land in the cost model.
 
-## Gate 4: plan year 2027 data. External, September to October
+## Gate 4: plan year 2027 data. Gates the open enrolment season, not launch
 
-Everything on disk is plan year 2026. Open enrolment sells 2027 plans. The
-NJ SBE publishes 2027 filings in the fall; when they drop:
+Everything on disk is plan year 2026, which is correct for every special
+enrolment sale through 31 December. The 2027 filings gate only the open
+enrolment season. The NJ SBE publishes them in the fall; when they drop:
 
 - Refresh the dataset, rebuild, and re-run the full verification suite:
   question-value, sensitivity, the dental audit (county limits and the
@@ -91,14 +102,24 @@ NJ SBE publishes 2027 filings in the fall; when they drop:
   ready for per-agent subdomains. enrollasst.com stays parked until the
   broker site exists.
 
-## Working back from 1 November
+## The two clocks
 
-- Now to September: server build, questionnaire decisions, rebrand applied
-  as design delivers.
-- September to mid-October: 2027 data lands, refresh and re-verify;
-  device, accessibility and paper passes; legal wrap.
-- Mid-October: freeze. No risky changes after; open enrolment seasonality is
-  doctrine, near-all volume lands in the window.
-- 1 November: live, with the validation sessions long since done, because a
-  launch-ready product running an unvalidated engine is a fast way to be
-  confidently wrong at scale.
+Special enrolment launch, gated by Gates 1 to 3 plus legal, not by the
+calendar:
+
+- Server build, questionnaire decisions, rebrand applied as design delivers,
+  legal wrap in parallel. Live on special enrolment traffic the moment they
+  clear. Low steady volume, every case watchable, the 60 day window making
+  the product's speed argument for it.
+
+Open enrolment readiness, gated additionally by Gate 4:
+
+- Fall: 2027 filings land, refresh and re-verify everything, including the
+  dental facts and the embedded pediatric dental count.
+- Mid-October: freeze. No risky changes after; near-all annual volume lands
+  between 1 November and 31 January.
+
+The validation sessions with Mike sit before both clocks, because a
+launch-ready product running an unvalidated engine is a fast way to be
+confidently wrong at scale. Special enrolment's trickle is also the natural
+place for that validation to happen on real cases.
