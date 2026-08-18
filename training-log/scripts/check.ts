@@ -2,12 +2,12 @@
 // artifact importer and CSV export. Run with npm run check.
 import assert from 'node:assert/strict'
 import { LIBRARY, MUSCLE_GROUPS, lookupType } from '../lib/exercises'
-import { SPLITS, dayItems } from '../lib/templates'
+import { SPLITS, dayItems, dayNames } from '../lib/templates'
 import { coach, roundLoad } from '../lib/coach'
 import { fmtSet, fmtTime, parseClock, topSet } from '../lib/format'
 import { importArtifactData, parseSetString } from '../lib/importer'
 import { toCsv } from '../lib/csv'
-import { buildDay, dayById, experienceScore, firstMonth, level, planFor } from '../lib/onboarding'
+import { buildDay, dayById, experienceScore, level, needsCheckin, planFor } from '../lib/onboarding'
 import { equipmentOf } from '../lib/exercises'
 import {
   beatsLast, bestsFor, e1rm, LADDERS, lifetime, nextLandmark, prsFor, trainingGrid, volumePr,
@@ -52,11 +52,40 @@ check('his splits carry the core circuit and no barbell squat or deadlift', () =
   for (const id of ['summer4', 'five']) {
     const split = SPLITS.find((s) => s.id === id)!
     for (const day of split.days) {
-      assert.ok(day.exercises.includes('Plank'), `${day.name} has no core circuit`)
-      assert.ok(day.exercises.includes('Hanging Leg Raise'), `${day.name} has no core circuit`)
-      for (const bad of banned) assert.ok(!day.exercises.includes(bad), `${day.name} has ${bad}`)
+      const names = dayNames(day)
+      assert.ok(names.includes('Plank'), `${day.name} has no core circuit`)
+      assert.ok(names.includes('Hanging Leg Raise'), `${day.name} has no core circuit`)
+      for (const bad of banned) assert.ok(!names.includes(bad), `${day.name} has ${bad}`)
     }
   }
+})
+
+check('the core circuit is one superset in his template days', () => {
+  for (const id of ['summer4', 'five']) {
+    const split = SPLITS.find((s) => s.id === id)!
+    for (const day of split.days) {
+      const items = dayItems(day)
+      const circuit = items.filter((i) => i.superset)
+      assert.equal(circuit.length, 4, `${day.name} circuit is ${circuit.length} movements`)
+      assert.equal(new Set(circuit.map((i) => i.superset)).size, 1, `${day.name} circuit split across tags`)
+      const tail = items.slice(-4)
+      assert.ok(tail.every((i) => i.superset), `${day.name} circuit is not at the end`)
+    }
+  }
+  // days without a circuit stay untagged
+  const bro = dayItems(dayById('bro-chest')!)
+  assert.ok(bro.every((i) => !i.superset))
+})
+
+check('a swap inside the circuit keeps the superset tag', () => {
+  // Ab Wheel Rollout swaps for a wrist, Cable Crunch for nothing here; use a
+  // fake day so the swap machinery is exercised inside a tagged group.
+  const day = { id: 'fake', name: 'Fake', exercises: [['Back Squat', 'Cable Curl']] as (string | string[])[] }
+  const items = buildDay(day as never, { sore: ['Knee'] })
+  assert.equal(items.length, 2)
+  assert.ok(items.every((i) => i.superset === items[0].superset && i.superset), 'tag lost in the swap')
+  assert.equal(items[0].name, 'Leg Press')
+  assert.equal(items[0].swappedFrom, 'Back Squat')
 })
 
 check('coach reacts to RPE against the goal', () => {
@@ -213,10 +242,26 @@ check('bodyweight only leaves nothing that needs a rack', () => {
   }
 })
 
-check('a shorter session means fewer movements', () => {
+check('a shorter session means fewer movements, and the cap never splits the circuit', () => {
   const day = dayById('five-chest')!
-  assert.equal(buildDay(day, { minutes: 30 }).length, 4)
-  assert.equal(buildDay(day, { minutes: 45 }).length, 6)
+
+  // 60 minutes: whole circuit plus four mains, never an orphaned circuit member
+  const hour = buildDay(day, { minutes: 60 })
+  assert.equal(hour.length, 8)
+  const circuit = hour.filter((i) => i.superset)
+  assert.equal(circuit.length, 4, `circuit arrived as ${circuit.length} of 4`)
+  assert.equal(hour[0].name, 'Incline Dumbbell Press', 'the first main survives the cap')
+
+  // 30 minutes: no room to keep the circuit whole, so it goes entirely
+  const half = buildDay(day, { minutes: 30 })
+  assert.equal(half.length, 4)
+  assert.ok(half.every((i) => !i.superset), 'a partial circuit leaked into the short session')
+
+  // 45 minutes: circuit (4) fits within cap 6 minus the two reserved mains
+  const mid = buildDay(day, { minutes: 45 })
+  assert.equal(mid.length, 6)
+  assert.equal(mid.filter((i) => i.superset).length, 4)
+
   assert.ok(buildDay(day, { minutes: 75 }).length >= 8)
 })
 
@@ -225,19 +270,23 @@ check('dislikes are never suggested', () => {
   assert.ok(!items.some((i) => i.name === 'Back Squat' || i.name === 'Plank'))
 })
 
-check('first 28 days counts distinct training days', () => {
-  assert.equal(firstMonth([]), null)
-  const start = new Date()
-  start.setDate(start.getDate() - 30)
-  const iso = (d: Date) => d.toISOString().slice(0, 10)
-  const day = (n: number) => {
-    const d = new Date(start)
-    d.setDate(d.getDate() + n)
-    return iso(d)
-  }
-  const month = firstMonth([day(0), day(2), day(2), day(9), day(29)])!
-  assert.equal(month.days, 3, 'day 29 should fall outside the window and the repeat should count once')
-  assert.ok(month.elapsed >= 28)
+check('the check-in fires once, on a rolling window, and an answer sticks', () => {
+  const today = '2026-08-18'
+  // not before four weeks have passed since onboarding
+  assert.equal(needsCheckin({ days: 4 }, '2026-08-01T00:00:00Z', 2, today), false)
+  // after four weeks, low recent attendance fires it
+  assert.equal(needsCheckin({ days: 4 }, '2026-07-01T00:00:00Z', 5, today), true)
+  // a strong recent month clears a weak start
+  assert.equal(needsCheckin({ days: 4 }, '2026-07-01T00:00:00Z', 12, today), false)
+  // an answer, either way, is final
+  assert.equal(
+    needsCheckin({ days: 4, checkinDismissedAt: '2026-08-01T00:00:00Z' }, '2026-07-01T00:00:00Z', 2, today),
+    false,
+  )
+  // a two day plan is never nagged toward two days
+  assert.equal(needsCheckin({ days: 2 }, '2026-07-01T00:00:00Z', 2, today), false)
+  // never onboarded, never nagged
+  assert.equal(needsCheckin({ days: 4 }, null, 0, today), false)
 })
 
 const HISTORY: Workout[] = [

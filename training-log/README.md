@@ -62,9 +62,16 @@ Postgres wants uuids and the artifact did not use them.
 
 ## Writes
 
-Edits land in React state immediately and reach Postgres 700ms later, so typing a
-set never waits on the network. A workout saves whole: upsert the workout row,
-replace its exercises and sets. Pending writes flush when the tab is hidden.
+Edits land in React state immediately and reach Postgres a beat later, so typing
+a set never waits on the network. A workout saves whole in one save_workout call.
+
+A failed save is never dropped. The queue holds it, retries with backoff, and
+flushes again the moment the connection returns. Everything unsaved is also
+mirrored to the device, keyed per user and per tab, so a tab that dies offline
+replays its work on the next open. Deletes ride the same queue. A dead
+connection gets a reassuring banner; a real rejection shows its message. What
+does not exist yet is offline boot: reloading with no network still cannot
+load the app itself.
 
 ## Checks
 
@@ -82,8 +89,9 @@ week.
 
 Tier 2 questions arrive later, in context: how long you have got at the first
 session start, sore joints on a visit after a session is behind you, everything
-else in Settings. Four weeks in, the app compares the days you said against the
-days you logged and offers a shorter plan.
+else in Settings. Four weeks in, if the last four weeks ran thin, the app offers
+the shorter plan exactly once: either answer is final, and the sore joints
+question is a quiet card on the log tab rather than anything that blocks a tap.
 
 `docs/onboarding-research.md` is the evidence and the tables.
 `docs/onboarding-prototype.html` is the clickable version of every screen.
@@ -107,16 +115,15 @@ target, which is the only number here that tells you what to do differently.
 
 ## Order
 
-Every generated session comes out hardest first: multi joint before single joint,
-big muscle before small, and heavier before lighter judged on this person's own
-logged numbers rather than a guess about what counts as heavy. The reason is that
-the hardest thing in a session should meet you fresh rather than after twenty sets
-of arms, which is the sequencing rule in ACSM's progression stand.
+Sessions generated from the plan come out hardest first: multi joint before
+single joint, big muscle before small, and heavier before lighter judged on this
+person's own logged numbers. A day picked by name from the templates, or built by
+hand, keeps the order it was written in: ordering with intent is not a mistake to
+correct, so the app neither re-sorts it nor offers to.
 
-Arrows on each exercise move it by hand, and a superset moves as one thing. Among
-movements that rank equally the order you chose stands, and it survives a re-sort.
-Push something genuinely out of order, a leg press below a leg extension, and the
-session offers to put the hardest back at the front.
+Arrows on each exercise move it by hand, and a superset moves as one thing. On
+generated sessions only, pushing something genuinely out of order surfaces an
+offer to put the hardest back at the front.
 
 ## Progression charts
 
@@ -133,12 +140,16 @@ actually tracks without asking which they are.
 
 ## Supersets
 
-The picker carries a Superset toggle. Turn it on and everything you pick joins
-the same group until you turn it off, so two taps and two movements is a
-superset. They render as one block, labelled A1 and A2, and the rest timer waits
-for the last movement in the group rather than firing between them, which is the
-only thing about a superset the app actually has to understand. Unlink puts them
-back to ordinary exercises.
+The picker and the workout builder both carry a Superset toggle. Turn it on and
+everything you pick joins the same group until you turn it off, so two taps and
+two movements is a superset. Saved workouts keep their groups. Templates can
+carry them too: the core circuit in the summer and five day splits is one, and
+the session time cap treats a group as atomic, whole or absent, never sliced.
+In a session, a Link button between any two neighbouring blocks joins them, and
+Unlink puts them back. Supersets render as one block, labelled A1 and A2, and
+the rest timer waits for the last movement in the group rather than firing
+between them, which is the only thing about a superset the app actually has to
+understand.
 
 A superset is a tag shared by consecutive exercises, not a table. Order on screen
 is the order they run in, so the same tag either side of a gap is two supersets,

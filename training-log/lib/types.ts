@@ -50,6 +50,8 @@ export interface CustomExercise {
 export interface CustomWorkoutItem {
   name: string
   type: SetType
+  // Items sharing a tag run together as a superset when the workout starts.
+  superset?: string | null
 }
 
 export interface CustomWorkout {

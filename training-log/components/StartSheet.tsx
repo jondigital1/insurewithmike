@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { SPLITS, dayItems } from '@/lib/templates'
+import { SPLITS, dayItems, dayNames } from '@/lib/templates'
 import { buildDay, dayById, type Plan, type Profile } from '@/lib/onboarding'
 import Sheet from './Sheet'
 import type { CustomWorkout, CustomWorkoutItem } from '@/lib/types'
@@ -18,7 +18,7 @@ export default function StartSheet({
   plan: Plan | null
   profile: Profile
   customWorkouts: CustomWorkout[]
-  onStart: (title: string, items: CustomWorkoutItem[]) => void
+  onStart: (title: string, items: CustomWorkoutItem[], sort?: boolean, dayId?: string) => void
   onBuild: () => void
   onDelete: (id: string) => void
   onClose: () => void
@@ -45,7 +45,7 @@ export default function StartSheet({
             {planDays.map((day, i) => (
               <button
                 key={day!.id}
-                onClick={() => onStart(day!.name, buildDay(day!, profile))}
+                onClick={() => onStart(day!.name, buildDay(day!, profile), true, day!.id)}
                 className="flex items-center justify-between rounded-xl bg-ink px-3 py-3 text-left ring-1 ring-edge"
               >
                 <span className="text-sm">{day!.name}</span>
@@ -118,7 +118,7 @@ export default function StartSheet({
                     >
                       <span className="text-sm text-bright">{day.name}</span>
                       <span className="truncate pl-3 text-xs text-muted">
-                        {day.exercises.slice(0, 2).join(', ')}
+                        {dayNames(day).slice(0, 2).join(', ')}
                       </span>
                     </button>
                   ))}

@@ -1,10 +1,14 @@
 import { lookupType } from './exercises'
 import type { CustomWorkoutItem } from './types'
 
+// A day is a list of entries. A plain string is one movement; a nested array is
+// a superset, the movements run together with no rest between them.
+export type TemplateEntry = string | string[]
+
 export interface TemplateDay {
   id: string
   name: string
-  exercises: string[]
+  exercises: TemplateEntry[]
 }
 
 export interface TemplateSplit {
@@ -14,8 +18,9 @@ export interface TemplateSplit {
   days: TemplateDay[]
 }
 
-// Baked into every day of the summer and five day splits.
-const CORE = ['Hanging Leg Raise', 'Cable Crunch', 'Pallof Press', 'Plank']
+// Baked into every day of the summer and five day splits. It is a circuit by
+// name, so it is a superset by structure: straight through, then rest.
+const CORE: TemplateEntry = ['Hanging Leg Raise', 'Cable Crunch', 'Pallof Press', 'Plank']
 
 // Knee note: the summer and five day splits carry no barbell back squat and no
 // heavy hinge. Quad and hamstring work runs through machines and split stance.
@@ -36,7 +41,7 @@ export const SPLITS: TemplateSplit[] = [
           'Lateral Raise',
           'Rope Pushdown',
           'Overhead Cable Extension',
-          ...CORE,
+          CORE,
         ],
       },
       {
@@ -50,7 +55,7 @@ export const SPLITS: TemplateSplit[] = [
           'Face Pull',
           'Incline Dumbbell Curl',
           'Hammer Curl',
-          ...CORE,
+          CORE,
         ],
       },
       {
@@ -63,7 +68,7 @@ export const SPLITS: TemplateSplit[] = [
           'Bulgarian Split Squat',
           'Hip Thrust',
           'Standing Calf Raise',
-          ...CORE,
+          CORE,
         ],
       },
       {
@@ -77,7 +82,7 @@ export const SPLITS: TemplateSplit[] = [
           'Reverse Pec Deck',
           'Cable Curl',
           'Triceps Pushdown',
-          ...CORE,
+          CORE,
         ],
       },
     ],
@@ -98,7 +103,7 @@ export const SPLITS: TemplateSplit[] = [
           'Weighted Dip',
           'Rope Pushdown',
           'Skull Crusher',
-          ...CORE,
+          CORE,
         ],
       },
       {
@@ -112,7 +117,7 @@ export const SPLITS: TemplateSplit[] = [
           'Straight Arm Pulldown',
           'Incline Dumbbell Curl',
           'Cable Curl',
-          ...CORE,
+          CORE,
         ],
       },
       {
@@ -125,7 +130,7 @@ export const SPLITS: TemplateSplit[] = [
           'Bulgarian Split Squat',
           'Hip Thrust',
           'Seated Calf Raise',
-          ...CORE,
+          CORE,
         ],
       },
       {
@@ -139,7 +144,7 @@ export const SPLITS: TemplateSplit[] = [
           'Face Pull',
           'Hammer Curl',
           'Overhead Cable Extension',
-          ...CORE,
+          CORE,
         ],
       },
       {
@@ -153,7 +158,7 @@ export const SPLITS: TemplateSplit[] = [
           'Machine Row',
           'Preacher Curl',
           'V Bar Pushdown',
-          ...CORE,
+          CORE,
         ],
       },
     ],
@@ -369,5 +374,18 @@ export const SPLITS: TemplateSplit[] = [
 ]
 
 export function dayItems(day: TemplateDay): CustomWorkoutItem[] {
-  return day.exercises.map((name) => ({ name, type: lookupType(name) ?? 'W' }))
+  const out: CustomWorkoutItem[] = []
+  day.exercises.forEach((entry, i) => {
+    if (typeof entry === 'string') {
+      out.push({ name: entry, type: lookupType(entry) ?? 'W', superset: null })
+      return
+    }
+    const tag = `${day.id}-ss${i}`
+    for (const name of entry) out.push({ name, type: lookupType(name) ?? 'W', superset: tag })
+  })
+  return out
+}
+
+export function dayNames(day: TemplateDay): string[] {
+  return day.exercises.flat()
 }

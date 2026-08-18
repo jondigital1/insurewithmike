@@ -114,6 +114,7 @@ export function importArtifactData(input: unknown): TrainingData {
         id: uid(),
         name,
         type,
+        superset: typeof ex.superset === 'string' ? ex.superset : null,
         sets: (ex.sets ?? []).map((s: unknown) => coerceSet(s, type)),
       }
     })
@@ -137,7 +138,11 @@ export function importArtifactData(input: unknown): TrainingData {
       if (typeof item === 'string') return { name: item, type: lookupType(item) ?? 'W' }
       const obj = item as Record<string, any>
       const name = String(obj.name ?? '')
-      return { name, type: coerceType(obj.type, name) }
+      return {
+        name,
+        type: coerceType(obj.type, name),
+        superset: typeof obj.superset === 'string' ? obj.superset : null,
+      }
     }),
   }))
 

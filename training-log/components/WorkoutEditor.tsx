@@ -1,10 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { fmtDate, workoutVolume } from '@/lib/format'
+import { fmtDate, workoutVolume, uid } from '@/lib/format'
 import ExerciseBlock, { type LastSession } from './ExerciseBlock'
 import type { Bests } from '@/lib/gamify'
-import { groupRuns, isSuperset, supersetLetter, supersetRest } from '@/lib/superset'
+import { groupRuns, isSuperset, supersetLetter, supersetRest, type Run } from '@/lib/superset'
 import { hardestFirst, isHardestFirst, moveRun } from '@/lib/order'
 import type { Exercise, Goal, Workout } from '@/lib/types'
 
@@ -24,6 +24,7 @@ export default function WorkoutEditor({
   live,
   onRest,
   loads,
+  offerSort = false,
   onChange,
   onDelete,
   onAddExercise,
@@ -38,6 +39,7 @@ export default function WorkoutEditor({
   live: boolean
   onRest: (exerciseId: string, name: string, seconds: number) => void
   loads: Map<string, number>
+  offerSort?: boolean
   onChange: (next: Workout) => void
   onDelete: () => void
   onAddExercise: () => void
@@ -57,7 +59,7 @@ export default function WorkoutEditor({
   }
 
   const volume = workoutVolume(workout)
-  const sorted = isHardestFirst(workout.exercises, loads)
+  const sorted = !offerSort || isHardestFirst(workout.exercises, loads)
 
   const move = (exerciseId: string, direction: -1 | 1) =>
     onChange({ ...workout, exercises: moveRun(workout.exercises, exerciseId, direction) })
@@ -112,7 +114,24 @@ export default function WorkoutEditor({
         />
       ) : null}
 
-      {groupRuns(workout.exercises).map((run) => {
+      {(() => {
+        const runs = groupRuns(workout.exercises)
+
+        // Joining two neighbouring runs into one superset. Everything in both
+        // runs takes a fresh shared tag, so linking a pair, or a single onto an
+        // existing superset, is the same one tap.
+        const link = (a: Run, b: Run) => {
+          const tag = uid()
+          const joined = new Set([...a.exercises, ...b.exercises].map((e) => e.id))
+          onChange({
+            ...workout,
+            exercises: workout.exercises.map((e) =>
+              joined.has(e.id) ? { ...e, superset: tag } : e,
+            ),
+          })
+        }
+
+        return runs.map((run, runIndex) => {
         const block = (exercise: Exercise, label?: string, extra?: Partial<BlockExtras>) => (
           <ExerciseBlock
             key={exercise.id}
@@ -175,7 +194,21 @@ export default function WorkoutEditor({
             </p>
           </div>
         )
-      })}
+        }).flatMap((node, runIndex) => {
+          if (runIndex === runs.length - 1) return [node]
+          return [
+            node,
+            <div key={`link-${runs[runIndex].exercises[0].id}`} className="-my-1.5 flex justify-center">
+              <button
+                onClick={() => link(runs[runIndex], runs[runIndex + 1])}
+                className="rounded-full bg-card px-3 py-0.5 text-xs text-muted ring-1 ring-edge"
+              >
+                Link
+              </button>
+            </div>,
+          ]
+        })
+      })()}
 
       <button
         onClick={onAddExercise}

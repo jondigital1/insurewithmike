@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from 'react'
 import { LIBRARY, MUSCLE_GROUPS } from '@/lib/exercises'
+import { uid } from '@/lib/format'
+import { supersetLetter } from '@/lib/superset'
 import Sheet from './Sheet'
 import type { CustomExercise, CustomWorkoutItem } from '@/lib/types'
 
@@ -18,6 +20,9 @@ export default function CustomBuilder({
   const [query, setQuery] = useState('')
   const [group, setGroup] = useState<string | null>(null)
   const [picked, setPicked] = useState<CustomWorkoutItem[]>([])
+  // While on, everything picked joins the same superset, exactly like the
+  // picker in a live session. Off and on again starts a new group.
+  const [superset, setSuperset] = useState<string | null>(null)
 
   const all = useMemo(
     () => [...customs.map((c) => ({ name: c.name, type: c.type, group: 'My exercises' })), ...LIBRARY],
@@ -37,8 +42,16 @@ export default function CustomBuilder({
     setPicked((prev) =>
       prev.some((p) => p.name === item.name)
         ? prev.filter((p) => p.name !== item.name)
-        : [...prev, { name: item.name, type: item.type }],
+        : [...prev, { name: item.name, type: item.type, superset }],
     )
+  }
+
+  // Letters for display: first superset A, second B, in order of appearance.
+  const letters = new Map<string, string>()
+  for (const p of picked) {
+    if (p.superset && !letters.has(p.superset)) {
+      letters.set(p.superset, supersetLetter(letters.size))
+    }
   }
 
   const groups = customs.length ? ['My exercises', ...MUSCLE_GROUPS] : MUSCLE_GROUPS
@@ -74,6 +87,18 @@ export default function CustomBuilder({
         className="mt-3 w-full rounded-xl bg-ink px-4 py-3 text-base outline-none ring-1 ring-edge focus:ring-accent"
       />
 
+      <button
+        onClick={() => setSuperset(superset ? null : uid())}
+        className={`mt-3 flex w-full items-center justify-between rounded-xl px-4 py-3 text-left ring-1 ${
+          superset ? 'bg-accent text-ink ring-accent' : 'bg-ink ring-edge'
+        }`}
+      >
+        <span className="text-sm">Superset</span>
+        <span className={`text-xs ${superset ? 'text-ink' : 'text-muted'}`}>
+          {superset ? 'everything picked now runs together' : 'off'}
+        </span>
+      </button>
+
       {picked.length ? (
         <div className="mt-3 flex flex-wrap gap-2">
           {picked.map((p) => (
@@ -82,6 +107,7 @@ export default function CustomBuilder({
               onClick={() => toggle(p)}
               className="rounded-full bg-accent px-3 py-1 text-xs text-ink"
             >
+              {p.superset ? `${letters.get(p.superset)} · ` : ''}
               {p.name} &times;
             </button>
           ))}

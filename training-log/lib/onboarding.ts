@@ -1,5 +1,5 @@
 import { LIBRARY, equipmentOf, groupOf, lookupType } from './exercises'
-import { SPLITS, type TemplateDay } from './templates'
+import { dayItems, SPLITS, type TemplateDay } from './templates'
 import type { CustomWorkoutItem, Goal, SetType } from './types'
 
 // Everything the first run asks, plus the questions that arrive later in
@@ -21,6 +21,9 @@ export interface Profile {
   goalChoice?: 'muscle' | 'strength' | 'lean' | 'health'
   wave?: boolean
   waveStart?: string
+  // When the four week check-in was answered, either way. Once set it never
+  // shows again: answered is answered.
+  checkinDismissedAt?: string
 }
 
 export const SORE_JOINTS = ['Knee', 'Low back', 'Shoulder', 'Hip', 'Elbow', 'Neck', 'Wrist']
@@ -217,20 +220,60 @@ export function buildDay(day: TemplateDay, profile: Profile): PlannedItem[] {
   const used = new Set<string>()
   const out: PlannedItem[] = []
 
-  for (const name of day.exercises) {
-    if (allowed(profile, name, bans)) {
-      used.add(name)
-      out.push({ name, type: (lookupType(name) ?? 'W') as SetType })
+  // A swap keeps the superset tag: the pattern stays in the circuit even when
+  // the movement changes.
+  for (const item of dayItems(day)) {
+    if (allowed(profile, item.name, bans)) {
+      used.add(item.name)
+      out.push({ name: item.name, type: item.type, superset: item.superset ?? null })
       continue
     }
-    const swap = alternative(name, profile, bans, used)
+    const swap = alternative(item.name, profile, bans, used)
     if (!swap) continue
     used.add(swap)
-    out.push({ name: swap, type: (lookupType(swap) ?? 'W') as SetType, swappedFrom: name })
+    out.push({
+      name: swap,
+      type: (lookupType(swap) ?? 'W') as SetType,
+      superset: item.superset ?? null,
+      swappedFrom: item.name,
+    })
   }
 
   const cap = BUDGET[profile.minutes ?? 60] ?? 8
-  return out.slice(0, cap)
+  if (out.length <= cap) return out
+
+  // The cap never slices through a superset: half a circuit is not a circuit.
+  // Tagged groups are kept whole while at least two other movements still fit,
+  // otherwise the whole group is dropped and singles fill the day.
+  const groups = new Map<string, PlannedItem[]>()
+  for (const item of out) {
+    if (!item.superset) continue
+    if (!groups.has(item.superset)) groups.set(item.superset, [])
+    groups.get(item.superset)!.push(item)
+  }
+
+  const kept = new Set<string>()
+  let reserved = 0
+  for (const [tag, members] of groups) {
+    if (reserved + members.length <= cap - 2) {
+      kept.add(tag)
+      reserved += members.length
+    }
+  }
+
+  const trimmed: PlannedItem[] = []
+  let singles = 0
+  for (const item of out) {
+    if (item.superset) {
+      if (kept.has(item.superset)) trimmed.push(item)
+      continue
+    }
+    if (singles < cap - reserved) {
+      trimmed.push(item)
+      singles += 1
+    }
+  }
+  return trimmed
 }
 
 export interface Plan {
@@ -273,19 +316,19 @@ export function showRpe(profile: Profile, onboarded: boolean): boolean {
   return planFor(profile, 'muscle').showRpe
 }
 
-// Distinct days trained in the first 28, the strongest adherence signal there
-// is, and the only thing worth acting on at the four week mark.
-export function firstMonth(dates: string[]): { days: number; elapsed: number } | null {
-  if (!dates.length) return null
-  const sorted = [...new Set(dates)].sort()
-  const start = new Date(sorted[0] + 'T00:00:00')
-  const end = new Date(start)
-  end.setDate(end.getDate() + 28)
-  const now = new Date()
-  const elapsed = Math.floor((now.getTime() - start.getTime()) / 86400000)
-  const within = sorted.filter((d) => {
-    const t = new Date(d + 'T00:00:00')
-    return t >= start && t < end
-  })
-  return { days: within.length, elapsed }
+// The four week check-in, on a rolling window rather than the first month
+// ever, so imported history cannot trigger it and a strong recent month
+// clears a weak start. trainedLast28 is distinct training days in the last 28.
+// It fires at most once: answering it, either way, stamps the profile.
+export function needsCheckin(
+  profile: Profile,
+  onboardedAt: string | null,
+  trainedLast28: number,
+  today: string,
+): boolean {
+  if (!onboardedAt || profile.checkinDismissedAt) return false
+  if ((profile.days ?? 3) < 3) return false
+  const elapsed = new Date(today + 'T00:00:00').getTime() - new Date(onboardedAt).getTime()
+  if (elapsed < 28 * 86400000) return false
+  return trainedLast28 < 8
 }

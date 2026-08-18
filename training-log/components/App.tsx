@@ -16,9 +16,9 @@ import SettingsSheet from './SettingsSheet'
 import StartSheet from './StartSheet'
 import WorkoutEditor from './WorkoutEditor'
 import type { LastSession } from './ExerciseBlock'
-import { buildDay, dayById, firstMonth, planFor, type Profile } from '@/lib/onboarding'
+import { buildDay, dayById, needsCheckin, planFor, type Profile } from '@/lib/onboarding'
 import { isEmptySet } from '@/lib/format'
-import { bestsFor as computeBests } from '@/lib/gamify'
+import { bestsFor as computeBests, trainingGrid } from '@/lib/gamify'
 import { waveWeek } from '@/lib/wave'
 import { hardestFirst, topLoads } from '@/lib/order'
 import {
@@ -33,6 +33,51 @@ import {
 
 type SheetName = 'start' | 'picker' | 'builder' | 'settings' | 'profile' | null
 
+// Supabase throws plain objects as often as Error instances, and an unreadable
+// failure would misclassify a dead connection as a real rejection.
+function errText(e: unknown): string {
+  if (e instanceof Error) return e.message
+  if (e && typeof e === 'object' && 'message' in e) return String((e as { message: unknown }).message)
+  return String(e)
+}
+
+// Unsaved work mirrored to this device, replayed on the next open. Keyed per
+// user and per tab, so two open tabs cannot clobber each other's queue and one
+// account's unsaved work never touches another's.
+const MIRROR_PREFIX = 'training-log-unsaved-v1:'
+
+interface MirrorShape {
+  workouts?: Workout[]
+  deletes?: string[]
+}
+
+function tabId(): string {
+  try {
+    let id = sessionStorage.getItem('training-log-tab')
+    if (!id) {
+      id = Math.random().toString(36).slice(2)
+      sessionStorage.setItem('training-log-tab', id)
+    }
+    return id
+  } catch {
+    return 'tab'
+  }
+}
+
+// A mirror entry that does not look like a workout is dropped rather than
+// replayed: a malformed entry merged into state would crash every load after.
+function validWorkout(w: unknown): w is Workout {
+  const x = w as Workout
+  return (
+    !!x &&
+    typeof x.id === 'string' &&
+    typeof x.date === 'string' &&
+    typeof x.title === 'string' &&
+    Array.isArray(x.exercises) &&
+    x.exercises.every((e) => e && typeof e.name === 'string' && Array.isArray(e.sets))
+  )
+}
+
 export default function App({ userId, email }: { userId: string; email: string }) {
   const sb = useMemo(() => supabaseBrowser(), [])
   const [data, setData] = useState<TrainingData>(EMPTY_DATA)
@@ -43,42 +88,121 @@ export default function App({ userId, email }: { userId: string; email: string }
   const [pickerTarget, setPickerTarget] = useState<string | null>(null)
   const [openHistory, setOpenHistory] = useState<string | null>(null)
   const [profileFocus, setProfileFocus] = useState<'minutes' | 'sore' | 'all'>('all')
-  const [pendingStart, setPendingStart] = useState<{ title: string; items: CustomWorkoutItem[] } | null>(null)
-  const [askedSore, setAskedSore] = useState(false)
-  const [dismissedCheckin, setDismissedCheckin] = useState(false)
+  const [pendingStart, setPendingStart] = useState<{
+    title: string
+    items: CustomWorkoutItem[]
+    sort: boolean
+    dayId?: string
+  } | null>(null)
   const rest = useRest()
 
   const pending = useRef(new Map<string, Workout>())
+  const deletes = useRef(new Set<string>())
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const retryDelay = useRef(0)
+  const flushing = useRef(false)
+  // Sessions this visit generated from the plan. Only those get order advice:
+  // a day the user wrote or picked deliberately is their business.
+  const generated = useRef(new Set<string>())
   const latest = useRef<TrainingData>(data)
   latest.current = data
+  const mirrorKey = useRef(`${MIRROR_PREFIX}${userId}:${tabId()}`)
   // True only if onboarding was already done when the app opened, so the tier 2
   // prompts wait for a later visit rather than stacking on the first one.
   const returning = useRef(false)
 
+  // Everything not yet in Postgres is mirrored to this device, so a tab that
+  // dies offline replays its unsaved work on the next open.
+  const syncMirror = useCallback(() => {
+    try {
+      if (pending.current.size === 0 && deletes.current.size === 0) {
+        localStorage.removeItem(mirrorKey.current)
+      } else {
+        localStorage.setItem(
+          mirrorKey.current,
+          JSON.stringify({
+            workouts: [...pending.current.values()],
+            deletes: [...deletes.current],
+          }),
+        )
+      }
+    } catch {
+      // no localStorage means no mirror, the queue and retries still run
+    }
+  }, [])
+
+  // A failed save stays in the queue and retries with backoff. Nothing typed is
+  // ever dropped: it either reaches Postgres or waits, mirrored, until it can.
   const flush = useCallback(async () => {
-    const queue = [...pending.current.values()]
-    pending.current.clear()
-    for (const workout of queue) {
+    if (flushing.current) return
+    flushing.current = true
+    let failed = false
+    let failMsg = ''
+
+    for (const [id, workout] of [...pending.current.entries()]) {
       try {
         await db.saveWorkout(sb, userId, workout)
+        // Only clear the slot if nothing newer arrived while this was in flight.
+        if (pending.current.get(id) === workout) pending.current.delete(id)
       } catch (e) {
-        setError(e instanceof Error ? e.message : 'Save failed')
-        return
+        failed = true
+        failMsg = errText(e)
+        break
       }
     }
-    setError('')
-  }, [sb, userId])
+
+    if (!failed) {
+      for (const id of [...deletes.current]) {
+        try {
+          await db.deleteWorkout(sb, id)
+          deletes.current.delete(id)
+        } catch (e) {
+          failed = true
+          failMsg = errText(e)
+          break
+        }
+      }
+    }
+
+    syncMirror()
+    flushing.current = false
+
+    if (failed) {
+      retryDelay.current = Math.min(Math.max(retryDelay.current * 2, 2000), 30000)
+      // A dead connection gets reassurance; a real rejection gets its message.
+      // Either way the queue holds the work and keeps retrying.
+      const offline =
+        (typeof navigator !== 'undefined' && !navigator.onLine) ||
+        /fetch|network|connection|load failed/i.test(failMsg)
+      setError(
+        offline
+          ? 'Offline. Your sets are safe on this phone and will save when the connection returns.'
+          : `Save failed: ${failMsg}. Your sets are held on this phone and retried.`,
+      )
+      if (timer.current) clearTimeout(timer.current)
+      timer.current = setTimeout(() => void flush(), retryDelay.current)
+    } else {
+      retryDelay.current = 0
+      setError('')
+      // Edits made while this flush was in flight are still queued: the guard
+      // turned their flush call away, so give them their own pass now.
+      if (pending.current.size || deletes.current.size) {
+        if (timer.current) clearTimeout(timer.current)
+        timer.current = setTimeout(() => void flush(), 100)
+      }
+    }
+  }, [sb, userId, syncMirror])
 
   // Every edit lands in state immediately and hits Postgres a beat later, so
   // typing a set never waits on the network.
   const queueSave = useCallback(
     (workout: Workout) => {
       pending.current.set(workout.id, workout)
+      syncMirror()
       if (timer.current) clearTimeout(timer.current)
       timer.current = setTimeout(() => void flush(), 400)
     },
-    [flush],
+    [flush, syncMirror],
   )
 
   useEffect(() => {
@@ -87,6 +211,47 @@ export default function App({ userId, email }: { userId: string; email: string }
       .then((loaded) => {
         if (!alive) return
         returning.current = loaded.settings.onboardedAt !== null
+
+        // A previous visit may have died with unsaved work. Every mirror this
+        // user left on this device, from any tab, is replayed: the mirror is
+        // by definition newer than the server for those workouts. Invalid
+        // entries are dropped rather than replayed, and consumed keys removed
+        // so a bad one cannot crash every load after.
+        try {
+          const prefix = `${MIRROR_PREFIX}${userId}:`
+          const keys: string[] = []
+          for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i)
+            if (key && key.startsWith(prefix)) keys.push(key)
+          }
+          for (const key of keys) {
+            try {
+              const saved = JSON.parse(localStorage.getItem(key) ?? 'null') as MirrorShape | null
+              for (const w of saved?.workouts ?? []) {
+                if (validWorkout(w)) pending.current.set(w.id, w)
+              }
+              for (const id of saved?.deletes ?? []) {
+                if (typeof id === 'string') deletes.current.add(id)
+              }
+            } catch {
+              // an unreadable mirror is treated as absent
+            }
+            if (key !== mirrorKey.current) localStorage.removeItem(key)
+          }
+          if (pending.current.size || deletes.current.size) {
+            const replaced = loaded.workouts
+              .filter((w) => !deletes.current.has(w.id))
+              .map((w) => pending.current.get(w.id) ?? w)
+            const known = new Set(replaced.map((w) => w.id))
+            const extra = [...pending.current.values()].filter((w) => !known.has(w.id))
+            loaded = { ...loaded, workouts: [...extra, ...replaced] }
+            syncMirror()
+            setTimeout(() => void flush(), 100)
+          }
+        } catch {
+          // no localStorage, no replay, the app still loads
+        }
+
         setData(loaded)
       })
       .catch((e) => setError(e instanceof Error ? e.message : 'Could not load'))
@@ -109,10 +274,12 @@ export default function App({ userId, email }: { userId: string; email: string }
     document.addEventListener('visibilitychange', onVisibility)
     document.addEventListener('focusout', onLeave)
     window.addEventListener('pagehide', onLeave)
+    window.addEventListener('online', onLeave)
     return () => {
       document.removeEventListener('visibilitychange', onVisibility)
       document.removeEventListener('focusout', onLeave)
       window.removeEventListener('pagehide', onLeave)
+      window.removeEventListener('online', onLeave)
       void flush()
     }
   }, [flush])
@@ -125,41 +292,53 @@ export default function App({ userId, email }: { userId: string; email: string }
     [queueSave],
   )
 
-  async function removeWorkout(id: string) {
+  function removeWorkout(id: string) {
     pending.current.delete(id)
+    deletes.current.add(id)
+    syncMirror()
     setData((prev) => ({ ...prev, workouts: prev.workouts.filter((w) => w.id !== id) }))
-    try {
-      await db.deleteWorkout(sb, id)
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Delete failed')
-    }
+    void flush()
   }
 
-  function startWorkout(title: string, items: CustomWorkoutItem[]) {
+  function startWorkout(title: string, items: CustomWorkoutItem[], sort = false, dayId?: string) {
     // The one tier 2 question worth asking up front, and only at the moment it
     // is a useful question about today rather than an obstacle at signup.
     if (data.settings.profile.minutes === undefined && items.length > 0) {
-      setPendingStart({ title, items })
+      setPendingStart({ title, items, sort, dayId })
       setProfileFocus('minutes')
       setSheet('profile')
       return
     }
-    reallyStart(title, items)
+    reallyStart(title, items, sort)
   }
 
-  function reallyStart(title: string, items: CustomWorkoutItem[]) {
-    // Hardest first, against this person's own numbers where there are any.
-    const exercises = hardestFirst(
-      items.map((item) => ({
-        id: uid(),
-        name: item.name,
-        type: item.type,
-        superset: null,
-        sets: [{ id: uid() }],
-      })),
-      topLoads(latest.current.workouts),
-    )
+  // The minutes answer has to shape the session it interrupted, so a plan day
+  // is rebuilt against the fresh profile rather than started from stale items.
+  function resumePendingStart(next: Profile) {
+    if (!pendingStart) return
+    const { title, items, sort, dayId } = pendingStart
+    setPendingStart(null)
+    const day = dayId ? dayById(dayId) : null
+    reallyStart(title, day ? buildDay(day, next) : items, sort)
+  }
+
+  function reallyStart(title: string, items: CustomWorkoutItem[], sort = false) {
+    // Superset tags flow straight through from templates and saved workouts.
+    let exercises: Workout['exercises'] = items.map((item) => ({
+      id: uid(),
+      name: item.name,
+      type: item.type,
+      superset: item.superset ?? null,
+      sets: [{ id: uid() }],
+    }))
+
+    // Hardest first applies only to sessions the app generated from the plan.
+    // A day the user wrote, or picked by name, keeps the order it was written
+    // in: ordering with intent is not a mistake to correct.
+    if (sort) exercises = hardestFirst(exercises, topLoads(latest.current.workouts))
+
     const workout: Workout = { id: uid(), date: today(), title, exercises }
+    if (sort) generated.current.add(workout.id)
     setData((prev) => ({ ...prev, workouts: [workout, ...prev.workouts] }))
     queueSave(workout)
     setSheet(null)
@@ -193,7 +372,7 @@ export default function App({ userId, email }: { userId: string; email: string }
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Could not save workout')
     }
-    startWorkout(name, items)
+    startWorkout(name, items, false)
   }
 
   async function removeCustomWorkout(id: string) {
@@ -225,7 +404,7 @@ export default function App({ userId, email }: { userId: string; email: string }
       setError(e instanceof Error ? e.message : 'Could not save your answers')
     }
     const day = startDayId ? dayById(startDayId) : null
-    if (day) reallyStart(day.name, buildDay(day, profile))
+    if (day) reallyStart(day.name, buildDay(day, profile), true)
   }
 
   async function setGoal(goal: Goal) {
@@ -289,13 +468,9 @@ export default function App({ userId, email }: { userId: string; email: string }
   )
   const wantsSore = hasTrained && returning.current && profile.sore === undefined
 
-  const month = firstMonth(data.workouts.map((w) => w.date))
+  const trainedLast28 = trainingGrid(data.workouts, now).filter((d) => d.trained).length
   const behind =
-    !dismissedCheckin &&
-    plan !== null &&
-    month !== null &&
-    month.elapsed >= 28 &&
-    month.days < Math.max(8, plan.days * 3)
+    plan !== null && needsCheckin(profile, data.settings.onboardedAt, trainedLast28, now)
 
   const ordered = data.workouts.slice().sort((a, b) => b.date.localeCompare(a.date))
   const todays = ordered.filter((w) => w.date === now)
@@ -337,32 +512,56 @@ export default function App({ userId, email }: { userId: string; email: string }
         <WaveCard week={wave} workouts={data.workouts} today={now} />
       ) : null}
 
-      {!loading && tab === 'log' && behind && month ? (
-        <div className="mb-4 rounded-2xl bg-card p-4 ring-1 ring-accent">
-          <p className="text-xs uppercase tracking-wide text-muted">Four weeks in</p>
-          <p className="mt-1 text-2xl num text-accent">{month.days} / 28</p>
-          <p className="mt-1 text-sm">
-            You said {profile.days ?? plan?.days} days a week. You have been managing about{' '}
-            {Math.max(1, Math.round((month.days / 4) * 10) / 10)}.
-          </p>
-          <p className="mt-2 text-sm text-muted">
-            Two days done properly beats {profile.days ?? plan?.days} missed. Want the shorter plan?
+      {!loading && tab === 'log' && behind ? (
+        <div className="mb-4 rounded-2xl bg-card p-4 ring-1 ring-edge">
+          <p className="text-xs uppercase tracking-wide text-muted">The last four weeks</p>
+          <p className="mt-1 text-2xl num">{trainedLast28} / 28 days</p>
+          <p className="mt-1 text-sm text-muted">
+            You planned {profile.days ?? plan?.days} a week. Two days done properly beats{' '}
+            {profile.days ?? plan?.days} missed. Want the shorter plan? Either answer sticks, and
+            days a week can always change in Settings.
           </p>
           <div className="mt-3 flex gap-2">
             <button
-              onClick={() => {
-                void saveProfile({ ...profile, days: 2 })
-                setDismissedCheckin(true)
-              }}
+              onClick={() =>
+                void saveProfile({ ...profile, days: 2, checkinDismissedAt: new Date().toISOString() })
+              }
               className="flex-1 rounded-xl bg-accent py-2 text-sm font-medium text-ink"
             >
               Move to 2 days
             </button>
             <button
-              onClick={() => setDismissedCheckin(true)}
+              onClick={() =>
+                void saveProfile({ ...profile, checkinDismissedAt: new Date().toISOString() })
+              }
               className="rounded-xl px-4 py-2 text-sm text-muted"
             >
-              Leave it
+              Keep my plan
+            </button>
+          </div>
+        </div>
+      ) : null}
+
+      {!loading && tab === 'log' && wantsSore && !behind ? (
+        <div className="mb-4 rounded-2xl bg-card p-4 ring-1 ring-edge">
+          <p className="text-sm">
+            Anything giving you trouble? Flag a joint and sessions swap around it.
+          </p>
+          <div className="mt-3 flex gap-2">
+            <button
+              onClick={() => {
+                setProfileFocus('sore')
+                setSheet('profile')
+              }}
+              className="rounded-xl bg-ink px-4 py-2 text-sm ring-1 ring-edge"
+            >
+              Flag something
+            </button>
+            <button
+              onClick={() => void saveProfile({ ...profile, sore: [] })}
+              className="rounded-xl px-4 py-2 text-sm text-muted"
+            >
+              All good
             </button>
           </div>
         </div>
@@ -387,6 +586,7 @@ export default function App({ userId, email }: { userId: string; email: string }
               live
               onRest={rest.start}
               loads={loads}
+              offerSort={generated.current.has(workout.id)}
               onChange={updateWorkout}
               onDelete={() => void removeWorkout(workout.id)}
               onAddExercise={() => {
@@ -527,34 +727,18 @@ export default function App({ userId, email }: { userId: string; email: string }
         />
       ) : null}
 
-      {sheet === 'profile' || (wantsSore && !askedSore && sheet === null) ? (
+      {sheet === 'profile' ? (
         <ProfileSheet
           profile={profile}
-          focus={sheet === 'profile' ? profileFocus : 'sore'}
+          focus={profileFocus}
           onSave={(next) => {
             void saveProfile(next)
             setSheet(null)
-            setAskedSore(true)
-            if (pendingStart) {
-              const { title, items } = pendingStart
-              setPendingStart(null)
-              reallyStart(title, items)
-            }
+            resumePendingStart(next)
           }}
           onClose={() => {
-            // Closing the contextual prompt is an answer of nothing. Without
-            // recording it the question comes back on every reload, which is
-            // nagging, and nagging is how an app gets deleted.
-            if (sheet !== 'profile' && profile.sore === undefined) {
-              void saveProfile({ ...profile, sore: [] })
-            }
             setSheet(null)
-            setAskedSore(true)
-            if (pendingStart) {
-              const { title, items } = pendingStart
-              setPendingStart(null)
-              reallyStart(title, items)
-            }
+            resumePendingStart(profile)
           }}
         />
       ) : null}
