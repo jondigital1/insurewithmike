@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { coach } from '@/lib/coach'
+import { coach, dropFrom } from '@/lib/coach'
 import { fmtDate, fmtSets, isEmptySet, topSet, uid } from '@/lib/format'
 import { beatsLast, PR_LABEL, prsFor, volumePr, type Bests } from '@/lib/gamify'
 import { isFullSet, restFor } from '@/lib/rest'
@@ -71,12 +71,15 @@ export default function ExerciseBlock({
     return () => clearTimeout(timer)
   }, [confirm])
 
-  const filled = exercise.sets.filter((s) => !isEmptySet(s, exercise.type))
+  const working = exercise.sets.filter((s) => !s.drop)
+  const filled = working.filter((s) => !isEmptySet(s, exercise.type))
   const basis = filled.length ? filled[filled.length - 1] : last ? topSet(last.exercise) ?? undefined : undefined
   const advice = coach(basis, exercise.type, goal, rpeBand)
   const fromLast = filled.length === 0 && !!basis
 
   const rest = restSeconds ?? restFor(exercise.name, exercise.type, goal)
+  const lastRow = exercise.sets[exercise.sets.length - 1]
+  const lastRowWeight = lastRow && lastRow.w != null ? lastRow.w : null
 
   function patchSet(id: string, patch: Partial<SetEntry>) {
     const before = exercise.sets.find((s) => s.id === id)
@@ -137,9 +140,16 @@ export default function ExerciseBlock({
       </div>
 
       <div className="mt-3 flex flex-col gap-2">
-        {exercise.sets.map((set, i) => {
+        {(() => {
+          // set numbers and the ghost comparison count working rows only, so a
+          // drop between sets two and three does not shift everything after it
+          const lastWorking = (last?.exercise.sets ?? []).filter((s) => !s.drop)
+          let workingIndex = -1
+          return exercise.sets.map((set) => {
+          if (!set.drop) workingIndex += 1
+          const i = workingIndex
           const records = prsFor(set, exercise.type, bests, goal)
-          const beat = records.length === 0 && beatsLast(set, last?.exercise.sets[i], exercise.type)
+          const beat = !set.drop && records.length === 0 && beatsLast(set, lastWorking[i], exercise.type)
           return (
             <div key={set.id} className="flex flex-col gap-1">
               <SetRow
@@ -159,7 +169,8 @@ export default function ExerciseBlock({
               ) : null}
             </div>
           )
-        })}
+        })
+        })()}
       </div>
 
       {advice ? (
@@ -176,6 +187,19 @@ export default function ExerciseBlock({
         >
           Add set
         </button>
+        {exercise.type === 'W' && lastRowWeight != null ? (
+          <button
+            onClick={() =>
+              onChange({
+                ...exercise,
+                sets: [...exercise.sets, { id: uid(), drop: true, w: dropFrom(lastRowWeight) }],
+              })
+            }
+            className="rounded-xl bg-ink px-3 py-2 text-sm text-muted ring-1 ring-edge"
+          >
+            Drop
+          </button>
+        ) : null}
         {live && rest > 0 && restOnComplete ? (
           <button
             onClick={() => onRest(exercise.id, exercise.name, rest)}

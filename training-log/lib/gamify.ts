@@ -51,6 +51,7 @@ export function bestsFor(workouts: Workout[], name: string, exclude: string, upT
       for (const s of ex.sets) {
         if (isEmptySet(s, ex.type)) continue
         counted = true
+        if (s.drop) continue
         if (s.w != null) out.load = Math.max(out.load, s.w)
         if (s.r != null) out.reps = Math.max(out.reps, s.r)
         if (s.t != null) out.time = Math.max(out.time, s.t)
@@ -76,7 +77,7 @@ function countsAsPr(set: SetEntry, goal: Goal): boolean {
 // The records this set just broke, best first. Nothing on a first outing: you
 // cannot beat a movement you have never done.
 export function prsFor(set: SetEntry, type: SetType, bests: Bests, goal: Goal): PrKind[] {
-  if (!bests.seen || isEmptySet(set, type)) return []
+  if (!bests.seen || isEmptySet(set, type) || set.drop) return []
   const out: PrKind[] = []
 
   if (type === 'W' && countsAsPr(set, goal)) {

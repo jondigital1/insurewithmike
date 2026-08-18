@@ -34,7 +34,13 @@ export function fmtSet(set: SetEntry, type: SetType): string {
 }
 
 export function fmtSets(exercise: Exercise): string {
-  return exercise.sets.map((s) => fmtSet(s, exercise.type)).join(', ')
+  let out = ''
+  for (const s of exercise.sets) {
+    if (!out) out = fmtSet(s, exercise.type)
+    else if (s.drop) out += ` drop ${fmtSet(s, exercise.type)}`
+    else out += `, ${fmtSet(s, exercise.type)}`
+  }
+  return out
 }
 
 export function isEmptySet(set: SetEntry, type: SetType): boolean {
@@ -85,6 +91,7 @@ export function workoutVolume(workout: Workout): number {
 export function topSet(exercise: Exercise): SetEntry | null {
   let best: SetEntry | null = null
   for (const set of exercise.sets) {
+    if (set.drop) continue
     if (exercise.type === 'W') {
       if (set.w == null) continue
       if (!best || set.w > (best.w ?? 0) || (set.w === best.w && (set.r ?? 0) > (best.r ?? 0))) best = set

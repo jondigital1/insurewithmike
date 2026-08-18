@@ -32,7 +32,7 @@ const APP: KnowledgeEntry[] = [
     q: 'How do I log a drop set?',
     group: 'Using the app',
     aliases: ['log drop set', 'record drop set', 'strip set entry'],
-    a: 'Log the drop as its own set row: the working set as one row, then Add set and enter the lighter weight and its reps. So 130 x 12 into a drop of 110 x 15 is two rows. Records stay honest: the lighter row never counts as a load PR, because records require matching or beating your best weight.',
+    a: 'Tap Drop under the exercise after your working set: it adds a row marked drop, prefilled about 20 percent lighter, and you type the reps. Chain another tap for a double drop. Drop rows are excluded from records and from the ghost comparison, because near failure at a lighter load is a technique, not a best. The importer also reads a notes line like 130x12 110x15 as a set and its drop.',
   },
   {
     id: 'app-ghost',

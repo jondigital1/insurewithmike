@@ -23,6 +23,10 @@ export interface SetEntry {
   t?: number | null
   d?: number | null
   raw?: string | null
+  // A drop set: this row continues the set above it at a lighter weight, with
+  // no rest between. Excluded from records, since near failure at a lighter
+  // load is a technique, not a best.
+  drop?: boolean | null
 }
 
 export interface Exercise {

@@ -13,7 +13,7 @@ import type {
 type Row = Record<string, any>
 
 const WORKOUT_SELECT =
-  'id,date,title,exercises(id,name,type,position,superset,sets(id,position,w,r,rpe,t,d,raw))'
+  'id,date,title,exercises(id,name,type,position,superset,sets(id,position,w,r,rpe,t,d,raw,dropset))'
 
 function toNum(v: unknown): number | null {
   if (v == null || v === '') return null
@@ -42,6 +42,7 @@ function rowToWorkout(row: Row): Workout {
             t: toNum(s.t),
             d: toNum(s.d),
             raw: (s.raw as string) ?? null,
+            drop: s.dropset === true ? true : null,
           }),
         ),
     }))
@@ -97,6 +98,7 @@ export async function saveWorkout(sb: SupabaseClient, _userId: string, workout: 
           t: s.t ?? null,
           d: s.d ?? null,
           raw: s.raw ?? null,
+          drop: s.drop === true,
         })),
       })),
     },

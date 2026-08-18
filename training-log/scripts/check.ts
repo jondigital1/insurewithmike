@@ -3,9 +3,9 @@
 import assert from 'node:assert/strict'
 import { LIBRARY, MUSCLE_GROUPS, lookupType } from '../lib/exercises'
 import { SPLITS, dayItems, dayNames } from '../lib/templates'
-import { coach, roundLoad } from '../lib/coach'
-import { fmtSet, fmtTime, parseClock, topSet } from '../lib/format'
-import { importArtifactData, parseSetString } from '../lib/importer'
+import { coach, dropFrom, roundLoad } from '../lib/coach'
+import { fmtSet, fmtSets, fmtTime, parseClock, topSet } from '../lib/format'
+import { importArtifactData, parseSetString, parseSetStrings } from '../lib/importer'
 import { toCsv } from '../lib/csv'
 import { buildDay, dayById, experienceScore, level, needsCheckin, planFor } from '../lib/onboarding'
 import { equipmentOf } from '../lib/exercises'
@@ -183,7 +183,7 @@ check('csv export is one row per set', () => {
   ]
   const lines = toCsv(workouts).split('\n')
   assert.equal(lines.length, 3)
-  assert.match(lines[1], /^2026-08-11,"Push, hard",Incline Dumbbell Press,W,1,80,8,8,,,$/)
+  assert.match(lines[1], /^2026-08-11,"Push, hard",Incline Dumbbell Press,W,1,80,8,8,,,,$/)
 })
 
 check('experience score and level follow the bands', () => {
@@ -670,6 +670,65 @@ check('the gate holds: off topic questions return nothing', () => {
   assert.deepEqual(searchKnowledge('best crypto to buy'), [])
   assert.deepEqual(searchKnowledge('who won the election'), [])
   assert.deepEqual(searchKnowledge(''), [])
+})
+
+check('a notes line with two pairs is a set and its drop', () => {
+  const rows = parseSetStrings('130x12 110x15', 'W')
+  assert.equal(rows.length, 2)
+  assert.equal(rows[0].w, 130)
+  assert.equal(rows[0].drop ?? null, null)
+  assert.equal(rows[1].w, 110)
+  assert.equal(rows[1].r, 15)
+  assert.equal(rows[1].drop, true)
+
+  const triple = parseSetStrings('42.5x12 37.5x25 30x10', 'W')
+  assert.equal(triple.length, 3)
+  assert.ok(triple[1].drop && triple[2].drop, 'a double drop is two drop rows')
+
+  assert.equal(parseSetStrings('135x8 @8', 'W').length, 1, 'one pair stays one set')
+
+  const imported = importArtifactData([
+    { date: '2026-08-18', title: 'Pull', exercises: [{ name: 'Lat Pulldown', sets: ['130x12', '130x10 100x10'] }] },
+  ])
+  const sets = imported.workouts[0].exercises[0].sets
+  assert.equal(sets.length, 3)
+  assert.equal(sets[2].drop, true)
+})
+
+check('drop rows set no records and move no bests', () => {
+  const withDrop: Workout[] = [
+    { id: 'w', date: '2026-08-10', title: 'Pull', exercises: [
+      { id: 'e', name: 'Lat Pulldown', type: 'W', sets: [
+        { id: 'a', w: 130, r: 12 },
+        { id: 'b', w: 100, r: 18, drop: true },
+      ] },
+    ] },
+  ]
+  const b = bestsFor(withDrop, 'Lat Pulldown', 'today', '2026-08-18')
+  assert.equal(b.reps, 12, 'the 18 rep drop must not become the rep best')
+  assert.equal(b.load, 130)
+
+  assert.deepEqual(prsFor({ id: 'x', w: 135, r: 12, drop: true }, 'W', b, 'muscle'), [], 'a drop row can never flag a PR')
+  assert.ok(prsFor({ id: 'x', w: 135, r: 12 }, 'W', b, 'muscle').length > 0, 'the same set as a working row can')
+
+  const best = topSet(withDrop[0].exercises[0])
+  assert.equal(best?.id, 'a', 'charts and prefill read the working set, not the drop')
+})
+
+check('the ghost line writes drops the way he does', () => {
+  const line = fmtSets({ id: 'e', name: 'Lat Pulldown', type: 'W', sets: [
+    { id: 'a', w: 130, r: 12, rpe: 8 },
+    { id: 'b', w: 110, r: 15, drop: true },
+    { id: 'c', w: 130, r: 10 },
+  ] })
+  assert.equal(line, '130 x 12 @8 drop 110 x 15, 130 x 10')
+})
+
+check('the drop seed cuts about a fifth and lands on real plates', () => {
+  assert.equal(dropFrom(130), 105)
+  assert.equal(dropFrom(12.5), 10)
+  assert.equal(dropFrom(255), 205)
+  assert.equal(dropFrom(50), 40)
 })
 
 console.log(`\n${checks} checks passed`)

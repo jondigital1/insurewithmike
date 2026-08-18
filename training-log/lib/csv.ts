@@ -1,7 +1,7 @@
 import { fmtNum } from './format'
 import type { Workout } from './types'
 
-const HEADERS = ['date', 'workout', 'exercise', 'type', 'set', 'weight', 'reps', 'rpe', 'seconds', 'distance', 'note']
+const HEADERS = ['date', 'workout', 'exercise', 'type', 'set', 'weight', 'reps', 'rpe', 'seconds', 'distance', 'note', 'drop']
 
 function cell(value: string | number | null | undefined): string {
   if (value == null) return ''
@@ -29,6 +29,7 @@ export function toCsv(workouts: Workout[]): string {
             s.t ?? null,
             s.d ?? null,
             s.raw ?? null,
+            s.drop ? '1' : null,
           ]
             .map(cell)
             .join(','),

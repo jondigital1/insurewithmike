@@ -31,9 +31,10 @@ accent text keeps its contrast on white.
 ## Setup
 
 1. Create a Supabase project.
-2. Run `supabase/migrations/0001_init.sql` in the SQL editor. It creates the six
-   tables, the indexes and one row level security policy per table, so every row
-   is readable only by the user that owns it.
+2. Run the files in `supabase/migrations/` in the SQL editor, in order, 0001 to
+   0005. They create the six tables, the indexes, one row level security policy
+   per table so every row is readable only by the user that owns it, the atomic
+   save function, and the superset and drop set columns.
 3. In Authentication then URL Configuration, add `https://YOUR-DOMAIN/auth/callback`
    as a redirect URL. Sign in is a magic link, no password.
 4. Copy `.env.example` to `.env.local` and fill in the project URL and anon key.
@@ -173,6 +174,18 @@ A superset is a tag shared by consecutive exercises, not a table. Order on scree
 is the order they run in, so the same tag either side of a gap is two supersets,
 and a tagged movement on its own is just a movement.
 
+## Drop sets
+
+A Drop button sits next to Add set on any weighted exercise once the last row
+has a load on it. It adds a row tagged DROP, seeded at 80 percent of that load
+rounded to real plates, with no RPE box, because a number taken in the state a
+drop set leaves you in measures the state, not the set.
+
+Drops count toward volume and they are excluded from everything comparative:
+records, the ghost line, the top set in history, and the coach line, which reads
+your last working set. The importer understands the shorthand from the artifact
+days too, so a pasted `130x15 110x15` becomes a working set with a drop attached.
+
 ## Rest timer
 
 Starts itself the moment a set becomes a set, which is the moment you want it,
@@ -206,4 +219,4 @@ what makes them worth having on a bad week.
 ## Not built yet
 
 Everything on the original backlog is built. Next up is the deploy: the schema,
-the two functions and the four migrations have never run against real Postgres.
+the functions and the five migrations have never run against real Postgres.

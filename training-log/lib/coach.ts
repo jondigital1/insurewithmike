@@ -26,6 +26,12 @@ export function roundLoad(w: number): number {
 const UP = 1.05
 const DOWN = 0.925
 
+// A drop cuts 10 to 30 percent; 20 is the middle of the road and lands on a
+// weight the plates can actually make.
+export function dropFrom(w: number): number {
+  return roundLoad(w * 0.8)
+}
+
 // Reads the last set of an exercise and says what to do next time. Returns null
 // when the set is inside target and there is nothing worth saying.
 export function coach(

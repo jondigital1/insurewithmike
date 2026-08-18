@@ -74,22 +74,44 @@ export function parseSetString(raw: string, type: SetType): SetEntry {
   }
 }
 
-function coerceSet(value: unknown, type: SetType): SetEntry {
-  if (typeof value === 'string') return parseSetString(value, type)
+// A weighted line with two pairs on it, like "130x12 110x15", is a working set
+// and its drop, which is how a notes app logs a drop set.
+export function parseSetStrings(raw: string, type: SetType): SetEntry[] {
+  if (type === 'W') {
+    const pairs = [...raw.matchAll(/(\d+(?:\.\d+)?)\s*[xX*]\s*(\d+)/g)]
+    if (pairs.length >= 2) {
+      const rpe = raw.match(/@\s*(\d+(?:\.\d+)?)/)
+      return pairs.map((m, i) => ({
+        id: uid(),
+        w: Number(m[1]),
+        r: Number(m[2]),
+        rpe: i === 0 && rpe ? Number(rpe[1]) : null,
+        drop: i > 0 ? true : null,
+      }))
+    }
+  }
+  return [parseSetString(raw, type)]
+}
+
+function coerceSets(value: unknown, type: SetType): SetEntry[] {
+  if (typeof value === 'string') return parseSetStrings(value, type)
   if (value && typeof value === 'object') {
     const v = value as Record<string, unknown>
     const num = (k: string) => (v[k] == null || v[k] === '' ? null : Number(v[k]))
-    return {
-      id: uid(),
-      w: num('w'),
-      r: num('r'),
-      rpe: num('rpe'),
-      t: num('t'),
-      d: num('d'),
-      raw: typeof v.raw === 'string' ? v.raw : null,
-    }
+    return [
+      {
+        id: uid(),
+        w: num('w'),
+        r: num('r'),
+        rpe: num('rpe'),
+        t: num('t'),
+        d: num('d'),
+        raw: typeof v.raw === 'string' ? v.raw : null,
+        drop: v.drop === true ? true : null,
+      },
+    ]
   }
-  return { id: uid() }
+  return [{ id: uid() }]
 }
 
 const VALID_TYPES: SetType[] = ['W', 'R', 'T', 'WD', 'C', 'X']
@@ -115,7 +137,7 @@ export function importArtifactData(input: unknown): TrainingData {
         name,
         type,
         superset: typeof ex.superset === 'string' ? ex.superset : null,
-        sets: (ex.sets ?? []).map((s: unknown) => coerceSet(s, type)),
+        sets: (ex.sets ?? []).flatMap((s: unknown) => coerceSets(s, type)),
       }
     })
     return {
