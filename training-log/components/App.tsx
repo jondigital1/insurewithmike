@@ -20,6 +20,7 @@ import { buildDay, dayById, firstMonth, planFor, type Profile } from '@/lib/onbo
 import { isEmptySet } from '@/lib/format'
 import { bestsFor as computeBests } from '@/lib/gamify'
 import { waveWeek } from '@/lib/wave'
+import { hardestFirst, topLoads } from '@/lib/order'
 import {
   EMPTY_DATA,
   type CustomExercise,
@@ -147,17 +148,18 @@ export default function App({ userId, email }: { userId: string; email: string }
   }
 
   function reallyStart(title: string, items: CustomWorkoutItem[]) {
-    const workout: Workout = {
-      id: uid(),
-      date: today(),
-      title,
-      exercises: items.map((item) => ({
+    // Hardest first, against this person's own numbers where there are any.
+    const exercises = hardestFirst(
+      items.map((item) => ({
         id: uid(),
         name: item.name,
         type: item.type,
+        superset: null,
         sets: [{ id: uid() }],
       })),
-    }
+      topLoads(latest.current.workouts),
+    )
+    const workout: Workout = { id: uid(), date: today(), title, exercises }
     setData((prev) => ({ ...prev, workouts: [workout, ...prev.workouts] }))
     queueSave(workout)
     setSheet(null)
@@ -265,6 +267,8 @@ export default function App({ userId, email }: { userId: string; email: string }
 
   // The records a set has to beat, gathered from every earlier session of the
   // same movement. Sits alongside the ghost line rather than replacing it.
+  const loads = useMemo(() => topLoads(data.workouts), [data.workouts])
+
   const bestsFor = useCallback(
     (name: string, workout: Workout) => computeBests(data.workouts, name, workout.id, workout.date),
     [data.workouts],
@@ -382,6 +386,7 @@ export default function App({ userId, email }: { userId: string; email: string }
               bestsFor={bestsFor}
               live
               onRest={rest.start}
+              loads={loads}
               onChange={updateWorkout}
               onDelete={() => void removeWorkout(workout.id)}
               onAddExercise={() => {
@@ -411,6 +416,7 @@ export default function App({ userId, email }: { userId: string; email: string }
                   bestsFor={bestsFor}
                   live={workout.date === now}
                   onRest={rest.start}
+                  loads={loads}
                   onChange={updateWorkout}
                   onDelete={() => {
                     setOpenHistory(null)

@@ -17,6 +17,7 @@ import { mondayOf, readWave, WAVE, waveWeek } from '../lib/wave'
 import { isCompound, isFullSet, restFor } from '../lib/rest'
 import { groupRuns, isSuperset, supersetLetter, supersetRest } from '../lib/superset'
 import { seriesFor, trackedNames } from '../lib/progress'
+import { groupSize, hardestFirst, isHardestFirst, moveRun, topLoads } from '../lib/order'
 import type { Exercise } from '../lib/types'
 import type { Workout } from '../lib/types'
 
@@ -516,6 +517,66 @@ check('movements rank by how many sessions they appear in', () => {
   assert.equal(names[0], 'Incline Dumbbell Press', 'three sessions beats two')
   assert.ok(names.includes('Plank'))
   assert.ok(!names.includes('Leg Press'), 'one session is not enough to rank')
+})
+
+const ex = (id: string, name: string, superset: string | null = null, type: 'W' | 'T' = 'W'): Exercise => ({
+  id, name, type, sets: [], superset,
+})
+
+check('the big compound movement goes first', () => {
+  const order = hardestFirst([
+    ex('1', 'Cable Curl'),
+    ex('2', 'Plank', null, 'T'),
+    ex('3', 'Lateral Raise'),
+    ex('4', 'Back Squat'),
+    ex('5', 'Barbell Row'),
+  ]).map((e) => e.name)
+
+  assert.equal(order[0], 'Back Squat', 'a squat should never sit behind a curl')
+  assert.equal(order[1], 'Barbell Row')
+  assert.equal(order[order.length - 1], 'Plank', 'the core work stays at the end')
+  assert.ok(order.indexOf('Lateral Raise') < order.indexOf('Cable Curl'), 'shoulders outrank arms')
+})
+
+check('muscle group size ranks large, medium, small', () => {
+  assert.equal(groupSize('Back Squat'), 3)
+  assert.equal(groupSize('Lateral Raise'), 2)
+  assert.equal(groupSize('Cable Curl'), 1)
+})
+
+check('their own numbers break the tie between two big lifts', () => {
+  const history: Workout[] = [
+    { id: 'w', date: '2026-08-11', title: 'Legs', exercises: [
+      { id: 'a', name: 'Leg Press', type: 'W', sets: [{ id: '1', w: 400, r: 10 }] },
+      { id: 'b', name: 'Barbell Row', type: 'W', sets: [{ id: '2', w: 135, r: 10 }] },
+    ] },
+  ]
+  const loads = topLoads(history)
+  assert.ok(loads.get('Leg Press')! > loads.get('Barbell Row')!)
+  const order = hardestFirst([ex('1', 'Barbell Row'), ex('2', 'Leg Press')], loads).map((e) => e.name)
+  assert.equal(order[0], 'Leg Press', 'the heavier of the two goes first')
+
+  // With no history to go on, the order it was given survives.
+  const blind = hardestFirst([ex('1', 'Barbell Row'), ex('2', 'Leg Press')]).map((e) => e.name)
+  assert.equal(blind[0], 'Barbell Row')
+})
+
+check('a superset moves and sorts as one thing', () => {
+  const list = [ex('1', 'Cable Curl'), ex('2', 'Back Squat', 's'), ex('3', 'Leg Extension', 's')]
+  const sorted = hardestFirst(list).map((e) => e.id)
+  assert.deepEqual(sorted, ['2', '3', '1'], 'the pair travels together, ranked by the squat')
+
+  const moved = moveRun(sorted.map((id) => list.find((e) => e.id === id)!), '1', -1).map((e) => e.id)
+  assert.deepEqual(moved, ['1', '2', '3'], 'moving the curl up jumps the whole superset')
+
+  const stuck = moveRun(list, '1', -1).map((e) => e.id)
+  assert.deepEqual(stuck, ['1', '2', '3'], 'nothing moves off the top')
+})
+
+check('a session already in order is left alone', () => {
+  const list = [ex('1', 'Back Squat'), ex('2', 'Cable Curl')]
+  assert.equal(isHardestFirst(list), true)
+  assert.equal(isHardestFirst([list[1], list[0]]), false)
 })
 
 console.log(`\n${checks} checks passed`)

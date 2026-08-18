@@ -43,6 +43,7 @@ export default function ExerciseBlock({
   nested,
   restSeconds,
   restOnComplete = true,
+  onMove,
   onChange,
   onRemove,
 }: {
@@ -58,6 +59,7 @@ export default function ExerciseBlock({
   nested?: boolean
   restSeconds?: number
   restOnComplete?: boolean
+  onMove: (direction: -1 | 1) => void
   onChange: (next: Exercise) => void
   onRemove: () => void
 }) {
@@ -118,12 +120,20 @@ export default function ExerciseBlock({
             <p className="mt-0.5 text-xs text-muted">First time logging this</p>
           )}
         </div>
-        <button
-          onClick={() => (confirm ? onRemove() : setConfirm(true))}
-          className={`shrink-0 rounded-lg px-2 py-1 text-xs ${confirm ? 'bg-accent text-ink' : 'text-muted'}`}
-        >
-          {confirm ? 'Sure?' : 'Remove'}
-        </button>
+        <div className="flex shrink-0 items-center gap-1">
+          <button onClick={() => onMove(-1)} aria-label="Move up" className="rounded-lg px-2 py-1 text-xs text-muted">
+            &uarr;
+          </button>
+          <button onClick={() => onMove(1)} aria-label="Move down" className="rounded-lg px-2 py-1 text-xs text-muted">
+            &darr;
+          </button>
+          <button
+            onClick={() => (confirm ? onRemove() : setConfirm(true))}
+            className={`rounded-lg px-2 py-1 text-xs ${confirm ? 'bg-accent text-ink' : 'text-muted'}`}
+          >
+            {confirm ? 'Sure?' : 'Remove'}
+          </button>
+        </div>
       </div>
 
       <div className="mt-3 flex flex-col gap-2">

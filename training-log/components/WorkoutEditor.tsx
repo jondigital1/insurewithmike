@@ -5,6 +5,7 @@ import { fmtDate, workoutVolume } from '@/lib/format'
 import ExerciseBlock, { type LastSession } from './ExerciseBlock'
 import type { Bests } from '@/lib/gamify'
 import { groupRuns, isSuperset, supersetLetter, supersetRest } from '@/lib/superset'
+import { hardestFirst, isHardestFirst, moveRun } from '@/lib/order'
 import type { Exercise, Goal, Workout } from '@/lib/types'
 
 interface BlockExtras {
@@ -22,6 +23,7 @@ export default function WorkoutEditor({
   bestsFor,
   live,
   onRest,
+  loads,
   onChange,
   onDelete,
   onAddExercise,
@@ -35,6 +37,7 @@ export default function WorkoutEditor({
   bestsFor: (name: string, workout: Workout) => Bests
   live: boolean
   onRest: (exerciseId: string, name: string, seconds: number) => void
+  loads: Map<string, number>
   onChange: (next: Workout) => void
   onDelete: () => void
   onAddExercise: () => void
@@ -54,6 +57,10 @@ export default function WorkoutEditor({
   }
 
   const volume = workoutVolume(workout)
+  const sorted = isHardestFirst(workout.exercises, loads)
+
+  const move = (exerciseId: string, direction: -1 | 1) =>
+    onChange({ ...workout, exercises: moveRun(workout.exercises, exerciseId, direction) })
 
   return (
     <section className="flex flex-col gap-3">
@@ -87,6 +94,15 @@ export default function WorkoutEditor({
         </button>
       </div>
 
+      {workout.exercises.length > 1 && !sorted ? (
+        <button
+          onClick={() => onChange({ ...workout, exercises: hardestFirst(workout.exercises, loads) })}
+          className="self-start rounded-lg bg-card px-3 py-1.5 text-xs text-muted ring-1 ring-edge"
+        >
+          Put the hardest first
+        </button>
+      ) : null}
+
       {showDate ? (
         <input
           type="date"
@@ -110,6 +126,7 @@ export default function WorkoutEditor({
             onRest={onRest}
             label={label}
             {...extra}
+            onMove={(direction) => move(exercise.id, direction)}
             onChange={patchExercise}
             onRemove={() =>
               onChange({ ...workout, exercises: workout.exercises.filter((e) => e.id !== exercise.id) })

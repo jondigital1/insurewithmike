@@ -44,6 +44,7 @@ Postgres wants uuids and the artifact did not use them.
     lib/rest.ts           when a set counts as done and how long it earns
     lib/superset.ts       which consecutive exercises run together
     lib/progress.ts       one point per movement per day, and what to measure
+    lib/order.ts          hardest first, and moving things by hand
     lib/templates.ts      6 splits, 24 days
     lib/coach.ts          goal ranges and the RPE response
     lib/importer.ts       artifact v1 and v2 blobs in
@@ -104,6 +105,19 @@ weeks that met the days you said rather than consecutive days, so a rest day
 costs nothing. Under it, sets per muscle group this week against the 10 set
 target, which is the only number here that tells you what to do differently.
 
+## Order
+
+Every generated session comes out hardest first: multi joint before single joint,
+big muscle before small, and heavier before lighter judged on this person's own
+logged numbers rather than a guess about what counts as heavy. The reason is that
+the hardest thing in a session should meet you fresh rather than after twenty sets
+of arms, which is the sequencing rule in ACSM's progression stand.
+
+Arrows on each exercise move it by hand, and a superset moves as one thing. Among
+movements that rank equally the order you chose stands, and it survives a re-sort.
+Push something genuinely out of order, a leg press below a leg extension, and the
+session offers to put the hardest back at the front.
+
 ## Progression charts
 
 A third tab. One chart per movement, never two movements on one axis: a leg press
@@ -162,4 +176,5 @@ what makes them worth having on a bad week.
 
 ## Not built yet
 
-Exercise reordering.
+Everything on the original backlog is built. Next up is the deploy: the schema,
+the two functions and the four migrations have never run against real Postgres.
