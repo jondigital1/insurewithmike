@@ -7,6 +7,7 @@ import { supabaseBrowser } from '@/lib/supabase/client'
 import CustomBuilder from './CustomBuilder'
 import Onboarding from './Onboarding'
 import ProfileSheet from './ProfileSheet'
+import StatsPanel from './StatsPanel'
 import ExercisePicker from './ExercisePicker'
 import SettingsSheet from './SettingsSheet'
 import StartSheet from './StartSheet'
@@ -14,6 +15,7 @@ import WorkoutEditor from './WorkoutEditor'
 import type { LastSession } from './ExerciseBlock'
 import { buildDay, dayById, firstMonth, planFor, type Profile } from '@/lib/onboarding'
 import { isEmptySet } from '@/lib/format'
+import { bestsFor as computeBests } from '@/lib/gamify'
 import {
   EMPTY_DATA,
   type CustomExercise,
@@ -256,6 +258,13 @@ export default function App({ userId, email }: { userId: string; email: string }
     [data.workouts],
   )
 
+  // The records a set has to beat, gathered from every earlier session of the
+  // same movement. Sits alongside the ghost line rather than replacing it.
+  const bestsFor = useCallback(
+    (name: string, workout: Workout) => computeBests(data.workouts, name, workout.id, workout.date),
+    [data.workouts],
+  )
+
   const now = today()
   const profile = data.settings.profile
   const plan = data.settings.onboardedAt ? planFor(profile, data.settings.goal) : null
@@ -358,6 +367,7 @@ export default function App({ userId, email }: { userId: string; email: string }
               goal={data.settings.goal}
               showRpe={rpeOn}
               lastFor={lastFor}
+              bestsFor={bestsFor}
               onChange={updateWorkout}
               onDelete={() => void removeWorkout(workout.id)}
               onAddExercise={() => {
@@ -371,6 +381,7 @@ export default function App({ userId, email }: { userId: string; email: string }
 
       {!loading && tab === 'history' ? (
         <div className="flex flex-col gap-3">
+          <StatsPanel workouts={data.workouts} today={now} target={profile.days ?? plan?.days ?? 3} />
           {past.length === 0 ? <p className="text-sm text-muted">No past sessions yet.</p> : null}
           {past.map((workout) =>
             openHistory === workout.id ? (
@@ -380,6 +391,7 @@ export default function App({ userId, email }: { userId: string; email: string }
                   goal={data.settings.goal}
                   showRpe={rpeOn}
                   lastFor={lastFor}
+                  bestsFor={bestsFor}
                   onChange={updateWorkout}
                   onDelete={() => {
                     setOpenHistory(null)

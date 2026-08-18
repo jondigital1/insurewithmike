@@ -9,6 +9,9 @@ import { importArtifactData, parseSetString } from '../lib/importer'
 import { toCsv } from '../lib/csv'
 import { buildDay, dayById, experienceScore, firstMonth, level, planFor } from '../lib/onboarding'
 import { equipmentOf } from '../lib/exercises'
+import {
+  beatsLast, bestsFor, e1rm, prsFor, trainingGrid, volumePr, weeklyCoverage, weeklyStreak, weekStart,
+} from '../lib/gamify'
 import type { Workout } from '../lib/types'
 
 let checks = 0
@@ -228,6 +231,112 @@ check('first 28 days counts distinct training days', () => {
   const month = firstMonth([day(0), day(2), day(2), day(9), day(29)])!
   assert.equal(month.days, 3, 'day 29 should fall outside the window and the repeat should count once')
   assert.ok(month.elapsed >= 28)
+})
+
+const HISTORY: Workout[] = [
+  {
+    id: 'w1', date: '2026-08-03', title: 'Push',
+    exercises: [
+      { id: 'e1', name: 'Incline Dumbbell Press', type: 'W', sets: [
+        { id: 's1', w: 70, r: 10 }, { id: 's2', w: 70, r: 9 },
+      ] },
+      { id: 'e2', name: 'Plank', type: 'T', sets: [{ id: 's3', t: 60 }] },
+    ],
+  },
+  {
+    id: 'w2', date: '2026-08-10', title: 'Push',
+    exercises: [
+      { id: 'e3', name: 'Incline Dumbbell Press', type: 'W', sets: [
+        { id: 's4', w: 75, r: 8 }, { id: 's5', w: 75, r: 7 },
+      ] },
+    ],
+  },
+]
+
+check('bests come from every earlier session, not just the last one', () => {
+  const b = bestsFor(HISTORY, 'Incline Dumbbell Press', 'today', '2026-08-18')
+  assert.equal(b.load, 75)
+  assert.equal(b.reps, 10)
+  assert.equal(b.volume, 1330, '70 x 10 plus 70 x 9 is the bigger session')
+  assert.ok(Math.abs(b.e1rm - 95) < 0.1, `estimated max was ${b.e1rm}`)
+  assert.equal(b.seen, true)
+  assert.equal(bestsFor(HISTORY, 'Leg Press', 'today', '2026-08-18').seen, false)
+})
+
+check('a first outing is never a PR', () => {
+  const fresh = bestsFor(HISTORY, 'Leg Press', 'today', '2026-08-18')
+  assert.deepEqual(prsFor({ id: 'x', w: 400, r: 10 }, 'W', fresh, 'muscle'), [])
+})
+
+check('PRs fire on load, reps and estimated max', () => {
+  const b = bestsFor(HISTORY, 'Incline Dumbbell Press', 'today', '2026-08-18')
+  assert.deepEqual(prsFor({ id: 'x', w: 80, r: 8 }, 'W', b, 'muscle'), ['e1rm', 'load'])
+  assert.deepEqual(prsFor({ id: 'x', w: 75, r: 11 }, 'W', b, 'muscle'), ['e1rm', 'reps'])
+  assert.deepEqual(prsFor({ id: 'x', w: 70, r: 9 }, 'W', b, 'muscle'), [])
+  assert.deepEqual(prsFor({ id: 'x', t: 90 }, 'T', bestsFor(HISTORY, 'Plank', 'today', '2026-08-18'), 'muscle'), ['time'])
+})
+
+check('a grindy single is not a PR unless strength is the goal', () => {
+  const b = bestsFor(HISTORY, 'Incline Dumbbell Press', 'today', '2026-08-18')
+  const single = { id: 'x', w: 100, r: 1 }
+  assert.deepEqual(prsFor(single, 'W', b, 'muscle'), [])
+  assert.ok(prsFor(single, 'W', b, 'strength').includes('load'))
+})
+
+check('session volume PR reads the whole exercise', () => {
+  const b = bestsFor(HISTORY, 'Incline Dumbbell Press', 'today', '2026-08-18')
+  const big = { id: 'e', name: 'Incline Dumbbell Press', type: 'W' as const, sets: [
+    { id: 'a', w: 75, r: 10 }, { id: 'b', w: 75, r: 10 },
+  ] }
+  assert.equal(volumePr(big, b), true)
+  const small = { ...big, sets: [{ id: 'a', w: 75, r: 5 }] }
+  assert.equal(volumePr(small, b), false)
+})
+
+check('beating the ghost compares set for set', () => {
+  assert.equal(beatsLast({ id: 'x', w: 75, r: 9 }, { id: 'y', w: 75, r: 8 }, 'W'), true)
+  assert.equal(beatsLast({ id: 'x', w: 80, r: 7 }, { id: 'y', w: 75, r: 8 }, 'W'), true)
+  assert.equal(beatsLast({ id: 'x', w: 75, r: 8 }, { id: 'y', w: 75, r: 8 }, 'W'), false)
+  assert.equal(beatsLast({ id: 'x', t: 70 }, { id: 'y', t: 60 }, 'T'), true)
+  assert.equal(beatsLast({ id: 'x', w: 75, r: 9 }, undefined, 'W'), false)
+  assert.ok(e1rm({ id: 'x', w: 100, r: 10 })! > e1rm({ id: 'y', w: 100, r: 9 })!)
+})
+
+check('weekly coverage counts logged sets by muscle group', () => {
+  const week: Workout[] = [
+    { id: 'a', date: '2026-08-17', title: 'Push', exercises: [
+      { id: 'e', name: 'Incline Dumbbell Press', type: 'W', sets: [
+        { id: '1', w: 80, r: 8 }, { id: '2', w: 80, r: 8 }, { id: '3' },
+      ] },
+    ] },
+  ]
+  const chest = weeklyCoverage(week, '2026-08-18').find((g) => g.group === 'Chest')!
+  assert.equal(chest.sets, 2, 'the empty set row should not count')
+  assert.equal(weeklyCoverage(week, '2026-08-25').find((g) => g.group === 'Chest')!.sets, 0, 'last week is not this week')
+  assert.equal(weekStart('2026-08-18'), '2026-08-17', 'weeks start on Monday')
+})
+
+check('the 28 day grid marks only days with something written down', () => {
+  const grid = trainingGrid(HISTORY, '2026-08-18')
+  assert.equal(grid.length, 28)
+  assert.equal(grid[grid.length - 1].date, '2026-08-18')
+  assert.equal(grid.filter((d) => d.trained).length, 2)
+})
+
+check('the streak counts weeks, so a rest day costs nothing', () => {
+  const set = (id: string, date: string): Workout => ({
+    id, date, title: 'x',
+    exercises: [{ id: id + 'e', name: 'Leg Press', type: 'W', sets: [{ id: id + 's', w: 100, r: 10 }] }],
+  })
+  const weeks = [
+    set('a', '2026-08-17'), set('b', '2026-08-19'),
+    set('c', '2026-08-10'), set('d', '2026-08-12'),
+    set('e', '2026-08-03'),
+  ]
+  assert.equal(weeklyStreak(weeks, '2026-08-19', 2), 2, 'two full weeks, the third only had one day')
+  assert.equal(weeklyStreak(weeks, '2026-08-19', 3), 0)
+  // A quiet current week must not wipe out the weeks behind it.
+  assert.equal(weeklyStreak(weeks, '2026-08-24', 2), 2, 'the two completed weeks behind it still count')
 })
 
 console.log(`\n${checks} checks passed`)

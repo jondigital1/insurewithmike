@@ -39,6 +39,7 @@ Postgres wants uuids and the artifact did not use them.
     components/           editor, exercise block, set row, picker, builder, sheets
     lib/exercises.ts      226 movements across 14 muscle groups, each typed
     lib/onboarding.ts     the questions, the scoring, the split table, the swaps
+    lib/gamify.ts         records, beat the ghost, coverage, the grid, the streak
     lib/templates.ts      6 splits, 24 days
     lib/coach.ts          goal ranges and the RPE response
     lib/importer.ts       artifact v1 and v2 blobs in
@@ -83,7 +84,23 @@ days you logged and offers a shorter plan.
 `docs/onboarding-prototype.html` is the clickable version of every screen.
 `lib/onboarding.ts` is the implementation.
 
+## What the log gives back
+
+PRs fire on four things and are flagged on the set as you type it: heaviest
+load, most reps at that load or heavier, best estimated max (Epley, so 80 x 9
+beats 80 x 8 without touching the plates), and best session volume for that
+movement. A grindy single does not count as a record unless strength is the
+stated goal.
+
+Beat the ghost: a set that clears the same numbered set from last session gets a
+quiet mark. Different bar to a PR, and it fires far more often.
+
+History carries the last 28 days as a dot per day and the week streak, counted in
+weeks that met the days you said rather than consecutive days, so a rest day
+costs nothing. Under it, sets per muscle group this week against the 10 set
+target, which is the only number here that tells you what to do differently.
+
 ## Not built yet
 
-Rest timer, progression charts, superset grouping, exercise reordering, PR
-detection, the 3 week effort wave as a cycle tracker.
+Rest timer, progression charts, superset grouping, exercise reordering, the 3
+week effort wave as a cycle tracker.

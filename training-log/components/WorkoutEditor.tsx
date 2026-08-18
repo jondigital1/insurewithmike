@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { fmtDate, workoutVolume } from '@/lib/format'
 import ExerciseBlock, { type LastSession } from './ExerciseBlock'
+import type { Bests } from '@/lib/gamify'
 import type { Exercise, Goal, Workout } from '@/lib/types'
 
 export default function WorkoutEditor({
@@ -10,6 +11,7 @@ export default function WorkoutEditor({
   goal,
   showRpe,
   lastFor,
+  bestsFor,
   onChange,
   onDelete,
   onAddExercise,
@@ -19,6 +21,7 @@ export default function WorkoutEditor({
   goal: Goal
   showRpe: boolean
   lastFor: (name: string, workout: Workout) => LastSession | null
+  bestsFor: (name: string, workout: Workout) => Bests
   onChange: (next: Workout) => void
   onDelete: () => void
   onAddExercise: () => void
@@ -87,6 +90,7 @@ export default function WorkoutEditor({
           goal={goal}
           showRpe={showRpe}
           last={lastFor(exercise.name, workout)}
+          bests={bestsFor(exercise.name, workout)}
           onChange={patchExercise}
           onRemove={() =>
             onChange({ ...workout, exercises: workout.exercises.filter((e) => e.id !== exercise.id) })

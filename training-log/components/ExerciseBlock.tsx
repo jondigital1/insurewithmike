@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { coach } from '@/lib/coach'
 import { fmtDate, fmtSets, isEmptySet, topSet, uid } from '@/lib/format'
+import { beatsLast, PR_LABEL, prsFor, volumePr, type Bests } from '@/lib/gamify'
 import SetRow from './SetRow'
 import type { Exercise, Goal, SetEntry } from '@/lib/types'
 
@@ -32,6 +33,7 @@ export default function ExerciseBlock({
   goal,
   showRpe,
   last,
+  bests,
   onChange,
   onRemove,
 }: {
@@ -39,6 +41,7 @@ export default function ExerciseBlock({
   goal: Goal
   showRpe: boolean
   last: LastSession | null
+  bests: Bests
   onChange: (next: Exercise) => void
   onRemove: () => void
 }) {
@@ -63,7 +66,14 @@ export default function ExerciseBlock({
     <div className="rounded-2xl bg-card p-3 ring-1 ring-edge">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <h3 className="truncate text-sm font-semibold">{exercise.name}</h3>
+          <h3 className="truncate text-sm font-semibold">
+            {exercise.name}
+            {volumePr(exercise, bests) ? (
+              <span className="ml-2 rounded-full bg-accent px-2 py-0.5 text-[10px] font-medium text-ink align-middle">
+                Best session
+              </span>
+            ) : null}
+          </h3>
           {last ? (
             <p className="mt-0.5 truncate text-xs text-muted num">
               {fmtDate(last.date)} &middot; {fmtSets(last.exercise)}
@@ -81,17 +91,29 @@ export default function ExerciseBlock({
       </div>
 
       <div className="mt-3 flex flex-col gap-2">
-        {exercise.sets.map((set, i) => (
-          <SetRow
-            key={set.id}
-            index={i}
-            set={set}
-            type={exercise.type}
-            showRpe={showRpe}
-            onChange={(patch) => patchSet(set.id, patch)}
-            onRemove={() => onChange({ ...exercise, sets: exercise.sets.filter((s) => s.id !== set.id) })}
-          />
-        ))}
+        {exercise.sets.map((set, i) => {
+          const records = prsFor(set, exercise.type, bests, goal)
+          const beat = records.length === 0 && beatsLast(set, last?.exercise.sets[i], exercise.type)
+          return (
+            <div key={set.id} className="flex flex-col gap-1">
+              <SetRow
+                index={i}
+                set={set}
+                type={exercise.type}
+                showRpe={showRpe}
+                onChange={(patch) => patchSet(set.id, patch)}
+                onRemove={() => onChange({ ...exercise, sets: exercise.sets.filter((s) => s.id !== set.id) })}
+              />
+              {records.length ? (
+                <p className="pl-6 text-xs font-medium text-accent">
+                  PR &middot; {records.map((k) => PR_LABEL[k]).join(', ')}
+                </p>
+              ) : beat ? (
+                <p className="pl-6 text-xs text-muted">Up on last time</p>
+              ) : null}
+            </div>
+          )
+        })}
       </div>
 
       {advice ? (
