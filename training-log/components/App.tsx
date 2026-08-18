@@ -57,7 +57,7 @@ export default function App({ userId, email }: { userId: string; email: string }
     (workout: Workout) => {
       pending.current.set(workout.id, workout)
       if (timer.current) clearTimeout(timer.current)
-      timer.current = setTimeout(() => void flush(), 700)
+      timer.current = setTimeout(() => void flush(), 400)
     },
     [flush],
   )
@@ -77,13 +77,21 @@ export default function App({ userId, email }: { userId: string; email: string }
     }
   }, [sb, userId])
 
+  // A set typed and not yet written is the one thing this app cannot lose, so
+  // anything that looks like leaving flushes the queue: the field losing focus,
+  // the tab going to the background, the page going away.
   useEffect(() => {
-    const onHide = () => {
+    const onVisibility = () => {
       if (document.visibilityState === 'hidden') void flush()
     }
-    document.addEventListener('visibilitychange', onHide)
+    const onLeave = () => void flush()
+    document.addEventListener('visibilitychange', onVisibility)
+    document.addEventListener('focusout', onLeave)
+    window.addEventListener('pagehide', onLeave)
     return () => {
-      document.removeEventListener('visibilitychange', onHide)
+      document.removeEventListener('visibilitychange', onVisibility)
+      document.removeEventListener('focusout', onLeave)
+      window.removeEventListener('pagehide', onLeave)
       void flush()
     }
   }, [flush])
@@ -312,14 +320,25 @@ export default function App({ userId, email }: { userId: string; email: string }
         </div>
       ) : null}
 
-      <div className="fixed inset-x-0 bottom-0 mx-auto max-w-lg px-4 pb-6">
+      {/* Sticky only when there is nothing to cover. Mid session the big orange
+          bar would sit on top of the set you are typing into. */}
+      {tab === 'history' || todays.length === 0 ? (
+        <div className="fixed inset-x-0 bottom-0 mx-auto max-w-lg px-4 pb-6">
+          <button
+            onClick={() => setSheet('start')}
+            className="w-full rounded-2xl bg-accent py-4 text-base font-medium text-ink shadow-lg"
+          >
+            Start a workout
+          </button>
+        </div>
+      ) : (
         <button
           onClick={() => setSheet('start')}
-          className="w-full rounded-2xl bg-accent py-4 text-base font-medium text-ink shadow-lg"
+          className="mt-8 w-full rounded-2xl bg-card py-4 text-base text-muted ring-1 ring-edge"
         >
-          Start a workout
+          Start another workout
         </button>
-      </div>
+      )}
 
       {sheet === 'start' ? (
         <StartSheet

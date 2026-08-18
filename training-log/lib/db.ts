@@ -69,47 +69,32 @@ export async function loadAll(sb: SupabaseClient, userId: string): Promise<Train
   }
 }
 
-// Writes a whole workout. Exercises and sets are replaced rather than diffed,
-// which keeps ordering honest and a session is only ever a handful of rows.
-export async function saveWorkout(sb: SupabaseClient, userId: string, workout: Workout) {
-  const up = await sb
-    .from('workouts')
-    .upsert({ id: workout.id, user_id: userId, date: workout.date, title: workout.title })
-  if (up.error) throw up.error
-
-  const del = await sb.from('exercises').delete().eq('workout_id', workout.id)
-  if (del.error) throw del.error
-
-  if (workout.exercises.length === 0) return
-
-  const exerciseRows = workout.exercises.map((ex, i) => ({
-    id: ex.id,
-    user_id: userId,
-    workout_id: workout.id,
-    name: ex.name,
-    type: ex.type,
-    position: i,
-  }))
-  const insEx = await sb.from('exercises').insert(exerciseRows)
-  if (insEx.error) throw insEx.error
-
-  const setRows = workout.exercises.flatMap((ex) =>
-    ex.sets.map((s, i) => ({
-      id: s.id,
-      user_id: userId,
-      exercise_id: ex.id,
-      position: i,
-      w: s.w ?? null,
-      r: s.r ?? null,
-      rpe: s.rpe ?? null,
-      t: s.t ?? null,
-      d: s.d ?? null,
-      raw: s.raw ?? null,
-    })),
-  )
-  if (setRows.length === 0) return
-  const insSets = await sb.from('sets').insert(setRows)
-  if (insSets.error) throw insSets.error
+// Writes a whole workout in a single call. One request rather than four means a
+// save that starts as the app is going away either lands or does not, instead
+// of leaving half a session behind. See supabase/migrations/0002_save_workout.sql
+export async function saveWorkout(sb: SupabaseClient, _userId: string, workout: Workout) {
+  const res = await sb.rpc('save_workout', {
+    payload: {
+      id: workout.id,
+      date: workout.date,
+      title: workout.title,
+      exercises: workout.exercises.map((ex) => ({
+        id: ex.id,
+        name: ex.name,
+        type: ex.type,
+        sets: ex.sets.map((s) => ({
+          id: s.id,
+          w: s.w ?? null,
+          r: s.r ?? null,
+          rpe: s.rpe ?? null,
+          t: s.t ?? null,
+          d: s.d ?? null,
+          raw: s.raw ?? null,
+        })),
+      })),
+    },
+  })
+  if (res.error) throw res.error
 }
 
 export async function deleteWorkout(sb: SupabaseClient, id: string) {
