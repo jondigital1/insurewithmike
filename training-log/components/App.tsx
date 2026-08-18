@@ -498,7 +498,7 @@ export default function App({ userId, email }: { userId: string; email: string }
           <button
             key={name}
             onClick={() => setTab(name)}
-            className={`flex-1 rounded-lg py-2 text-sm capitalize ${tab === name ? 'bg-accent text-ink' : 'text-muted'}`}
+            className={`flex-1 rounded-lg py-2 text-sm capitalize ${tab === name ? 'bg-accent text-on-accent' : 'text-muted'}`}
           >
             {name}
           </button>
@@ -526,7 +526,7 @@ export default function App({ userId, email }: { userId: string; email: string }
               onClick={() =>
                 void saveProfile({ ...profile, days: 2, checkinDismissedAt: new Date().toISOString() })
               }
-              className="flex-1 rounded-xl bg-accent py-2 text-sm font-medium text-ink"
+              className="flex-1 rounded-xl bg-accent py-2 text-sm font-medium text-on-accent"
             >
               Move to 2 days
             </button>
@@ -672,7 +672,7 @@ export default function App({ userId, email }: { userId: string; email: string }
         <div className="fixed inset-x-0 bottom-0 mx-auto max-w-lg px-4 pb-6">
           <button
             onClick={() => setSheet('start')}
-            className="w-full rounded-2xl bg-accent py-4 text-base font-medium text-ink shadow-lg"
+            className="w-full rounded-2xl bg-accent py-4 text-base font-medium text-on-accent shadow-lg"
           >
             Start a workout
           </button>

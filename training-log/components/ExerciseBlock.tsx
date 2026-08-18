@@ -107,7 +107,7 @@ export default function ExerciseBlock({
             {label ? <span className="mr-2 text-xs num text-accent">{label}</span> : null}
             {exercise.name}
             {volumePr(exercise, bests) ? (
-              <span className="ml-2 rounded-full bg-accent px-2 py-0.5 text-[10px] font-medium text-ink align-middle">
+              <span className="ml-2 rounded-full bg-accent px-2 py-0.5 text-[10px] font-medium text-on-accent align-middle">
                 Best session
               </span>
             ) : null}
@@ -129,7 +129,7 @@ export default function ExerciseBlock({
           </button>
           <button
             onClick={() => (confirm ? onRemove() : setConfirm(true))}
-            className={`rounded-lg px-2 py-1 text-xs ${confirm ? 'bg-accent text-ink' : 'text-muted'}`}
+            className={`rounded-lg px-2 py-1 text-xs ${confirm ? 'bg-accent text-on-accent' : 'text-muted'}`}
           >
             {confirm ? 'Sure?' : 'Remove'}
           </button>

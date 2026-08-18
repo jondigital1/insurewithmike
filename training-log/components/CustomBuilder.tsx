@@ -73,7 +73,7 @@ export default function CustomBuilder({
               setGroup(group === g ? null : g)
               setQuery('')
             }}
-            className={`rounded-full px-3 py-1 text-xs ${group === g ? 'bg-accent text-ink' : 'bg-ink text-muted ring-1 ring-edge'}`}
+            className={`rounded-full px-3 py-1 text-xs ${group === g ? 'bg-accent text-on-accent' : 'bg-ink text-muted ring-1 ring-edge'}`}
           >
             {g}
           </button>
@@ -90,11 +90,11 @@ export default function CustomBuilder({
       <button
         onClick={() => setSuperset(superset ? null : uid())}
         className={`mt-3 flex w-full items-center justify-between rounded-xl px-4 py-3 text-left ring-1 ${
-          superset ? 'bg-accent text-ink ring-accent' : 'bg-ink ring-edge'
+          superset ? 'bg-accent text-on-accent ring-accent' : 'bg-ink ring-edge'
         }`}
       >
         <span className="text-sm">Superset</span>
-        <span className={`text-xs ${superset ? 'text-ink' : 'text-muted'}`}>
+        <span className={`text-xs ${superset ? 'text-on-accent' : 'text-muted'}`}>
           {superset ? 'everything picked now runs together' : 'off'}
         </span>
       </button>
@@ -105,7 +105,7 @@ export default function CustomBuilder({
             <button
               key={p.name}
               onClick={() => toggle(p)}
-              className="rounded-full bg-accent px-3 py-1 text-xs text-ink"
+              className="rounded-full bg-accent px-3 py-1 text-xs text-on-accent"
             >
               {p.superset ? `${letters.get(p.superset)} · ` : ''}
               {p.name} &times;
@@ -136,7 +136,7 @@ export default function CustomBuilder({
       <button
         disabled={!name.trim() || picked.length === 0}
         onClick={() => onSave(name.trim(), picked)}
-        className="sticky bottom-0 mt-4 w-full rounded-xl bg-accent py-3 text-sm font-medium text-ink disabled:opacity-40"
+        className="sticky bottom-0 mt-4 w-full rounded-xl bg-accent py-3 text-sm font-medium text-on-accent disabled:opacity-40"
       >
         Save workout
       </button>

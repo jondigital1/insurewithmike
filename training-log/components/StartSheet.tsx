@@ -83,7 +83,7 @@ export default function StartSheet({
                 </button>
                 <button
                   onClick={() => (confirm === w.id ? onDelete(w.id) : setConfirm(w.id))}
-                  className={`rounded-xl px-3 py-3 text-xs ${confirm === w.id ? 'bg-accent text-ink' : 'text-muted'}`}
+                  className={`rounded-xl px-3 py-3 text-xs ${confirm === w.id ? 'bg-accent text-on-accent' : 'text-muted'}`}
                 >
                   {confirm === w.id ? 'Sure?' : 'Delete'}
                 </button>

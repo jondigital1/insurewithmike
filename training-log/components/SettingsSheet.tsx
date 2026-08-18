@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { GOALS } from '@/lib/coach'
 import { toCsv } from '@/lib/csv'
 import { today } from '@/lib/format'
@@ -27,6 +27,31 @@ export default function SettingsSheet({
 }) {
   const [paste, setPaste] = useState('')
   const [status, setStatus] = useState('')
+  const [theme, setTheme] = useState<'system' | 'light' | 'dark'>('system')
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('training-log-theme')
+      if (saved === 'light' || saved === 'dark') setTheme(saved)
+    } catch {
+      // no storage, the choice just does not persist
+    }
+  }, [])
+
+  function pickTheme(next: 'system' | 'light' | 'dark') {
+    setTheme(next)
+    try {
+      if (next === 'system') {
+        localStorage.removeItem('training-log-theme')
+        delete document.documentElement.dataset.theme
+      } else {
+        localStorage.setItem('training-log-theme', next)
+        document.documentElement.dataset.theme = next
+      }
+    } catch {
+      document.documentElement.dataset.theme = next === 'system' ? undefined : next
+    }
+  }
 
   function exportCsv() {
     const blob = new Blob([toCsv(data.workouts)], { type: 'text/csv' })
@@ -64,13 +89,28 @@ export default function SettingsSheet({
             key={g.id}
             onClick={() => onGoal(g.id)}
             className={`flex items-center justify-between rounded-xl px-3 py-3 text-left ring-1 ${
-              data.settings.goal === g.id ? 'bg-accent text-ink ring-accent' : 'bg-ink ring-edge'
+              data.settings.goal === g.id ? 'bg-accent text-on-accent ring-accent' : 'bg-ink ring-edge'
             }`}
           >
             <span className="text-sm">{g.label}</span>
-            <span className={`text-xs num ${data.settings.goal === g.id ? 'text-ink' : 'text-muted'}`}>
+            <span className={`text-xs num ${data.settings.goal === g.id ? 'text-on-accent' : 'text-muted'}`}>
               {g.reps[0]} to {g.reps[1]} reps, RPE {g.rpe[0]} to {g.rpe[1]}
             </span>
+          </button>
+        ))}
+      </div>
+
+      <h3 className="mt-6 text-xs uppercase tracking-wide text-muted">Appearance</h3>
+      <div className="mt-2 flex gap-2">
+        {(['system', 'light', 'dark'] as const).map((t) => (
+          <button
+            key={t}
+            onClick={() => pickTheme(t)}
+            className={`flex-1 rounded-xl py-2 text-sm capitalize ring-1 ${
+              theme === t ? 'bg-accent text-on-accent ring-accent' : 'bg-ink text-muted ring-edge'
+            }`}
+          >
+            {t}
           </button>
         ))}
       </div>

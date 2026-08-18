@@ -135,7 +135,7 @@ export default function RestBar({
           >
             +30s
           </button>
-          <button onClick={onStop} className="rounded-xl bg-accent px-3 py-2 text-xs font-medium text-ink">
+          <button onClick={onStop} className="rounded-xl bg-accent px-3 py-2 text-xs font-medium text-on-accent">
             {done ? 'Done' : 'Skip'}
           </button>
         </div>

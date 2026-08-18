@@ -9,7 +9,7 @@ import Sheet from './Sheet'
 type Focus = 'minutes' | 'sore' | 'all'
 
 const CHIP = 'rounded-full px-3 py-2 text-sm ring-1'
-const ON = 'bg-accent text-ink ring-accent'
+const ON = 'bg-accent text-on-accent ring-accent'
 const OFF = 'bg-ink text-muted ring-edge'
 
 function Chips({
@@ -205,7 +205,7 @@ export default function ProfileSheet({
 
       <button
         onClick={() => onSave(draft)}
-        className="mt-6 w-full rounded-xl bg-accent py-3 text-sm font-medium text-ink"
+        className="mt-6 w-full rounded-xl bg-accent py-3 text-sm font-medium text-on-accent"
       >
         Save
       </button>

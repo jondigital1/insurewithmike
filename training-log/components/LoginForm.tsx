@@ -51,7 +51,7 @@ export default function LoginForm() {
             <button
               onClick={() => void send()}
               disabled={state === 'sending'}
-              className="mt-3 w-full rounded-xl bg-accent px-4 py-3 text-base font-medium text-ink disabled:opacity-50"
+              className="mt-3 w-full rounded-xl bg-accent px-4 py-3 text-base font-medium text-on-accent disabled:opacity-50"
             >
               {state === 'sending' ? 'Sending' : 'Send magic link'}
             </button>

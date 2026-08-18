@@ -90,7 +90,7 @@ export default function WorkoutEditor({
         )}
         <button
           onClick={() => (confirm ? onDelete() : setConfirm(true))}
-          className={`shrink-0 rounded-lg px-3 py-2 text-xs ${confirm ? 'bg-accent text-ink' : 'text-muted'}`}
+          className={`shrink-0 rounded-lg px-3 py-2 text-xs ${confirm ? 'bg-accent text-on-accent' : 'text-muted'}`}
         >
           {confirm ? 'Sure?' : 'Delete'}
         </button>

@@ -145,7 +145,7 @@ export default function Onboarding({
         <div className="flex gap-2 pb-2">
           <button
             onClick={() => setStep(0)}
-            className="flex-1 rounded-2xl bg-accent py-4 text-base font-medium text-ink"
+            className="flex-1 rounded-2xl bg-accent py-4 text-base font-medium text-on-accent"
           >
             Set me up
           </button>
@@ -224,7 +224,7 @@ export default function Onboarding({
         <div className="flex gap-2 pb-2">
           <button
             onClick={() => finish(first)}
-            className="flex-1 rounded-2xl bg-accent py-4 text-base font-medium text-ink"
+            className="flex-1 rounded-2xl bg-accent py-4 text-base font-medium text-on-accent"
           >
             Start day 1
           </button>

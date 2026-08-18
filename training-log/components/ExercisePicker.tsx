@@ -61,11 +61,11 @@ export default function ExercisePicker({
       <button
         onClick={() => setSuperset(superset ? null : uid())}
         className={`mt-3 flex w-full items-center justify-between rounded-xl px-4 py-3 text-left ring-1 ${
-          superset ? 'bg-accent text-ink ring-accent' : 'bg-ink ring-edge'
+          superset ? 'bg-accent text-on-accent ring-accent' : 'bg-ink ring-edge'
         }`}
       >
         <span className="text-sm">Superset</span>
-        <span className={`text-xs ${superset ? 'text-ink' : 'text-muted'}`}>
+        <span className={`text-xs ${superset ? 'text-on-accent' : 'text-muted'}`}>
           {superset
             ? added.length
               ? `${added.length} in this one, keep picking`
@@ -77,7 +77,7 @@ export default function ExercisePicker({
       <div className="mt-3 flex flex-wrap gap-2">
         <button
           onClick={() => setGroup(null)}
-          className={`rounded-full px-3 py-1 text-xs ${group === null ? 'bg-accent text-ink' : 'bg-ink text-muted ring-1 ring-edge'}`}
+          className={`rounded-full px-3 py-1 text-xs ${group === null ? 'bg-accent text-on-accent' : 'bg-ink text-muted ring-1 ring-edge'}`}
         >
           All
         </button>
@@ -85,7 +85,7 @@ export default function ExercisePicker({
           <button
             key={g}
             onClick={() => setGroup(group === g ? null : g)}
-            className={`rounded-full px-3 py-1 text-xs ${group === g ? 'bg-accent text-ink' : 'bg-ink text-muted ring-1 ring-edge'}`}
+            className={`rounded-full px-3 py-1 text-xs ${group === g ? 'bg-accent text-on-accent' : 'bg-ink text-muted ring-1 ring-edge'}`}
           >
             {g}
           </button>
@@ -117,7 +117,7 @@ export default function ExercisePicker({
               <button
                 key={t.type}
                 onClick={() => setNewType(t.type)}
-                className={`rounded-full px-3 py-1 text-xs ${newType === t.type ? 'bg-accent text-ink' : 'bg-card text-muted ring-1 ring-edge'}`}
+                className={`rounded-full px-3 py-1 text-xs ${newType === t.type ? 'bg-accent text-on-accent' : 'bg-card text-muted ring-1 ring-edge'}`}
               >
                 {t.label}
               </button>
@@ -130,7 +130,7 @@ export default function ExercisePicker({
               pick(exercise.name, exercise.type)
               setQuery('')
             }}
-            className="mt-3 w-full rounded-lg bg-accent py-2 text-sm font-medium text-ink"
+            className="mt-3 w-full rounded-lg bg-accent py-2 text-sm font-medium text-on-accent"
           >
             Save and add
           </button>
