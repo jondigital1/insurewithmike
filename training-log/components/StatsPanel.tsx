@@ -1,7 +1,41 @@
 'use client'
 
-import { COVERAGE_TARGET, trainingGrid, weeklyCoverage, weeklyStreak } from '@/lib/gamify'
+import {
+  COVERAGE_TARGET, LADDERS, lifetime, nextLandmark, trainingGrid, weeklyCoverage, weeklyStreak,
+} from '@/lib/gamify'
+import { fmtTime } from '@/lib/format'
 import type { Workout } from '@/lib/types'
+
+function Landmark({
+  label,
+  value,
+  ladder,
+  suffix = '',
+}: {
+  label: string
+  value: number
+  ladder: number[]
+  suffix?: string
+}) {
+  const { next, pct } = nextLandmark(value, ladder)
+  return (
+    <div>
+      <div className="flex items-baseline justify-between">
+        <span className="text-sm text-muted">{label}</span>
+        <span className="text-base num">
+          {Math.round(value).toLocaleString()}
+          {suffix}
+        </span>
+      </div>
+      <span className="mt-1.5 block h-1.5 overflow-hidden rounded-full bg-ink ring-1 ring-edge">
+        <span className="block h-full rounded-full bg-accent" style={{ width: `${pct}%` }} />
+      </span>
+      {next != null ? (
+        <p className="mt-1 text-right text-xs text-muted num">next at {next.toLocaleString()}{suffix}</p>
+      ) : null}
+    </div>
+  )
+}
 
 export default function StatsPanel({
   workouts,
@@ -16,6 +50,7 @@ export default function StatsPanel({
   const grid = trainingGrid(workouts, today)
   const streak = weeklyStreak(workouts, today, target)
   const month = grid.filter((d) => d.trained).length
+  const totals = lifetime(workouts)
 
   return (
     <div className="mb-4 flex flex-col gap-4">
@@ -49,6 +84,19 @@ export default function StatsPanel({
               Hit {target} days this week and the count starts. Rest days cost nothing.
             </span>
           )}
+        </p>
+      </div>
+
+      <div className="rounded-2xl bg-card p-4 ring-1 ring-edge">
+        <h2 className="text-xs uppercase tracking-wide text-muted">All time</h2>
+        <div className="mt-3 flex flex-col gap-3">
+          <Landmark label="Lifted" value={totals.volume} suffix=" lb" ladder={LADDERS.volume} />
+          <Landmark label="Sessions" value={totals.sessions} ladder={LADDERS.sessions} />
+          <Landmark label="Sets" value={totals.sets} ladder={LADDERS.sets} />
+        </div>
+        <p className="mt-3 border-t border-edge pt-3 text-xs text-muted num">
+          {totals.reps.toLocaleString()} reps
+          {totals.seconds > 0 ? ` · ${fmtTime(totals.seconds)} of holds and cardio` : ''}
         </p>
       </div>
 

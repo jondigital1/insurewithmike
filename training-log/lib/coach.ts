@@ -28,13 +28,18 @@ const DOWN = 0.925
 
 // Reads the last set of an exercise and says what to do next time. Returns null
 // when the set is inside target and there is nothing worth saying.
-export function coach(set: SetEntry | undefined, type: SetType, goal: Goal): string | null {
+export function coach(
+  set: SetEntry | undefined,
+  type: SetType,
+  goal: Goal,
+  rpeBand?: [number, number],
+): string | null {
   if (!set) return null
   if (type !== 'W' && type !== 'R') return null
 
   const spec = goalSpec(goal)
   const [repLo, repHi] = spec.reps
-  const [rpeLo, rpeHi] = spec.rpe
+  const [rpeLo, rpeHi] = rpeBand ?? spec.rpe
   const reps = set.r ?? null
   const rpe = set.rpe ?? null
   const weight = set.w ?? null

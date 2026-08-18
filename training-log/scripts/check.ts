@@ -10,8 +10,10 @@ import { toCsv } from '../lib/csv'
 import { buildDay, dayById, experienceScore, firstMonth, level, planFor } from '../lib/onboarding'
 import { equipmentOf } from '../lib/exercises'
 import {
-  beatsLast, bestsFor, e1rm, prsFor, trainingGrid, volumePr, weeklyCoverage, weeklyStreak, weekStart,
+  beatsLast, bestsFor, e1rm, LADDERS, lifetime, nextLandmark, prsFor, trainingGrid, volumePr,
+  weeklyCoverage, weeklyStreak, weekStart,
 } from '../lib/gamify'
+import { mondayOf, readWave, WAVE, waveWeek } from '../lib/wave'
 import type { Workout } from '../lib/types'
 
 let checks = 0
@@ -337,6 +339,66 @@ check('the streak counts weeks, so a rest day costs nothing', () => {
   assert.equal(weeklyStreak(weeks, '2026-08-19', 3), 0)
   // A quiet current week must not wipe out the weeks behind it.
   assert.equal(weeklyStreak(weeks, '2026-08-24', 2), 2, 'the two completed weeks behind it still count')
+})
+
+check('lifetime totals count only what was written down', () => {
+  const t = lifetime(HISTORY)
+  assert.equal(t.sessions, 2)
+  assert.equal(t.sets, 5)
+  assert.equal(t.reps, 34)
+  assert.equal(t.volume, 70 * 10 + 70 * 9 + 75 * 8 + 75 * 7)
+  assert.equal(t.seconds, 60)
+
+  const blank: Workout[] = [
+    { id: 'z', date: '2026-08-18', title: 'started, never logged', exercises: [
+      { id: 'e', name: 'Leg Press', type: 'W', sets: [{ id: 's' }] },
+    ] },
+  ]
+  assert.equal(lifetime(blank).sessions, 0, 'an empty session is not a session')
+})
+
+check('landmarks point at the next round number', () => {
+  assert.deepEqual(nextLandmark(0, LADDERS.sessions).next, 10)
+  assert.deepEqual(nextLandmark(10, LADDERS.sessions).next, 25)
+  const half = nextLandmark(30, [0, 20, 40])
+  assert.equal(half.next, 40)
+  assert.equal(Math.round(half.pct), 50)
+  assert.equal(nextLandmark(99_999_999, LADDERS.volume).next, null)
+  assert.equal(nextLandmark(99_999_999, LADDERS.volume).pct, 100)
+})
+
+check('the wave runs three weeks and repeats', () => {
+  assert.equal(waveWeek({}, '2026-08-18'), null, 'off unless it is turned on')
+  const on = { wave: true, waveStart: '2026-08-03' }
+  assert.equal(waveWeek(on, '2026-08-05')!.index, 1)
+  assert.equal(waveWeek(on, '2026-08-12')!.index, 2)
+  assert.equal(waveWeek(on, '2026-08-19')!.index, 3)
+  assert.equal(waveWeek(on, '2026-08-26')!.index, 1, 'and round again')
+  assert.equal(mondayOf('2026-08-19'), '2026-08-17')
+  assert.deepEqual(WAVE.map((w) => w.rpe[1]), [8.5, 9.5, 10])
+})
+
+check('the wave reads the RPE actually logged this week', () => {
+  const week = WAVE[1]
+  const sets = (rpe: number[]): Workout[] => [
+    { id: 'w', date: '2026-08-18', title: 'Push', exercises: [
+      { id: 'e', name: 'Incline Dumbbell Press', type: 'W',
+        sets: rpe.map((v, i) => ({ id: String(i), w: 80, r: 8, rpe: v })) },
+    ] },
+  ]
+  assert.equal(readWave(sets([9, 9]), week, '2026-08-18').verdict, 'on')
+  assert.equal(readWave(sets([7, 7]), week, '2026-08-18').verdict, 'under')
+  assert.equal(readWave(sets([10, 10]), week, '2026-08-18').verdict, 'over')
+  assert.equal(readWave([], week, '2026-08-18').verdict, null)
+  assert.equal(readWave(sets([9, 8]), week, '2026-08-18').average, 8.5)
+})
+
+check('the coach aims at the wave week rather than the goal band', () => {
+  const set = { id: 'x', w: 100, r: 8, rpe: 9 }
+  assert.equal(coach(set, 'W', 'muscle'), null, 'RPE 9 is inside the muscle band')
+  assert.match(coach(set, 'W', 'muscle', WAVE[0].rpe)!, /over target/, 'but too hard for a build week')
+  assert.equal(coach(set, 'W', 'muscle', WAVE[1].rpe), null, 'and right for a push week')
+  assert.match(coach(set, 'W', 'muscle', WAVE[2].rpe)!, /under target/, 'and easy for a send week')
 })
 
 console.log(`\n${checks} checks passed`)

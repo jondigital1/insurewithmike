@@ -32,6 +32,7 @@ export default function ExerciseBlock({
   exercise,
   goal,
   showRpe,
+  rpeBand,
   last,
   bests,
   onChange,
@@ -40,6 +41,7 @@ export default function ExerciseBlock({
   exercise: Exercise
   goal: Goal
   showRpe: boolean
+  rpeBand?: [number, number]
   last: LastSession | null
   bests: Bests
   onChange: (next: Exercise) => void
@@ -55,7 +57,7 @@ export default function ExerciseBlock({
 
   const filled = exercise.sets.filter((s) => !isEmptySet(s, exercise.type))
   const basis = filled.length ? filled[filled.length - 1] : last ? topSet(last.exercise) ?? undefined : undefined
-  const advice = coach(basis, exercise.type, goal)
+  const advice = coach(basis, exercise.type, goal, rpeBand)
   const fromLast = filled.length === 0 && !!basis
 
   function patchSet(id: string, patch: Partial<SetEntry>) {

@@ -19,6 +19,8 @@ export interface Profile {
   age?: 'under40' | '40to59' | 'over60'
   dislikes?: string[]
   goalChoice?: 'muscle' | 'strength' | 'lean' | 'health'
+  wave?: boolean
+  waveStart?: string
 }
 
 export const SORE_JOINTS = ['Knee', 'Low back', 'Shoulder', 'Hip', 'Elbow', 'Neck', 'Wrist']

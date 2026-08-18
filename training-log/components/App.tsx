@@ -8,6 +8,7 @@ import CustomBuilder from './CustomBuilder'
 import Onboarding from './Onboarding'
 import ProfileSheet from './ProfileSheet'
 import StatsPanel from './StatsPanel'
+import WaveCard from './WaveCard'
 import ExercisePicker from './ExercisePicker'
 import SettingsSheet from './SettingsSheet'
 import StartSheet from './StartSheet'
@@ -16,6 +17,7 @@ import type { LastSession } from './ExerciseBlock'
 import { buildDay, dayById, firstMonth, planFor, type Profile } from '@/lib/onboarding'
 import { isEmptySet } from '@/lib/format'
 import { bestsFor as computeBests } from '@/lib/gamify'
+import { waveWeek } from '@/lib/wave'
 import {
   EMPTY_DATA,
   type CustomExercise,
@@ -269,6 +271,8 @@ export default function App({ userId, email }: { userId: string; email: string }
   const profile = data.settings.profile
   const plan = data.settings.onboardedAt ? planFor(profile, data.settings.goal) : null
   const rpeOn = !plan || plan.showRpe
+  // The wave only means anything once the RPE box exists to aim with.
+  const wave = rpeOn ? waveWeek(profile, now) : null
 
   // Only ask about sore joints once a session is behind them, on a later visit.
   // Asking the moment onboarding hands over the first session is two sheets back
@@ -322,6 +326,10 @@ export default function App({ userId, email }: { userId: string; email: string }
       {error ? <p className="mb-3 rounded-xl bg-card p-3 text-xs text-accent ring-1 ring-edge">{error}</p> : null}
       {loading ? <p className="text-sm text-muted">Loading</p> : null}
 
+      {!loading && tab === 'log' && wave ? (
+        <WaveCard week={wave} workouts={data.workouts} today={now} />
+      ) : null}
+
       {!loading && tab === 'log' && behind && month ? (
         <div className="mb-4 rounded-2xl bg-card p-4 ring-1 ring-accent">
           <p className="text-xs uppercase tracking-wide text-muted">Four weeks in</p>
@@ -366,6 +374,7 @@ export default function App({ userId, email }: { userId: string; email: string }
               workout={workout}
               goal={data.settings.goal}
               showRpe={rpeOn}
+              rpeBand={wave?.rpe}
               lastFor={lastFor}
               bestsFor={bestsFor}
               onChange={updateWorkout}
@@ -390,6 +399,7 @@ export default function App({ userId, email }: { userId: string; email: string }
                   workout={workout}
                   goal={data.settings.goal}
                   showRpe={rpeOn}
+                  rpeBand={wave?.rpe}
                   lastFor={lastFor}
                   bestsFor={bestsFor}
                   onChange={updateWorkout}

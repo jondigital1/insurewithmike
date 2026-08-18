@@ -201,3 +201,52 @@ export function weeklyStreak(workouts: Workout[], today: string, target: number)
   }
   return streak
 }
+
+export interface Totals {
+  sessions: number
+  sets: number
+  reps: number
+  volume: number
+  seconds: number
+}
+
+// Everything ever written down. The one set of numbers that only goes up, which
+// is what makes them worth showing on a bad week.
+export function lifetime(workouts: Workout[]): Totals {
+  const out: Totals = { sessions: 0, sets: 0, reps: 0, volume: 0, seconds: 0 }
+  for (const w of workouts) {
+    let counted = false
+    for (const ex of w.exercises) {
+      for (const s of ex.sets) {
+        if (isEmptySet(s, ex.type)) continue
+        counted = true
+        out.sets += 1
+        if (s.r != null) out.reps += s.r
+        if (s.w != null && s.r != null) out.volume += s.w * s.r
+        if (s.t != null) out.seconds += s.t
+      }
+    }
+    if (counted) out.sessions += 1
+  }
+  return out
+}
+
+export const LADDERS = {
+  volume: [50_000, 100_000, 250_000, 500_000, 1_000_000, 2_500_000, 5_000_000, 10_000_000],
+  sessions: [10, 25, 50, 100, 200, 365, 500, 1000],
+  sets: [250, 500, 1000, 2500, 5000, 10_000, 25_000],
+}
+
+export interface Landmark {
+  next: number | null
+  pct: number
+}
+
+// The next round number worth chasing, and how close it is.
+export function nextLandmark(value: number, ladder: number[]): Landmark {
+  const next = ladder.find((n) => n > value) ?? null
+  if (next == null) return { next: null, pct: 100 }
+  const previous = [...ladder].reverse().find((n) => n <= value) ?? 0
+  const span = next - previous
+  return { next, pct: Math.max(0, Math.min(100, ((value - previous) / span) * 100)) }
+}

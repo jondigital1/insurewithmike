@@ -10,6 +10,7 @@ export default function WorkoutEditor({
   workout,
   goal,
   showRpe,
+  rpeBand,
   lastFor,
   bestsFor,
   onChange,
@@ -20,6 +21,7 @@ export default function WorkoutEditor({
   workout: Workout
   goal: Goal
   showRpe: boolean
+  rpeBand?: [number, number]
   lastFor: (name: string, workout: Workout) => LastSession | null
   bestsFor: (name: string, workout: Workout) => Bests
   onChange: (next: Workout) => void
@@ -89,6 +91,7 @@ export default function WorkoutEditor({
           exercise={exercise}
           goal={goal}
           showRpe={showRpe}
+          rpeBand={rpeBand}
           last={lastFor(exercise.name, workout)}
           bests={bestsFor(exercise.name, workout)}
           onChange={patchExercise}

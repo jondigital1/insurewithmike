@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import { COMMON_DISLIKES, OTHER_TRAINING, SORE_JOINTS, type Profile } from '@/lib/onboarding'
+import { today } from '@/lib/format'
+import { mondayOf, waveWeek } from '@/lib/wave'
 import Sheet from './Sheet'
 
 type Focus = 'minutes' | 'sore' | 'all'
@@ -163,6 +165,27 @@ export default function ProfileSheet({
               { v: 'over60' as const, label: '60 or over' },
             ]}
           />
+
+          <Label>Effort wave</Label>
+          <Choice
+            value={draft.wave ? 'on' : 'off'}
+            onPick={(v) =>
+              set(
+                v === 'on'
+                  ? { wave: true, waveStart: draft.waveStart ?? mondayOf(today()) }
+                  : { wave: false },
+              )
+            }
+            options={[
+              { v: 'off' as const, label: 'Off' },
+              { v: 'on' as const, label: 'Three week wave' },
+            ]}
+          />
+          <p className="mt-2 text-xs leading-relaxed text-muted">
+            Build at two in reserve, push at one, then a week that goes to the end, on repeat. The coach
+            line aims at the week you are in rather than the goal band.
+            {draft.wave ? ` Currently week ${waveWeek(draft, today())?.index ?? 1} of 3.` : ''}
+          </p>
 
           <Label>Never suggest</Label>
           <Chips

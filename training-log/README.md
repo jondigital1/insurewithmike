@@ -40,6 +40,7 @@ Postgres wants uuids and the artifact did not use them.
     lib/exercises.ts      226 movements across 14 muscle groups, each typed
     lib/onboarding.ts     the questions, the scoring, the split table, the swaps
     lib/gamify.ts         records, beat the ghost, coverage, the grid, the streak
+    lib/wave.ts           the three week effort cycle and what it asks of a set
     lib/templates.ts      6 splits, 24 days
     lib/coach.ts          goal ranges and the RPE response
     lib/importer.ts       artifact v1 and v2 blobs in
@@ -100,7 +101,24 @@ weeks that met the days you said rather than consecutive days, so a rest day
 costs nothing. Under it, sets per muscle group this week against the 10 set
 target, which is the only number here that tells you what to do differently.
 
+## The effort wave
+
+Optional, off by default, switched on in Settings. Three weeks on repeat: build
+at two in reserve, push at one, then a week that goes to the end. The card on the
+Log tab says which week you are in and reads back the average RPE you have
+actually logged this week against it.
+
+It is not decoration. While the wave is running the coach line takes its RPE band
+from the week rather than the goal, so RPE 9 says nothing in a push week and
+"over target, hold the load, drop a rep" in a build week. Only appears once the
+RPE box does, since a target you cannot aim at is noise.
+
+## All time
+
+Total lifted, sessions and sets, each with the next round number to chase, plus
+reps and time under holds. The only numbers here that never go down, which is
+what makes them worth having on a bad week.
+
 ## Not built yet
 
-Rest timer, progression charts, superset grouping, exercise reordering, the 3
-week effort wave as a cycle tracker.
+Rest timer, progression charts, superset grouping, exercise reordering.
