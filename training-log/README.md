@@ -64,6 +64,13 @@ replace its exercises and sets. Pending writes flush when the tab is hidden.
 `npm run check` covers the library, the templates, the coach, the importer and the
 CSV export. `npm run build` type checks the whole app.
 
+## Design notes
+
+`docs/onboarding-research.md` is the research behind the first run questions:
+what to ask a new user who does not know what they want, why each question earns
+its place, and the tables that turn the answers into one of the 24 template days.
+Not built yet.
+
 ## Not built yet
 
 Rest timer, progression charts, superset grouping, exercise reordering, PR
