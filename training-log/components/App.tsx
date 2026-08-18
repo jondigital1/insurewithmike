@@ -7,6 +7,7 @@ import { supabaseBrowser } from '@/lib/supabase/client'
 import CustomBuilder from './CustomBuilder'
 import Onboarding from './Onboarding'
 import ProfileSheet from './ProfileSheet'
+import ProgressTab from './ProgressTab'
 import StatsPanel from './StatsPanel'
 import WaveCard from './WaveCard'
 import RestBar, { useRest } from './RestTimer'
@@ -36,7 +37,7 @@ export default function App({ userId, email }: { userId: string; email: string }
   const [data, setData] = useState<TrainingData>(EMPTY_DATA)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [tab, setTab] = useState<'log' | 'history'>('log')
+  const [tab, setTab] = useState<'log' | 'history' | 'progress'>('log')
   const [sheet, setSheet] = useState<SheetName>(null)
   const [pickerTarget, setPickerTarget] = useState<string | null>(null)
   const [openHistory, setOpenHistory] = useState<string | null>(null)
@@ -314,7 +315,7 @@ export default function App({ userId, email }: { userId: string; email: string }
       </header>
 
       <div className="mb-4 flex gap-1 rounded-xl bg-card p-1 ring-1 ring-edge">
-        {(['log', 'history'] as const).map((name) => (
+        {(['log', 'history', 'progress'] as const).map((name) => (
           <button
             key={name}
             onClick={() => setTab(name)}
@@ -392,6 +393,8 @@ export default function App({ userId, email }: { userId: string; email: string }
         </div>
       ) : null}
 
+      {!loading && tab === 'progress' ? <ProgressTab workouts={data.workouts} /> : null}
+
       {!loading && tab === 'history' ? (
         <div className="flex flex-col gap-3">
           <StatsPanel workouts={data.workouts} today={now} target={profile.days ?? plan?.days ?? 3} />
@@ -459,7 +462,7 @@ export default function App({ userId, email }: { userId: string; email: string }
 
       {/* Sticky only when there is nothing to cover. Mid session the big orange
           bar would sit on top of the set you are typing into. */}
-      {(tab === 'history' || todays.length === 0) && !rest.rest ? (
+      {(tab !== 'log' || todays.length === 0) && !rest.rest ? (
         <div className="fixed inset-x-0 bottom-0 mx-auto max-w-lg px-4 pb-6">
           <button
             onClick={() => setSheet('start')}

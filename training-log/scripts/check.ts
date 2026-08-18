@@ -16,6 +16,7 @@ import {
 import { mondayOf, readWave, WAVE, waveWeek } from '../lib/wave'
 import { isCompound, isFullSet, restFor } from '../lib/rest'
 import { groupRuns, isSuperset, supersetLetter, supersetRest } from '../lib/superset'
+import { seriesFor, trackedNames } from '../lib/progress'
 import type { Exercise } from '../lib/types'
 import type { Workout } from '../lib/types'
 
@@ -471,6 +472,50 @@ check('a superset rests as long as its hungriest movement', () => {
   ])[0]
   assert.equal(supersetRest(run, 'muscle'), restFor('Back Squat', 'W', 'muscle'))
   assert.ok(supersetRest(run, 'muscle') > restFor('Cable Curl', 'W', 'muscle'))
+})
+
+check('a series needs two sessions before there is a line', () => {
+  assert.equal(seriesFor(HISTORY, 'Plank'), null, 'one session is a dot, not a trend')
+  assert.equal(seriesFor(HISTORY, 'Leg Press'), null)
+  assert.ok(seriesFor(HISTORY, 'Incline Dumbbell Press'))
+})
+
+check('the series takes the best set of each session, oldest first', () => {
+  const s = seriesFor(HISTORY, 'Incline Dumbbell Press')!
+  assert.equal(s.points.length, 2)
+  assert.deepEqual(s.points.map((p) => p.date), ['2026-08-03', '2026-08-10'])
+  assert.equal(s.points[0].label, '70 x 10')
+  assert.equal(s.metric, 'Estimated max')
+  assert.ok(Math.abs(s.points[0].value - 93.3) < 0.2)
+  assert.ok(Math.abs(s.latest - 95) < 0.2)
+  assert.equal(Math.round(s.best), 95)
+  assert.ok(s.change !== null && s.change > 0, 'it went up')
+})
+
+check('two sessions on one day are one point, at the better of them', () => {
+  const twice: Workout[] = [
+    ...HISTORY,
+    { id: 'w2b', date: '2026-08-10', title: 'Push again', exercises: [
+      { id: 'e4', name: 'Incline Dumbbell Press', type: 'W', sets: [{ id: 's5', w: 85, r: 6 }] },
+    ] },
+  ]
+  const s = seriesFor(twice, 'Incline Dumbbell Press')!
+  assert.equal(s.points.length, 2, 'still two dates')
+  assert.equal(s.points[1].label, '85 x 6', 'the better of the two on that day')
+})
+
+check('movements rank by how many sessions they appear in', () => {
+  const busy: Workout[] = [
+    ...HISTORY,
+    { id: 'w3', date: '2026-08-17', title: 'Push', exercises: [
+      { id: 'e5', name: 'Incline Dumbbell Press', type: 'W', sets: [{ id: 's6', w: 80, r: 8 }] },
+      { id: 'e6', name: 'Plank', type: 'T', sets: [{ id: 's7', t: 75 }] },
+    ] },
+  ]
+  const names = trackedNames(busy)
+  assert.equal(names[0], 'Incline Dumbbell Press', 'three sessions beats two')
+  assert.ok(names.includes('Plank'))
+  assert.ok(!names.includes('Leg Press'), 'one session is not enough to rank')
 })
 
 console.log(`\n${checks} checks passed`)

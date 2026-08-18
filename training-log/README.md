@@ -43,6 +43,7 @@ Postgres wants uuids and the artifact did not use them.
     lib/wave.ts           the three week effort cycle and what it asks of a set
     lib/rest.ts           when a set counts as done and how long it earns
     lib/superset.ts       which consecutive exercises run together
+    lib/progress.ts       one point per movement per day, and what to measure
     lib/templates.ts      6 splits, 24 days
     lib/coach.ts          goal ranges and the RPE response
     lib/importer.ts       artifact v1 and v2 blobs in
@@ -103,6 +104,19 @@ weeks that met the days you said rather than consecutive days, so a rest day
 costs nothing. Under it, sets per muscle group this week against the 10 set
 target, which is the only number here that tells you what to do differently.
 
+## Progression charts
+
+A third tab. One chart per movement, never two movements on one axis: a leg press
+and a lateral raise sharing a scale says nothing true. Weighted work is charted on
+the estimated max, so a rep added at the same load shows up as progress, and
+everything else on the thing it is measured in.
+
+Each chart carries the current number, the change since the first session, a
+crosshair you can drag along to read any session, and a Numbers toggle that opens
+the same data as a table. A movement needs two sessions before it gets a line. The
+top three by frequency show by default, which surfaces the numbers somebody
+actually tracks without asking which they are.
+
 ## Supersets
 
 The picker carries a Superset toggle. Turn it on and everything you pick joins
@@ -148,4 +162,4 @@ what makes them worth having on a bad week.
 
 ## Not built yet
 
-Progression charts, exercise reordering.
+Exercise reordering.
