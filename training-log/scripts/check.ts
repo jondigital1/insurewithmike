@@ -14,6 +14,7 @@ import {
   weeklyCoverage, weeklyStreak, weekStart,
 } from '../lib/gamify'
 import { mondayOf, readWave, WAVE, waveWeek } from '../lib/wave'
+import { isCompound, isFullSet, restFor } from '../lib/rest'
 import type { Workout } from '../lib/types'
 
 let checks = 0
@@ -399,6 +400,29 @@ check('the coach aims at the wave week rather than the goal band', () => {
   assert.match(coach(set, 'W', 'muscle', WAVE[0].rpe)!, /over target/, 'but too hard for a build week')
   assert.equal(coach(set, 'W', 'muscle', WAVE[1].rpe), null, 'and right for a push week')
   assert.match(coach(set, 'W', 'muscle', WAVE[2].rpe)!, /under target/, 'and easy for a send week')
+})
+
+check('a set is only a set once the fields that matter are filled', () => {
+  assert.equal(isFullSet({ id: 'a', w: 80 }, 'W'), false, 'a load with no reps is half a set')
+  assert.equal(isFullSet({ id: 'a', r: 8 }, 'W'), false)
+  assert.equal(isFullSet({ id: 'a', w: 80, r: 8 }, 'W'), true)
+  assert.equal(isFullSet({ id: 'a', r: 12 }, 'R'), true)
+  assert.equal(isFullSet({ id: 'a', t: 60 }, 'T'), true)
+  assert.equal(isFullSet({ id: 'a', w: 70, d: 50 }, 'WD'), true)
+})
+
+check('rest is longer for the big movements and the heavier goal', () => {
+  assert.equal(isCompound('Back Squat'), true)
+  assert.equal(isCompound('Barbell Row'), true)
+  assert.equal(isCompound('Lateral Raise'), false)
+  assert.equal(isCompound('Leg Extension'), false, 'extension is not a press')
+  assert.equal(isCompound('Cable Curl'), false)
+
+  assert.ok(restFor('Back Squat', 'W', 'strength') > restFor('Back Squat', 'W', 'muscle'))
+  assert.ok(restFor('Back Squat', 'W', 'muscle') > restFor('Lateral Raise', 'W', 'muscle'))
+  assert.ok(restFor('Lateral Raise', 'W', 'muscle') > restFor('Cable Curl', 'W', 'muscle'))
+  assert.ok(restFor('Back Squat', 'W', 'endurance') <= 60)
+  assert.equal(restFor('Run', 'C', 'muscle'), 0, 'cardio does not rest between sets')
 })
 
 console.log(`\n${checks} checks passed`)

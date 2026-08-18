@@ -13,6 +13,8 @@ export default function WorkoutEditor({
   rpeBand,
   lastFor,
   bestsFor,
+  live,
+  onRest,
   onChange,
   onDelete,
   onAddExercise,
@@ -24,6 +26,8 @@ export default function WorkoutEditor({
   rpeBand?: [number, number]
   lastFor: (name: string, workout: Workout) => LastSession | null
   bestsFor: (name: string, workout: Workout) => Bests
+  live: boolean
+  onRest: (exerciseId: string, name: string, seconds: number) => void
   onChange: (next: Workout) => void
   onDelete: () => void
   onAddExercise: () => void
@@ -94,6 +98,8 @@ export default function WorkoutEditor({
           rpeBand={rpeBand}
           last={lastFor(exercise.name, workout)}
           bests={bestsFor(exercise.name, workout)}
+          live={live}
+          onRest={onRest}
           onChange={patchExercise}
           onRemove={() =>
             onChange({ ...workout, exercises: workout.exercises.filter((e) => e.id !== exercise.id) })

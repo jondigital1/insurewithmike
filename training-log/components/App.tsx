@@ -9,6 +9,7 @@ import Onboarding from './Onboarding'
 import ProfileSheet from './ProfileSheet'
 import StatsPanel from './StatsPanel'
 import WaveCard from './WaveCard'
+import RestBar, { useRest } from './RestTimer'
 import ExercisePicker from './ExercisePicker'
 import SettingsSheet from './SettingsSheet'
 import StartSheet from './StartSheet'
@@ -43,6 +44,7 @@ export default function App({ userId, email }: { userId: string; email: string }
   const [pendingStart, setPendingStart] = useState<{ title: string; items: CustomWorkoutItem[] } | null>(null)
   const [askedSore, setAskedSore] = useState(false)
   const [dismissedCheckin, setDismissedCheckin] = useState(false)
+  const rest = useRest()
 
   const pending = useRef(new Map<string, Workout>())
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -377,6 +379,8 @@ export default function App({ userId, email }: { userId: string; email: string }
               rpeBand={wave?.rpe}
               lastFor={lastFor}
               bestsFor={bestsFor}
+              live
+              onRest={rest.start}
               onChange={updateWorkout}
               onDelete={() => void removeWorkout(workout.id)}
               onAddExercise={() => {
@@ -402,6 +406,8 @@ export default function App({ userId, email }: { userId: string; email: string }
                   rpeBand={wave?.rpe}
                   lastFor={lastFor}
                   bestsFor={bestsFor}
+                  live={workout.date === now}
+                  onRest={rest.start}
                   onChange={updateWorkout}
                   onDelete={() => {
                     setOpenHistory(null)
@@ -453,7 +459,7 @@ export default function App({ userId, email }: { userId: string; email: string }
 
       {/* Sticky only when there is nothing to cover. Mid session the big orange
           bar would sit on top of the set you are typing into. */}
-      {tab === 'history' || todays.length === 0 ? (
+      {(tab === 'history' || todays.length === 0) && !rest.rest ? (
         <div className="fixed inset-x-0 bottom-0 mx-auto max-w-lg px-4 pb-6">
           <button
             onClick={() => setSheet('start')}
@@ -470,6 +476,15 @@ export default function App({ userId, email }: { userId: string; email: string }
           Start another workout
         </button>
       )}
+
+      {rest.rest ? (
+        <RestBar
+          rest={rest.rest}
+          remaining={rest.remaining}
+          onExtend={rest.extend}
+          onStop={rest.stop}
+        />
+      ) : null}
 
       {sheet === 'start' ? (
         <StartSheet
@@ -518,6 +533,12 @@ export default function App({ userId, email }: { userId: string; email: string }
             }
           }}
           onClose={() => {
+            // Closing the contextual prompt is an answer of nothing. Without
+            // recording it the question comes back on every reload, which is
+            // nagging, and nagging is how an app gets deleted.
+            if (sheet !== 'profile' && profile.sore === undefined) {
+              void saveProfile({ ...profile, sore: [] })
+            }
             setSheet(null)
             setAskedSore(true)
             if (pendingStart) {

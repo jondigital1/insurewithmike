@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import { coach } from '@/lib/coach'
 import { fmtDate, fmtSets, isEmptySet, topSet, uid } from '@/lib/format'
 import { beatsLast, PR_LABEL, prsFor, volumePr, type Bests } from '@/lib/gamify'
+import { isFullSet, restFor } from '@/lib/rest'
+import { fmtTime } from '@/lib/format'
 import SetRow from './SetRow'
 import type { Exercise, Goal, SetEntry } from '@/lib/types'
 
@@ -35,6 +37,8 @@ export default function ExerciseBlock({
   rpeBand,
   last,
   bests,
+  live,
+  onRest,
   onChange,
   onRemove,
 }: {
@@ -44,6 +48,8 @@ export default function ExerciseBlock({
   rpeBand?: [number, number]
   last: LastSession | null
   bests: Bests
+  live: boolean
+  onRest: (exerciseId: string, name: string, seconds: number) => void
   onChange: (next: Exercise) => void
   onRemove: () => void
 }) {
@@ -60,8 +66,18 @@ export default function ExerciseBlock({
   const advice = coach(basis, exercise.type, goal, rpeBand)
   const fromLast = filled.length === 0 && !!basis
 
+  const rest = restFor(exercise.name, exercise.type, goal)
+
   function patchSet(id: string, patch: Partial<SetEntry>) {
+    const before = exercise.sets.find((s) => s.id === id)
+    const after = before ? { ...before, ...patch } : null
     onChange({ ...exercise, sets: exercise.sets.map((s) => (s.id === id ? { ...s, ...patch } : s)) })
+
+    // The moment a set becomes a set is the moment you want the clock running.
+    // Only on today's session: editing last Tuesday should not start a timer.
+    if (live && before && after && !isFullSet(before, exercise.type) && isFullSet(after, exercise.type)) {
+      onRest(exercise.id, exercise.name, rest)
+    }
   }
 
   return (
@@ -125,12 +141,22 @@ export default function ExerciseBlock({
         </p>
       ) : null}
 
-      <button
-        onClick={() => onChange({ ...exercise, sets: [...exercise.sets, seedSet(exercise, last)] })}
-        className="mt-3 w-full rounded-xl bg-ink py-2 text-sm text-muted ring-1 ring-edge"
-      >
-        Add set
-      </button>
+      <div className="mt-3 flex gap-2">
+        <button
+          onClick={() => onChange({ ...exercise, sets: [...exercise.sets, seedSet(exercise, last)] })}
+          className="flex-1 rounded-xl bg-ink py-2 text-sm text-muted ring-1 ring-edge"
+        >
+          Add set
+        </button>
+        {live && rest > 0 ? (
+          <button
+            onClick={() => onRest(exercise.id, exercise.name, rest)}
+            className="rounded-xl bg-ink px-3 py-2 text-sm num text-muted ring-1 ring-edge"
+          >
+            Rest {fmtTime(rest)}
+          </button>
+        ) : null}
+      </div>
     </div>
   )
 }

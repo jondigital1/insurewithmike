@@ -41,6 +41,7 @@ Postgres wants uuids and the artifact did not use them.
     lib/onboarding.ts     the questions, the scoring, the split table, the swaps
     lib/gamify.ts         records, beat the ghost, coverage, the grid, the streak
     lib/wave.ts           the three week effort cycle and what it asks of a set
+    lib/rest.ts           when a set counts as done and how long it earns
     lib/templates.ts      6 splits, 24 days
     lib/coach.ts          goal ranges and the RPE response
     lib/importer.ts       artifact v1 and v2 blobs in
@@ -101,6 +102,18 @@ weeks that met the days you said rather than consecutive days, so a rest day
 costs nothing. Under it, sets per muscle group this week against the 10 set
 target, which is the only number here that tells you what to do differently.
 
+## Rest timer
+
+Starts itself the moment a set becomes a set, which is the moment you want it,
+and not before: a load with no reps beside it is half a set and starts nothing.
+The suggested length comes from the movement and the goal, longer for the big
+lifts, shorter for the arms and calves, none at all for cardio. There is a manual
+button on every exercise for the times it guesses wrong.
+
+The bar counts to an end timestamp rather than ticking a number down, so locking
+the phone or reloading the page gives back the right number. It buzzes and beeps
+once at zero. Editing a past session never starts anything.
+
 ## The effort wave
 
 Optional, off by default, switched on in Settings. Three weeks on repeat: build
@@ -121,4 +134,4 @@ what makes them worth having on a bad week.
 
 ## Not built yet
 
-Rest timer, progression charts, superset grouping, exercise reordering.
+Progression charts, superset grouping, exercise reordering.
