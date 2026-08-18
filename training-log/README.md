@@ -10,6 +10,17 @@ Artifact storage does not follow the code between threads, so the history was on
 lost thread away from gone. Postgres holds it now, the phone is just a client, and
 everything can leave as CSV.
 
+## Help
+
+A built-in knowledge base behind the ? in the header and a row in Settings: 45
+answers across the basics (supersets, drop sets, RPE, soreness, failure), getting
+stronger (double progression, increment sizes, plateaus, deloads), the app
+itself, and what its numbers mean. Search is local scoring over authored text
+and nothing else: a question the base cannot answer says so plainly instead of
+guessing, and nothing ever searches the internet. Nutrition, supplements and
+pain are answered with an honest gate rather than silence. lib/knowledge.ts is
+the content, sourced from the beginner questions people actually ask.
+
 ## Appearance
 
 Light and dark, from one token set. The app follows the device by default, pure
