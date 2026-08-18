@@ -4,7 +4,14 @@ import { useEffect, useState } from 'react'
 import { fmtDate, workoutVolume } from '@/lib/format'
 import ExerciseBlock, { type LastSession } from './ExerciseBlock'
 import type { Bests } from '@/lib/gamify'
+import { groupRuns, isSuperset, supersetLetter, supersetRest } from '@/lib/superset'
 import type { Exercise, Goal, Workout } from '@/lib/types'
+
+interface BlockExtras {
+  nested: boolean
+  restSeconds: number
+  restOnComplete: boolean
+}
 
 export default function WorkoutEditor({
   workout,
@@ -89,23 +96,69 @@ export default function WorkoutEditor({
         />
       ) : null}
 
-      {workout.exercises.map((exercise) => (
-        <ExerciseBlock
-          key={exercise.id}
-          exercise={exercise}
-          goal={goal}
-          showRpe={showRpe}
-          rpeBand={rpeBand}
-          last={lastFor(exercise.name, workout)}
-          bests={bestsFor(exercise.name, workout)}
-          live={live}
-          onRest={onRest}
-          onChange={patchExercise}
-          onRemove={() =>
-            onChange({ ...workout, exercises: workout.exercises.filter((e) => e.id !== exercise.id) })
-          }
-        />
-      ))}
+      {groupRuns(workout.exercises).map((run) => {
+        const block = (exercise: Exercise, label?: string, extra?: Partial<BlockExtras>) => (
+          <ExerciseBlock
+            key={exercise.id}
+            exercise={exercise}
+            goal={goal}
+            showRpe={showRpe}
+            rpeBand={rpeBand}
+            last={lastFor(exercise.name, workout)}
+            bests={bestsFor(exercise.name, workout)}
+            live={live}
+            onRest={onRest}
+            label={label}
+            {...extra}
+            onChange={patchExercise}
+            onRemove={() =>
+              onChange({ ...workout, exercises: workout.exercises.filter((e) => e.id !== exercise.id) })
+            }
+          />
+        )
+
+        if (!isSuperset(run)) {
+          return run.exercises.map((exercise) => block(exercise))
+        }
+
+        // One clock for the group, set by the movement that asks for the most.
+        const rest = supersetRest(run, goal)
+        const letter = supersetLetter(run.index)
+
+        return (
+          <div key={run.exercises[0].id} className="rounded-2xl bg-card p-2 ring-1 ring-accent">
+            <div className="flex items-center justify-between px-2 pb-1 pt-1">
+              <span className="text-xs uppercase tracking-wide text-accent">Superset {letter}</span>
+              <button
+                onClick={() =>
+                  onChange({
+                    ...workout,
+                    exercises: workout.exercises.map((e) =>
+                      e.superset === run.superset ? { ...e, superset: null } : e,
+                    ),
+                  })
+                }
+                className="text-xs text-muted"
+              >
+                Unlink
+              </button>
+            </div>
+            <div className="flex flex-col gap-2">
+              {run.exercises.map((exercise, i) =>
+                block(exercise, `${letter}${i + 1}`, {
+                  nested: true,
+                  restSeconds: rest,
+                  restOnComplete: i === run.exercises.length - 1,
+                }),
+              )}
+            </div>
+            <p className="px-2 pb-1 pt-2 text-xs text-muted">
+              Straight through, then rest. The clock starts after {letter}
+              {run.exercises.length}.
+            </p>
+          </div>
+        )
+      })}
 
       <button
         onClick={onAddExercise}

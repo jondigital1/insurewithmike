@@ -163,12 +163,12 @@ export default function App({ userId, email }: { userId: string; email: string }
     setTab('log')
   }
 
-  function addExercise(workoutId: string, name: string, type: SetType) {
+  function addExercise(workoutId: string, name: string, type: SetType, superset: string | null) {
     const workout = latest.current.workouts.find((w) => w.id === workoutId)
     if (!workout) return
     updateWorkout({
       ...workout,
-      exercises: [...workout.exercises, { id: uid(), name, type, sets: [{ id: uid() }] }],
+      exercises: [...workout.exercises, { id: uid(), name, type, superset, sets: [{ id: uid() }] }],
     })
   }
 
@@ -509,7 +509,7 @@ export default function App({ userId, email }: { userId: string; email: string }
       {sheet === 'picker' && targetWorkout ? (
         <ExercisePicker
           customs={data.custom}
-          onPick={(name, type) => addExercise(targetWorkout.id, name, type)}
+          onPick={(name, type, superset) => addExercise(targetWorkout.id, name, type, superset)}
           onCreate={(exercise) => void createCustomExercise(exercise)}
           onClose={() => {
             setSheet(null)

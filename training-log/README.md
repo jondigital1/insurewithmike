@@ -42,6 +42,7 @@ Postgres wants uuids and the artifact did not use them.
     lib/gamify.ts         records, beat the ghost, coverage, the grid, the streak
     lib/wave.ts           the three week effort cycle and what it asks of a set
     lib/rest.ts           when a set counts as done and how long it earns
+    lib/superset.ts       which consecutive exercises run together
     lib/templates.ts      6 splits, 24 days
     lib/coach.ts          goal ranges and the RPE response
     lib/importer.ts       artifact v1 and v2 blobs in
@@ -102,6 +103,19 @@ weeks that met the days you said rather than consecutive days, so a rest day
 costs nothing. Under it, sets per muscle group this week against the 10 set
 target, which is the only number here that tells you what to do differently.
 
+## Supersets
+
+The picker carries a Superset toggle. Turn it on and everything you pick joins
+the same group until you turn it off, so two taps and two movements is a
+superset. They render as one block, labelled A1 and A2, and the rest timer waits
+for the last movement in the group rather than firing between them, which is the
+only thing about a superset the app actually has to understand. Unlink puts them
+back to ordinary exercises.
+
+A superset is a tag shared by consecutive exercises, not a table. Order on screen
+is the order they run in, so the same tag either side of a gap is two supersets,
+and a tagged movement on its own is just a movement.
+
 ## Rest timer
 
 Starts itself the moment a set becomes a set, which is the moment you want it,
@@ -134,4 +148,4 @@ what makes them worth having on a bad week.
 
 ## Not built yet
 
-Progression charts, superset grouping, exercise reordering.
+Progression charts, exercise reordering.

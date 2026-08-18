@@ -30,6 +30,8 @@ export interface Exercise {
   name: string
   type: SetType
   sets: SetEntry[]
+  // Exercises sharing a tag run together with no rest between them.
+  superset?: string | null
 }
 
 export interface Workout {

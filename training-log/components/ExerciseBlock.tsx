@@ -39,6 +39,10 @@ export default function ExerciseBlock({
   bests,
   live,
   onRest,
+  label,
+  nested,
+  restSeconds,
+  restOnComplete = true,
   onChange,
   onRemove,
 }: {
@@ -50,6 +54,10 @@ export default function ExerciseBlock({
   bests: Bests
   live: boolean
   onRest: (exerciseId: string, name: string, seconds: number) => void
+  label?: string
+  nested?: boolean
+  restSeconds?: number
+  restOnComplete?: boolean
   onChange: (next: Exercise) => void
   onRemove: () => void
 }) {
@@ -66,7 +74,7 @@ export default function ExerciseBlock({
   const advice = coach(basis, exercise.type, goal, rpeBand)
   const fromLast = filled.length === 0 && !!basis
 
-  const rest = restFor(exercise.name, exercise.type, goal)
+  const rest = restSeconds ?? restFor(exercise.name, exercise.type, goal)
 
   function patchSet(id: string, patch: Partial<SetEntry>) {
     const before = exercise.sets.find((s) => s.id === id)
@@ -75,16 +83,26 @@ export default function ExerciseBlock({
 
     // The moment a set becomes a set is the moment you want the clock running.
     // Only on today's session: editing last Tuesday should not start a timer.
-    if (live && before && after && !isFullSet(before, exercise.type) && isFullSet(after, exercise.type)) {
+    // In a superset the clock only starts after the last movement in the group,
+    // because the whole point is that you do not rest in between.
+    if (
+      live &&
+      restOnComplete &&
+      before &&
+      after &&
+      !isFullSet(before, exercise.type) &&
+      isFullSet(after, exercise.type)
+    ) {
       onRest(exercise.id, exercise.name, rest)
     }
   }
 
   return (
-    <div className="rounded-2xl bg-card p-3 ring-1 ring-edge">
+    <div className={`rounded-2xl p-3 ring-1 ring-edge ${nested ? 'bg-ink' : 'bg-card'}`}>
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <h3 className="truncate text-sm font-semibold">
+            {label ? <span className="mr-2 text-xs num text-accent">{label}</span> : null}
             {exercise.name}
             {volumePr(exercise, bests) ? (
               <span className="ml-2 rounded-full bg-accent px-2 py-0.5 text-[10px] font-medium text-ink align-middle">
@@ -148,7 +166,7 @@ export default function ExerciseBlock({
         >
           Add set
         </button>
-        {live && rest > 0 ? (
+        {live && rest > 0 && restOnComplete ? (
           <button
             onClick={() => onRest(exercise.id, exercise.name, rest)}
             className="rounded-xl bg-ink px-3 py-2 text-sm num text-muted ring-1 ring-edge"

@@ -15,6 +15,8 @@ import {
 } from '../lib/gamify'
 import { mondayOf, readWave, WAVE, waveWeek } from '../lib/wave'
 import { isCompound, isFullSet, restFor } from '../lib/rest'
+import { groupRuns, isSuperset, supersetLetter, supersetRest } from '../lib/superset'
+import type { Exercise } from '../lib/types'
 import type { Workout } from '../lib/types'
 
 let checks = 0
@@ -423,6 +425,52 @@ check('rest is longer for the big movements and the heavier goal', () => {
   assert.ok(restFor('Lateral Raise', 'W', 'muscle') > restFor('Cable Curl', 'W', 'muscle'))
   assert.ok(restFor('Back Squat', 'W', 'endurance') <= 60)
   assert.equal(restFor('Run', 'C', 'muscle'), 0, 'cardio does not rest between sets')
+})
+
+check('consecutive exercises sharing a tag are one superset', () => {
+  const ex = (id: string, name: string, superset: string | null = null): Exercise => ({
+    id, name, type: 'W', sets: [], superset,
+  })
+  const runs = groupRuns([
+    ex('1', 'Back Squat'),
+    ex('2', 'Incline Dumbbell Press', 'a'),
+    ex('3', 'Barbell Row', 'a'),
+    ex('4', 'Cable Curl'),
+    ex('5', 'Lateral Raise', 'b'),
+    ex('6', 'Face Pull', 'b'),
+  ])
+  assert.equal(runs.length, 4)
+  assert.deepEqual(runs.map((r) => r.exercises.length), [1, 2, 1, 2])
+  assert.equal(isSuperset(runs[0]), false)
+  assert.equal(isSuperset(runs[1]), true)
+  assert.equal(supersetLetter(runs[1].index), 'A')
+  assert.equal(supersetLetter(runs[3].index), 'B')
+})
+
+check('a tagged exercise on its own is not a superset', () => {
+  const lonely: Exercise = { id: '1', name: 'Back Squat', type: 'W', sets: [], superset: 'a' }
+  const runs = groupRuns([lonely])
+  assert.equal(runs.length, 1)
+  assert.equal(isSuperset(runs[0]), false, 'one movement is just a movement')
+})
+
+check('the same tag either side of a gap is two supersets', () => {
+  const ex = (id: string, superset: string | null): Exercise => ({
+    id, name: 'Cable Curl', type: 'W', sets: [], superset,
+  })
+  const runs = groupRuns([ex('1', 'a'), ex('2', 'a'), ex('3', null), ex('4', 'a'), ex('5', 'a')])
+  assert.equal(runs.length, 3)
+  assert.equal(supersetLetter(runs[0].index), 'A')
+  assert.equal(supersetLetter(runs[2].index), 'B')
+})
+
+check('a superset rests as long as its hungriest movement', () => {
+  const run = groupRuns([
+    { id: '1', name: 'Back Squat', type: 'W', sets: [], superset: 'a' },
+    { id: '2', name: 'Cable Curl', type: 'W', sets: [], superset: 'a' },
+  ])[0]
+  assert.equal(supersetRest(run, 'muscle'), restFor('Back Squat', 'W', 'muscle'))
+  assert.ok(supersetRest(run, 'muscle') > restFor('Cable Curl', 'W', 'muscle'))
 })
 
 console.log(`\n${checks} checks passed`)
