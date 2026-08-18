@@ -14,6 +14,7 @@ export default function SettingsSheet({
   onGoal,
   onImport,
   onEditProfile,
+  onHelp,
   onSignOut,
   onClose,
 }: {
@@ -21,6 +22,7 @@ export default function SettingsSheet({
   email: string
   onGoal: (goal: Goal) => void
   onEditProfile: () => void
+  onHelp: () => void
   onImport: (data: TrainingData) => Promise<void>
   onSignOut: () => void
   onClose: () => void
@@ -147,6 +149,17 @@ export default function SettingsSheet({
         Import
       </button>
       {status ? <p className="mt-2 text-xs text-accent">{status}</p> : null}
+
+      <h3 className="mt-6 text-xs uppercase tracking-wide text-muted">Help</h3>
+      <button
+        onClick={onHelp}
+        className="mt-2 w-full rounded-xl bg-ink px-3 py-3 text-left text-sm ring-1 ring-edge"
+      >
+        What things mean
+        <span className="mt-0.5 block text-xs text-muted">
+          Supersets, drop sets, RPE, adding weight, and everything the app shows
+        </span>
+      </button>
 
       <h3 className="mt-6 text-xs uppercase tracking-wide text-muted">Account</h3>
       <p className="mt-2 text-sm text-muted">{email}</p>

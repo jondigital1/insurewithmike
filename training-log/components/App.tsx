@@ -6,6 +6,7 @@ import { fmtDate, fmtSets, today, uid, workoutVolume } from '@/lib/format'
 import { supabaseBrowser } from '@/lib/supabase/client'
 import CustomBuilder from './CustomBuilder'
 import Onboarding from './Onboarding'
+import HelpSheet from './HelpSheet'
 import ProfileSheet from './ProfileSheet'
 import ProgressTab from './ProgressTab'
 import StatsPanel from './StatsPanel'
@@ -31,7 +32,7 @@ import {
   type Workout,
 } from '@/lib/types'
 
-type SheetName = 'start' | 'picker' | 'builder' | 'settings' | 'profile' | null
+type SheetName = 'start' | 'picker' | 'builder' | 'settings' | 'profile' | 'help' | null
 
 // Supabase throws plain objects as often as Error instances, and an unreadable
 // failure would misclassify a dead connection as a real rejection.
@@ -485,12 +486,21 @@ export default function App({ userId, email }: { userId: string; email: string }
     <main className="mx-auto flex min-h-screen w-full max-w-lg flex-col px-4 pb-28">
       <header className="flex items-center justify-between pb-3 pt-5">
         <h1 className="text-xl font-semibold tracking-tight">Training Log</h1>
-        <button
-          onClick={() => setSheet('settings')}
-          className="rounded-full bg-card px-3 py-1 text-xs text-muted ring-1 ring-edge"
-        >
-          {data.settings.goal}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setSheet('help')}
+            aria-label="Help"
+            className="rounded-full bg-card px-3 py-1 text-xs text-muted ring-1 ring-edge"
+          >
+            ?
+          </button>
+          <button
+            onClick={() => setSheet('settings')}
+            className="rounded-full bg-card px-3 py-1 text-xs text-muted ring-1 ring-edge"
+          >
+            {data.settings.goal}
+          </button>
+        </div>
       </header>
 
       <div className="mb-4 flex gap-1 rounded-xl bg-card p-1 ring-1 ring-edge">
@@ -743,6 +753,8 @@ export default function App({ userId, email }: { userId: string; email: string }
         />
       ) : null}
 
+      {sheet === 'help' ? <HelpSheet onClose={() => setSheet(null)} /> : null}
+
       {sheet === 'settings' ? (
         <SettingsSheet
           data={data}
@@ -753,6 +765,7 @@ export default function App({ userId, email }: { userId: string; email: string }
             setProfileFocus('all')
             setSheet('profile')
           }}
+          onHelp={() => setSheet('help')}
           onSignOut={async () => {
             await flush()
             await sb.auth.signOut()

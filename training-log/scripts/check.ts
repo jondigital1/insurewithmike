@@ -16,6 +16,7 @@ import {
 import { mondayOf, readWave, WAVE, waveWeek } from '../lib/wave'
 import { isCompound, isFullSet, restFor } from '../lib/rest'
 import { groupRuns, isSuperset, supersetLetter, supersetRest } from '../lib/superset'
+import { KNOWLEDGE, KNOWLEDGE_GROUPS, searchKnowledge } from '../lib/knowledge'
 import { seriesFor, trackedNames } from '../lib/progress'
 import { groupSize, hardestFirst, isHardestFirst, moveRun, topLoads } from '../lib/order'
 import type { Exercise } from '../lib/types'
@@ -626,6 +627,49 @@ check('a session already in order is left alone', () => {
   const list = [ex('1', 'Back Squat'), ex('2', 'Cable Curl')]
   assert.equal(isHardestFirst(list), true)
   assert.equal(isHardestFirst([list[1], list[0]]), false)
+})
+
+check('five supersets in one workout letter themselves A to E', () => {
+  const list: Exercise[] = []
+  for (let g = 0; g < 5; g++) {
+    for (let m = 0; m < 2; m++) {
+      list.push({ id: `${g}-${m}`, name: 'Cable Curl', type: 'W', sets: [], superset: `group${g}` })
+    }
+  }
+  const runs = groupRuns(list)
+  assert.equal(runs.length, 5)
+  assert.ok(runs.every((r) => isSuperset(r)))
+  assert.deepEqual(runs.map((r) => supersetLetter(r.index)), ['A', 'B', 'C', 'D', 'E'])
+})
+
+check('the knowledge base is well formed', () => {
+  assert.ok(KNOWLEDGE.length >= 35, `only ${KNOWLEDGE.length} entries`)
+  const ids = KNOWLEDGE.map((e) => e.id)
+  assert.equal(new Set(ids).size, ids.length, 'duplicate entry ids')
+  for (const e of KNOWLEDGE) {
+    assert.ok((KNOWLEDGE_GROUPS as readonly string[]).includes(e.group), `${e.id} has group ${e.group}`)
+    assert.ok(e.aliases.length >= 2, `${e.id} needs aliases to be findable`)
+    assert.ok(e.a.length > 80, `${e.id} answer too thin`)
+    assert.ok(!/[\u2013\u2014]/.test(e.a) && !/[\u2013\u2014]/.test(e.q), `${e.id} contains an em or en dash`)
+  }
+})
+
+check('the questions people actually type find their answers', () => {
+  const first = (q: string) => searchKnowledge(q)[0]?.id
+  assert.equal(first('what is a drop set'), 'basic-dropset')
+  assert.equal(first('what is a superset'), 'basic-superset')
+  assert.ok(['strong-progression', 'strong-increments'].includes(first('how should I increase my weights week by week')!))
+  assert.equal(first('what does rpe 8 mean'), 'basic-rpe')
+  assert.ok(searchKnowledge('protein').some((e) => e.id === 'basic-protein'))
+  assert.ok(searchKnowledge('multiple supersets').some((e) => e.id === 'app-superset-how'))
+  assert.ok(searchKnowledge('lost my wifi').some((e) => e.id === 'app-offline'))
+  assert.ok(searchKnowledge('deload').some((e) => e.id === 'strong-deload'))
+})
+
+check('the gate holds: off topic questions return nothing', () => {
+  assert.deepEqual(searchKnowledge('best crypto to buy'), [])
+  assert.deepEqual(searchKnowledge('who won the election'), [])
+  assert.deepEqual(searchKnowledge(''), [])
 })
 
 console.log(`\n${checks} checks passed`)
