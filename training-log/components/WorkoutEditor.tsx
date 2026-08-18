@@ -8,6 +8,7 @@ import type { Exercise, Goal, Workout } from '@/lib/types'
 export default function WorkoutEditor({
   workout,
   goal,
+  showRpe,
   lastFor,
   onChange,
   onDelete,
@@ -16,6 +17,7 @@ export default function WorkoutEditor({
 }: {
   workout: Workout
   goal: Goal
+  showRpe: boolean
   lastFor: (name: string, workout: Workout) => LastSession | null
   onChange: (next: Workout) => void
   onDelete: () => void
@@ -83,6 +85,7 @@ export default function WorkoutEditor({
           key={exercise.id}
           exercise={exercise}
           goal={goal}
+          showRpe={showRpe}
           last={lastFor(exercise.name, workout)}
           onChange={patchExercise}
           onRemove={() =>

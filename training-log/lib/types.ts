@@ -60,6 +60,8 @@ export type Goal = 'strength' | 'muscle' | 'endurance'
 
 export interface Settings {
   goal: Goal
+  profile: import('./onboarding').Profile
+  onboardedAt: string | null
 }
 
 export interface TrainingData {
@@ -73,5 +75,5 @@ export const EMPTY_DATA: TrainingData = {
   workouts: [],
   custom: [],
   customWorkouts: [],
-  settings: { goal: 'muscle' },
+  settings: { goal: 'muscle', profile: {}, onboardedAt: null },
 }

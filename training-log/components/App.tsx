@@ -5,11 +5,15 @@ import * as db from '@/lib/db'
 import { fmtDate, fmtSets, today, uid, workoutVolume } from '@/lib/format'
 import { supabaseBrowser } from '@/lib/supabase/client'
 import CustomBuilder from './CustomBuilder'
+import Onboarding from './Onboarding'
+import ProfileSheet from './ProfileSheet'
 import ExercisePicker from './ExercisePicker'
 import SettingsSheet from './SettingsSheet'
 import StartSheet from './StartSheet'
 import WorkoutEditor from './WorkoutEditor'
 import type { LastSession } from './ExerciseBlock'
+import { buildDay, dayById, firstMonth, planFor, type Profile } from '@/lib/onboarding'
+import { isEmptySet } from '@/lib/format'
 import {
   EMPTY_DATA,
   type CustomExercise,
@@ -20,7 +24,7 @@ import {
   type Workout,
 } from '@/lib/types'
 
-type SheetName = 'start' | 'picker' | 'builder' | 'settings' | null
+type SheetName = 'start' | 'picker' | 'builder' | 'settings' | 'profile' | null
 
 export default function App({ userId, email }: { userId: string; email: string }) {
   const sb = useMemo(() => supabaseBrowser(), [])
@@ -31,11 +35,18 @@ export default function App({ userId, email }: { userId: string; email: string }
   const [sheet, setSheet] = useState<SheetName>(null)
   const [pickerTarget, setPickerTarget] = useState<string | null>(null)
   const [openHistory, setOpenHistory] = useState<string | null>(null)
+  const [profileFocus, setProfileFocus] = useState<'minutes' | 'sore' | 'all'>('all')
+  const [pendingStart, setPendingStart] = useState<{ title: string; items: CustomWorkoutItem[] } | null>(null)
+  const [askedSore, setAskedSore] = useState(false)
+  const [dismissedCheckin, setDismissedCheckin] = useState(false)
 
   const pending = useRef(new Map<string, Workout>())
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const latest = useRef<TrainingData>(data)
   latest.current = data
+  // True only if onboarding was already done when the app opened, so the tier 2
+  // prompts wait for a later visit rather than stacking on the first one.
+  const returning = useRef(false)
 
   const flush = useCallback(async () => {
     const queue = [...pending.current.values()]
@@ -66,7 +77,9 @@ export default function App({ userId, email }: { userId: string; email: string }
     let alive = true
     db.loadAll(sb, userId)
       .then((loaded) => {
-        if (alive) setData(loaded)
+        if (!alive) return
+        returning.current = loaded.settings.onboardedAt !== null
+        setData(loaded)
       })
       .catch((e) => setError(e instanceof Error ? e.message : 'Could not load'))
       .finally(() => {
@@ -115,6 +128,18 @@ export default function App({ userId, email }: { userId: string; email: string }
   }
 
   function startWorkout(title: string, items: CustomWorkoutItem[]) {
+    // The one tier 2 question worth asking up front, and only at the moment it
+    // is a useful question about today rather than an obstacle at signup.
+    if (data.settings.profile.minutes === undefined && items.length > 0) {
+      setPendingStart({ title, items })
+      setProfileFocus('minutes')
+      setSheet('profile')
+      return
+    }
+    reallyStart(title, items)
+  }
+
+  function reallyStart(title: string, items: CustomWorkoutItem[]) {
     const workout: Workout = {
       id: uid(),
       date: today(),
@@ -171,8 +196,31 @@ export default function App({ userId, email }: { userId: string; email: string }
     }
   }
 
+  async function saveProfile(profile: Profile, onboardedAt?: string) {
+    const stamp = onboardedAt ?? data.settings.onboardedAt
+    setData((prev) => ({ ...prev, settings: { ...prev.settings, profile, onboardedAt: stamp } }))
+    try {
+      await db.saveProfile(sb, userId, profile, stamp)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not save your answers')
+    }
+  }
+
+  async function finishOnboarding(profile: Profile, goal: Goal, startDayId: string | null) {
+    const stamp = new Date().toISOString()
+    setData((prev) => ({ ...prev, settings: { goal, profile, onboardedAt: stamp } }))
+    try {
+      await db.saveProfile(sb, userId, profile, stamp)
+      await db.saveGoal(sb, userId, goal)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not save your answers')
+    }
+    const day = startDayId ? dayById(startDayId) : null
+    if (day) reallyStart(day.name, buildDay(day, profile))
+  }
+
   async function setGoal(goal: Goal) {
-    setData((prev) => ({ ...prev, settings: { goal } }))
+    setData((prev) => ({ ...prev, settings: { ...prev.settings, goal } }))
     try {
       await db.saveGoal(sb, userId, goal)
     } catch (e) {
@@ -195,7 +243,11 @@ export default function App({ userId, email }: { userId: string; email: string }
       for (const candidate of data.workouts) {
         if (candidate.id === workout.id) continue
         if (candidate.date > workout.date) continue
-        const exercise = candidate.exercises.find((e) => e.name === name && e.sets.length > 0)
+        // A session with nothing written in it is not a last session. Without
+        // this the ghost line reads "? x ?" off an untouched set row.
+        const exercise = candidate.exercises.find(
+          (e) => e.name === name && e.sets.some((s) => !isEmptySet(s, e.type)),
+        )
         if (!exercise) continue
         if (!best || candidate.date > best.date) best = { date: candidate.date, exercise }
       }
@@ -205,10 +257,34 @@ export default function App({ userId, email }: { userId: string; email: string }
   )
 
   const now = today()
+  const profile = data.settings.profile
+  const plan = data.settings.onboardedAt ? planFor(profile, data.settings.goal) : null
+  const rpeOn = !plan || plan.showRpe
+
+  // Only ask about sore joints once a session is behind them, on a later visit.
+  // Asking the moment onboarding hands over the first session is two sheets back
+  // to back, which is the interrogation this whole flow exists to avoid.
+  const hasTrained = data.workouts.some(
+    (w) => w.date < now && w.exercises.some((e) => e.sets.some((s) => !isEmptySet(s, e.type))),
+  )
+  const wantsSore = hasTrained && returning.current && profile.sore === undefined
+
+  const month = firstMonth(data.workouts.map((w) => w.date))
+  const behind =
+    !dismissedCheckin &&
+    plan !== null &&
+    month !== null &&
+    month.elapsed >= 28 &&
+    month.days < Math.max(8, plan.days * 3)
+
   const ordered = data.workouts.slice().sort((a, b) => b.date.localeCompare(a.date))
   const todays = ordered.filter((w) => w.date === now)
   const past = ordered.filter((w) => w.date !== now)
   const targetWorkout = data.workouts.find((w) => w.id === pickerTarget) ?? null
+
+  if (!loading && !data.settings.onboardedAt) {
+    return <Onboarding onFinish={(p, g, day) => void finishOnboarding(p, g, day)} />
+  }
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-lg flex-col px-4 pb-28">
@@ -237,6 +313,37 @@ export default function App({ userId, email }: { userId: string; email: string }
       {error ? <p className="mb-3 rounded-xl bg-card p-3 text-xs text-accent ring-1 ring-edge">{error}</p> : null}
       {loading ? <p className="text-sm text-muted">Loading</p> : null}
 
+      {!loading && tab === 'log' && behind && month ? (
+        <div className="mb-4 rounded-2xl bg-card p-4 ring-1 ring-accent">
+          <p className="text-xs uppercase tracking-wide text-muted">Four weeks in</p>
+          <p className="mt-1 text-2xl num text-accent">{month.days} / 28</p>
+          <p className="mt-1 text-sm">
+            You said {profile.days ?? plan?.days} days a week. You have been managing about{' '}
+            {Math.max(1, Math.round((month.days / 4) * 10) / 10)}.
+          </p>
+          <p className="mt-2 text-sm text-muted">
+            Two days done properly beats {profile.days ?? plan?.days} missed. Want the shorter plan?
+          </p>
+          <div className="mt-3 flex gap-2">
+            <button
+              onClick={() => {
+                void saveProfile({ ...profile, days: 2 })
+                setDismissedCheckin(true)
+              }}
+              className="flex-1 rounded-xl bg-accent py-2 text-sm font-medium text-ink"
+            >
+              Move to 2 days
+            </button>
+            <button
+              onClick={() => setDismissedCheckin(true)}
+              className="rounded-xl px-4 py-2 text-sm text-muted"
+            >
+              Leave it
+            </button>
+          </div>
+        </div>
+      ) : null}
+
       {!loading && tab === 'log' ? (
         <div className="flex flex-col gap-6">
           {todays.length === 0 ? (
@@ -249,6 +356,7 @@ export default function App({ userId, email }: { userId: string; email: string }
               key={workout.id}
               workout={workout}
               goal={data.settings.goal}
+              showRpe={rpeOn}
               lastFor={lastFor}
               onChange={updateWorkout}
               onDelete={() => void removeWorkout(workout.id)}
@@ -270,6 +378,7 @@ export default function App({ userId, email }: { userId: string; email: string }
                 <WorkoutEditor
                   workout={workout}
                   goal={data.settings.goal}
+                  showRpe={rpeOn}
                   lastFor={lastFor}
                   onChange={updateWorkout}
                   onDelete={() => {
@@ -342,6 +451,8 @@ export default function App({ userId, email }: { userId: string; email: string }
 
       {sheet === 'start' ? (
         <StartSheet
+          plan={plan}
+          profile={profile}
           customWorkouts={data.customWorkouts}
           onStart={startWorkout}
           onBuild={() => setSheet('builder')}
@@ -370,12 +481,42 @@ export default function App({ userId, email }: { userId: string; email: string }
         />
       ) : null}
 
+      {sheet === 'profile' || (wantsSore && !askedSore && sheet === null) ? (
+        <ProfileSheet
+          profile={profile}
+          focus={sheet === 'profile' ? profileFocus : 'sore'}
+          onSave={(next) => {
+            void saveProfile(next)
+            setSheet(null)
+            setAskedSore(true)
+            if (pendingStart) {
+              const { title, items } = pendingStart
+              setPendingStart(null)
+              reallyStart(title, items)
+            }
+          }}
+          onClose={() => {
+            setSheet(null)
+            setAskedSore(true)
+            if (pendingStart) {
+              const { title, items } = pendingStart
+              setPendingStart(null)
+              reallyStart(title, items)
+            }
+          }}
+        />
+      ) : null}
+
       {sheet === 'settings' ? (
         <SettingsSheet
           data={data}
           email={email}
           onGoal={(goal) => void setGoal(goal)}
           onImport={importAll}
+          onEditProfile={() => {
+            setProfileFocus('all')
+            setSheet('profile')
+          }}
           onSignOut={async () => {
             await flush()
             await sb.auth.signOut()

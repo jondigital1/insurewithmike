@@ -55,16 +55,18 @@ export default function SetRow({
   index,
   set,
   type,
+  showRpe: rpeEnabled,
   onChange,
   onRemove,
 }: {
   index: number
   set: SetEntry
   type: SetType
+  showRpe: boolean
   onChange: (patch: Partial<SetEntry>) => void
   onRemove: () => void
 }) {
-  const showRpe = type === 'W' || type === 'R'
+  const showRpe = rpeEnabled && (type === 'W' || type === 'R')
 
   return (
     <div className="flex items-center gap-2">

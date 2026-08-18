@@ -148,6 +148,10 @@ export function importArtifactData(input: unknown): TrainingData {
     workouts: workouts.filter((w) => /^\d{4}-\d{2}-\d{2}$/.test(w.date)),
     custom,
     customWorkouts,
-    settings: { goal: valid.includes(goal) ? goal : 'muscle' },
+    settings: {
+      goal: valid.includes(goal) ? goal : 'muscle',
+      profile: (source.settings?.profile as TrainingData['settings']['profile']) ?? {},
+      onboardedAt: (source.settings?.onboardedAt as string) ?? null,
+    },
   }
 }

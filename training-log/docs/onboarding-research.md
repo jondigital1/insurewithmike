@@ -306,6 +306,20 @@ combination is defensible for almost anyone who answered no to the gate.
   days predict everything.
 - **Diet.** Unless and until the app does anything with the answer.
 
+## Built
+
+`lib/onboarding.ts` and `components/Onboarding.tsx` implement tier 0 and tier 1,
+the experience score, the split table and the substitutions.
+`components/ProfileSheet.tsx` carries tier 2, prompted in context and editable in
+Settings. The answers live in `settings.profile` as jsonb.
+
+Two things moved on contact with the code. The substitution needed a preferred
+target per movement rather than just the first workable movement in the same
+muscle group, which handed a bad knee a goblet squat. And the sore joints
+question waits for a visit after a session rather than firing the moment
+onboarding hands over the first one, because two sheets back to back is the
+interrogation this flow exists to avoid.
+
 ## Open questions for you
 
 1. Do you want the gate at all? It is defensible to ship with no medical

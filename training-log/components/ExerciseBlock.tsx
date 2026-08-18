@@ -30,12 +30,14 @@ function seedSet(exercise: Exercise, last: LastSession | null): SetEntry {
 export default function ExerciseBlock({
   exercise,
   goal,
+  showRpe,
   last,
   onChange,
   onRemove,
 }: {
   exercise: Exercise
   goal: Goal
+  showRpe: boolean
   last: LastSession | null
   onChange: (next: Exercise) => void
   onRemove: () => void
@@ -85,6 +87,7 @@ export default function ExerciseBlock({
             index={i}
             set={set}
             type={exercise.type}
+            showRpe={showRpe}
             onChange={(patch) => patchSet(set.id, patch)}
             onRemove={() => onChange({ ...exercise, sets: exercise.sets.filter((s) => s.id !== set.id) })}
           />

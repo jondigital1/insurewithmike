@@ -1,4 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
+import type { Profile } from './onboarding'
 import type {
   CustomExercise,
   CustomWorkout,
@@ -51,7 +52,7 @@ export async function loadAll(sb: SupabaseClient, userId: string): Promise<Train
     sb.from('workouts').select(WORKOUT_SELECT).order('date', { ascending: false }),
     sb.from('custom_exercises').select('id,name,type').order('name'),
     sb.from('custom_workouts').select('id,name,items').order('created_at'),
-    sb.from('settings').select('goal').eq('user_id', userId).maybeSingle(),
+    sb.from('settings').select('goal,profile,onboarded_at').eq('user_id', userId).maybeSingle(),
   ])
 
   const err = workouts.error ?? custom.error ?? customWorkouts.error ?? settings.error
@@ -65,7 +66,11 @@ export async function loadAll(sb: SupabaseClient, userId: string): Promise<Train
       name: r.name as string,
       items: Array.isArray(r.items) ? r.items : [],
     })) as CustomWorkout[],
-    settings: { goal: ((settings.data?.goal as Goal) ?? 'muscle') },
+    settings: {
+      goal: (settings.data?.goal as Goal) ?? 'muscle',
+      profile: (settings.data?.profile as Profile) ?? {},
+      onboardedAt: (settings.data?.onboarded_at as string) ?? null,
+    },
   }
 }
 
@@ -128,5 +133,17 @@ export async function deleteCustomWorkout(sb: SupabaseClient, id: string) {
 
 export async function saveGoal(sb: SupabaseClient, userId: string, goal: Goal) {
   const res = await sb.from('settings').upsert({ user_id: userId, goal })
+  if (res.error) throw res.error
+}
+
+export async function saveProfile(
+  sb: SupabaseClient,
+  userId: string,
+  profile: Profile,
+  onboardedAt: string | null,
+) {
+  const res = await sb
+    .from('settings')
+    .upsert({ user_id: userId, profile, onboarded_at: onboardedAt })
   if (res.error) throw res.error
 }

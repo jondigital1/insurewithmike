@@ -7,6 +7,8 @@ import { coach, roundLoad } from '../lib/coach'
 import { fmtSet, fmtTime, parseClock, topSet } from '../lib/format'
 import { importArtifactData, parseSetString } from '../lib/importer'
 import { toCsv } from '../lib/csv'
+import { buildDay, dayById, experienceScore, firstMonth, level, planFor } from '../lib/onboarding'
+import { equipmentOf } from '../lib/exercises'
 import type { Workout } from '../lib/types'
 
 let checks = 0
@@ -142,6 +144,90 @@ check('csv export is one row per set', () => {
   const lines = toCsv(workouts).split('\n')
   assert.equal(lines.length, 3)
   assert.match(lines[1], /^2026-08-11,"Push, hard",Incline Dumbbell Press,W,1,80,8,8,,,$/)
+})
+
+check('experience score and level follow the bands', () => {
+  assert.equal(level({}), 'Beginner')
+  assert.equal(level({ years: 'never', before: 'no' }), 'Beginner')
+  assert.equal(level({ years: 'under6', before: 'thisYear' }), 'Returner')
+  assert.equal(level({ years: 'sixToTwo' }), 'Intermediate')
+  assert.equal(level({ years: 'overTwo' }), 'Intermediate')
+  assert.equal(level({ years: 'overTwo', barbell: 'confident' }), 'Advanced')
+  assert.equal(experienceScore({ years: 'overTwo', barbell: 'confident' }), 5)
+})
+
+check('the plan points at template days that exist', () => {
+  const cases = [
+    { years: 'never' as const, days: 2 },
+    { years: 'never' as const, days: 3 },
+    { years: 'under6' as const, before: 'thisYear' as const, days: 4 },
+    { years: 'sixToTwo' as const, days: 3 },
+    { years: 'overTwo' as const, barbell: 'confident' as const, days: 4 },
+    { years: 'overTwo' as const, barbell: 'confident' as const, days: 5 },
+  ]
+  for (const profile of cases) {
+    const plan = planFor(profile, 'muscle')
+    assert.equal(plan.dayIds.length, plan.days, `${plan.splitName} ${plan.days}`)
+    for (const id of plan.dayIds) assert.ok(dayById(id), `missing template day ${id}`)
+  }
+  assert.equal(planFor({ years: 'never', days: 6 }, 'muscle').days, 5)
+  assert.equal(planFor({ years: 'never', days: 6 }, 'muscle').capped, true)
+})
+
+check('RPE stays hidden until the number means something', () => {
+  assert.equal(planFor({ years: 'never' }, 'muscle').showRpe, false)
+  assert.equal(planFor({ years: 'under6', before: 'thisYear' }, 'muscle').showRpe, false)
+  assert.equal(planFor({ years: 'sixToTwo' }, 'muscle').showRpe, true)
+})
+
+check('a sore knee changes the movement, not the session', () => {
+  const day = dayById('ul-lower-a')!
+  const plain = buildDay(day, {}).map((i) => i.name)
+  const knee = buildDay(day, { sore: ['Knee'] })
+  assert.ok(plain.includes('Back Squat'))
+  assert.ok(!knee.some((i) => i.name === 'Back Squat'), 'squat survived a bad knee')
+  assert.equal(knee.length, plain.length, 'the session lost an exercise instead of swapping it')
+  assert.ok(knee.some((i) => i.swappedFrom === 'Back Squat' && i.name === 'Leg Press'), 'a knee wants the leg press')
+  const backs = buildDay(dayById('ul-lower-a')!, { sore: ['Low back'] })
+  assert.ok(!backs.some((i) => /Deadlift|Good Morning/.test(i.name)), 'a hinge survived a bad back')
+  assert.ok(backs.some((i) => i.swappedFrom === 'Romanian Deadlift' && /Curl/.test(i.name)))
+})
+
+check('bodyweight only leaves nothing that needs a rack', () => {
+  for (const id of ['fb-a', 'fb-b', 'ul-upper-a']) {
+    const items = buildDay(dayById(id)!, { access: 'body' })
+    assert.ok(items.length >= 3, `${id} came back with ${items.length}`)
+    for (const item of items) {
+      assert.equal(equipmentOf(item.name), 'bodyweight', `${item.name} is not bodyweight`)
+    }
+  }
+})
+
+check('a shorter session means fewer movements', () => {
+  const day = dayById('five-chest')!
+  assert.equal(buildDay(day, { minutes: 30 }).length, 4)
+  assert.equal(buildDay(day, { minutes: 45 }).length, 6)
+  assert.ok(buildDay(day, { minutes: 75 }).length >= 8)
+})
+
+check('dislikes are never suggested', () => {
+  const items = buildDay(dayById('fb-a')!, { dislikes: ['Back Squat', 'Plank'] })
+  assert.ok(!items.some((i) => i.name === 'Back Squat' || i.name === 'Plank'))
+})
+
+check('first 28 days counts distinct training days', () => {
+  assert.equal(firstMonth([]), null)
+  const start = new Date()
+  start.setDate(start.getDate() - 30)
+  const iso = (d: Date) => d.toISOString().slice(0, 10)
+  const day = (n: number) => {
+    const d = new Date(start)
+    d.setDate(d.getDate() + n)
+    return iso(d)
+  }
+  const month = firstMonth([day(0), day(2), day(2), day(9), day(29)])!
+  assert.equal(month.days, 3, 'day 29 should fall outside the window and the repeat should count once')
+  assert.ok(month.elapsed >= 28)
 })
 
 console.log(`\n${checks} checks passed`)

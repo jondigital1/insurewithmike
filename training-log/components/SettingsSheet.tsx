@@ -13,12 +13,14 @@ export default function SettingsSheet({
   email,
   onGoal,
   onImport,
+  onEditProfile,
   onSignOut,
   onClose,
 }: {
   data: TrainingData
   email: string
   onGoal: (goal: Goal) => void
+  onEditProfile: () => void
   onImport: (data: TrainingData) => Promise<void>
   onSignOut: () => void
   onClose: () => void
@@ -72,6 +74,15 @@ export default function SettingsSheet({
           </button>
         ))}
       </div>
+
+      <h3 className="mt-6 text-xs uppercase tracking-wide text-muted">You</h3>
+      <button
+        onClick={onEditProfile}
+        className="mt-2 w-full rounded-xl bg-ink px-3 py-3 text-left text-sm ring-1 ring-edge"
+      >
+        Experience, sore joints, time, dislikes
+        <span className="mt-0.5 block text-xs text-muted">What we use to pick your sessions</span>
+      </button>
 
       <h3 className="mt-6 text-xs uppercase tracking-wide text-muted">Data</h3>
       <button onClick={exportCsv} className="mt-2 w-full rounded-xl bg-ink py-3 text-sm ring-1 ring-edge">

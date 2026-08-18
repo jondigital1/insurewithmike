@@ -37,7 +37,8 @@ Postgres wants uuids and the artifact did not use them.
     app/                  routes, the auth gate and the magic link callback
     components/App.tsx    tabs, state, the debounced writer
     components/           editor, exercise block, set row, picker, builder, sheets
-    lib/exercises.ts      223 movements across 14 muscle groups, each typed
+    lib/exercises.ts      226 movements across 14 muscle groups, each typed
+    lib/onboarding.ts     the questions, the scoring, the split table, the swaps
     lib/templates.ts      6 splits, 24 days
     lib/coach.ts          goal ranges and the RPE response
     lib/importer.ts       artifact v1 and v2 blobs in
@@ -64,12 +65,23 @@ replace its exercises and sets. Pending writes flush when the tab is hidden.
 `npm run check` covers the library, the templates, the coach, the importer and the
 CSV export. `npm run build` type checks the whole app.
 
-## Design notes
+## Onboarding
 
-`docs/onboarding-research.md` is the research behind the first run questions:
-what to ask a new user who does not know what they want, why each question earns
-its place, and the tables that turn the answers into one of the 24 template days.
-Not built yet.
+First open asks two health questions and four real ones, then hands over a
+session. The answers pick a split from the 24 template days, decide how many
+movements fit the time available, swap movements around sore joints, filter to
+the equipment on hand, and keep the RPE box hidden until the number would mean
+something. Everything is skippable and skipping lands on Full Body three days a
+week.
+
+Tier 2 questions arrive later, in context: how long you have got at the first
+session start, sore joints on a visit after a session is behind you, everything
+else in Settings. Four weeks in, the app compares the days you said against the
+days you logged and offers a shorter plan.
+
+`docs/onboarding-research.md` is the evidence and the tables.
+`docs/onboarding-prototype.html` is the clickable version of every screen.
+`lib/onboarding.ts` is the implementation.
 
 ## Not built yet
 

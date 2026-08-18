@@ -83,6 +83,8 @@ const RAW: Record<string, string[]> = {
     'Machine Lateral Raise|W',
     'Leaning Lateral Raise|W',
     'Front Raise|W',
+    'Pike Push Up|R',
+    'Handstand Push Up|R',
     'Plate Front Raise|W',
     'Rear Delt Fly|W',
     'Cable Rear Delt Fly|W',
@@ -152,6 +154,7 @@ const RAW: Record<string, string[]> = {
     'Back Squat|W',
     'Front Squat|W',
     'Goblet Squat|W',
+    'Bodyweight Squat|R',
     'Hack Squat|W',
     'Machine Hack Squat|W',
     'Belt Squat|W',
@@ -274,4 +277,77 @@ const BY_NAME = new Map(LIBRARY.map((e) => [e.name.toLowerCase(), e]))
 
 export function lookupType(name: string): SetType | null {
   return BY_NAME.get(name.trim().toLowerCase())?.type ?? null
+}
+
+export function groupOf(name: string): string | null {
+  return BY_NAME.get(name.trim().toLowerCase())?.group ?? null
+}
+
+export type Equipment = 'barbell' | 'dumbbell' | 'machine' | 'cable' | 'bodyweight' | 'other'
+
+// Names the keyword rules below get wrong.
+const EQUIPMENT_OVERRIDES: Record<string, Equipment> = {
+  'Dip': 'bodyweight',
+  'Weighted Dip': 'bodyweight',
+  'Bench Dip': 'bodyweight',
+  'Goblet Squat': 'dumbbell',
+  'Bodyweight Squat': 'bodyweight',
+  'Sissy Squat': 'bodyweight',
+  'Wall Sit': 'bodyweight',
+  'Belt Squat': 'machine',
+  'Leg Press': 'machine',
+  'Single Leg Press': 'machine',
+  'Leg Press Calf Raise': 'machine',
+  'Hack Squat': 'machine',
+  'Pec Deck': 'machine',
+  'Reverse Pec Deck': 'machine',
+  'Hip Abduction': 'machine',
+  'Standing Hip Abduction': 'machine',
+  'Reverse Hyper': 'machine',
+  'Glute Ham Raise': 'bodyweight',
+  'Nordic Curl': 'bodyweight',
+  'Back Extension': 'bodyweight',
+  'Inverted Row': 'bodyweight',
+  'Frog Pump': 'bodyweight',
+  'Glute Bridge': 'bodyweight',
+  'Single Leg Calf Raise': 'bodyweight',
+  'Tibialis Raise': 'bodyweight',
+  'Dead Hang': 'bodyweight',
+  'Jump Rope': 'bodyweight',
+  'Hip Thrust': 'barbell',
+  'Single Leg Hip Thrust': 'bodyweight',
+  'Trap Bar Carry': 'barbell',
+  'Farmer Carry': 'dumbbell',
+  'Suitcase Carry': 'dumbbell',
+  'Front Rack Carry': 'dumbbell',
+  'Overhead Carry': 'dumbbell',
+  'Sandbag Carry': 'other',
+  'Yoke Walk': 'other',
+  'Plate Pinch': 'other',
+  'Wrist Roller': 'other',
+  'Grip Crusher': 'other',
+  'Svend Press': 'other',
+  'Landmine Press': 'barbell',
+  'Z Press': 'barbell',
+  '21s': 'barbell',
+}
+
+const BODYWEIGHT_WORDS = [
+  'Push Up', 'Pull Up', 'Chin Up', 'Plank', 'Hollow', 'Hanging', 'Sit Up', 'Crunch', 'Russian Twist',
+  'Dead Bug', 'Bird Dog', 'V Up', 'Toes to Bar', 'Dragon Flag', 'Ab Wheel', 'Captains Chair',
+  'Lying Leg Raise', 'Bicycle', 'Run', 'Jog', 'Walk', 'Sprints', 'Swim',
+]
+
+// Derived from the name, which is imprecise but keeps 226 movements from
+// needing a hand written tag each. The overrides above carry the exceptions.
+export function equipmentOf(name: string): Equipment {
+  const n = name.trim()
+  if (EQUIPMENT_OVERRIDES[n]) return EQUIPMENT_OVERRIDES[n]
+  if (/Machine|Hammer Strength|Smith|Erg|Assault Bike|Stationary Bike|Elliptical|Stair Climber|Treadmill/i.test(n)) return 'machine'
+  if (/Cable|Pulldown|Pushdown|Rope|Face Pull|Pull Through|Woodchop|Pallof/i.test(n)) return 'cable'
+  if (/Dumbbell|Goblet|Arnold|Concentration|Zottman|Hammer Curl|Cross Body/i.test(n)) return 'dumbbell'
+  if (/Barbell|EZ Bar|Trap Bar|Deadlift|Squat|Shrug|Good Morning|Rack Pull|Snatch|Skull Crusher|Upright Row|Overhead Press|Push Press|Bench Press|JM Press|Preacher|Drag Curl|Spider Curl|Reverse Curl|Wrist Curl|Meadows|Seal Row|Pendlay|T Bar/i.test(n)) return 'barbell'
+  if (BODYWEIGHT_WORDS.some((w) => n.includes(w))) return 'bodyweight'
+  if (/Sled|Cycling/i.test(n)) return 'other'
+  return 'dumbbell'
 }
