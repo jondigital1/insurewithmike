@@ -226,8 +226,12 @@ and for bodyweight movement load estimates.
 
     total 0 to 1    beginner
     total 2 to 3    returner if Q1 is never or under 6 months, else intermediate
-    total 4 to 5    intermediate
-    total 6 plus    advanced
+    total 4          intermediate
+    total 5 plus     advanced
+
+Maximum reachable score is 5, because Q2 is only asked of people who answered
+never or under 6 months. Advanced therefore means over 2 years unbroken plus
+confidence under a bar, which is the right bar for it.
 
 C4 is not asked at first run, so the first pass runs on Q1 and Q2 alone and the
 level is revised silently once C4 arrives.

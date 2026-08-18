@@ -1,0 +1,1213 @@
+<title>Six Taps to a Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+
+<style>
+  :root {
+    --ground: #08090c;
+    --panel: #101318;
+    --app-ink: #0c0e12;
+    --card: #15181e;
+    --edge: #232833;
+    --accent: #e8613c;
+    --muted: #8b93a3;
+    --bright: #eef1f6;
+    --note: #7fb2c4;
+
+    --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --ui: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  /* .bench sets display: grid, which outranks the hidden attribute on its own */
+  [hidden] { display: none !important; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--bright);
+    font-family: var(--serif);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+  }
+
+  /* ---------- masthead ---------- */
+
+  .masthead {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--edge);
+  }
+
+  .masthead h1 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(30px, 4.2vw, 46px);
+    letter-spacing: -0.025em;
+    line-height: 1;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .masthead p {
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--muted);
+    margin: 10px 0 0;
+    max-width: 60ch;
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--note);
+    margin: 0 0 10px;
+  }
+
+  .modes {
+    display: flex;
+    gap: 6px;
+    padding: 5px;
+    background: var(--panel);
+    border: 1px solid var(--edge);
+    border-radius: 12px;
+  }
+
+  .modes button {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    background: none;
+    border: 0;
+    border-radius: 8px;
+    padding: 9px 14px;
+    cursor: pointer;
+  }
+
+  .modes button[aria-pressed="true"] {
+    background: var(--accent);
+    color: #120602;
+    font-weight: 500;
+  }
+
+  /* ---------- workbench ---------- */
+
+  .bench {
+    display: grid;
+    grid-template-columns: 232px minmax(340px, 1fr) minmax(300px, 400px);
+    gap: 28px;
+    align-items: start;
+    padding-top: 28px;
+  }
+
+  .rail {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    position: sticky;
+    top: 20px;
+  }
+
+  .rail-group {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 18px 8px 7px;
+    border-top: 1px solid var(--edge);
+    margin-top: 8px;
+  }
+
+  .rail-group:first-child { border-top: 0; margin-top: 0; padding-top: 2px; }
+
+  .rail button {
+    display: flex;
+    align-items: baseline;
+    gap: 9px;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: 0;
+    border-radius: 8px;
+    padding: 8px 9px;
+    cursor: pointer;
+    color: var(--muted);
+    font-family: var(--ui);
+    font-size: 13.5px;
+    line-height: 1.3;
+  }
+
+  .rail button:hover { background: var(--panel); color: var(--bright); }
+
+  .rail button[aria-current="true"] {
+    background: var(--panel);
+    color: var(--bright);
+    box-shadow: inset 2px 0 0 var(--accent);
+  }
+
+  .rail .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: #4a5261;
+    min-width: 22px;
+  }
+
+  .rail button[aria-current="true"] .tag { color: var(--accent); }
+  .rail button.done .tag { color: var(--note); }
+
+  /* ---------- phone ---------- */
+
+  .stage { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+
+  .phone {
+    width: 360px;
+    height: 720px;
+    background: var(--app-ink);
+    border: 1px solid var(--edge);
+    border-radius: 34px;
+    padding: 14px 14px 18px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55);
+    font-family: var(--ui);
+  }
+
+  .statusbar {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: #39404e;
+    padding: 2px 8px 12px;
+    flex: 0 0 auto;
+  }
+
+  .screen {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    padding: 0 10px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+
+  .screen::-webkit-scrollbar { width: 4px; }
+  .screen::-webkit-scrollbar-thumb { background: var(--edge); border-radius: 4px; }
+
+  .kicker {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 4px 0 14px;
+  }
+
+  .q {
+    font-family: var(--ui);
+    font-size: 23px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.22;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .sub {
+    font-family: var(--ui);
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--muted);
+    margin: 10px 0 0;
+  }
+
+  .opts { display: flex; flex-direction: column; gap: 8px; margin-top: 22px; }
+
+  .opt {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: var(--card);
+    border: 1px solid var(--edge);
+    border-radius: 14px;
+    padding: 14px 15px;
+    color: var(--bright);
+    font-family: var(--ui);
+    font-size: 15px;
+    cursor: pointer;
+    transition: border-color 0.12s ease, background 0.12s ease;
+  }
+
+  .opt:hover { border-color: var(--muted); }
+
+  .opt[aria-pressed="true"] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #120602;
+    font-weight: 500;
+  }
+
+  .opt small {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 3px;
+    line-height: 1.4;
+  }
+
+  .opt[aria-pressed="true"] small { color: rgba(18, 6, 2, 0.72); }
+
+  .spacer { flex: 1 1 auto; min-height: 16px; }
+
+  .footer-actions { display: flex; gap: 8px; padding: 12px 0 4px; flex: 0 0 auto; }
+
+  .btn {
+    flex: 1;
+    border-radius: 14px;
+    padding: 14px;
+    font-family: var(--ui);
+    font-size: 15px;
+    cursor: pointer;
+    border: 1px solid var(--edge);
+    background: var(--card);
+    color: var(--bright);
+  }
+
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #120602; font-weight: 500; }
+  .btn.ghost { background: none; color: var(--muted); flex: 0 0 auto; padding: 14px 18px; }
+  .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  /* app-side blocks */
+
+  .block {
+    background: var(--card);
+    border: 1px solid var(--edge);
+    border-radius: 16px;
+    padding: 14px;
+    margin-top: 10px;
+  }
+
+  .block h4 {
+    font-family: var(--ui);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 9px;
+    font-weight: 500;
+  }
+
+  .block p { font-family: var(--ui); font-size: 14px; line-height: 1.5; margin: 0; }
+  .block p + p { margin-top: 8px; }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--edge);
+    font-family: var(--ui);
+    font-size: 14px;
+  }
+
+  .row:last-child { border-bottom: 0; padding-bottom: 0; }
+  .row span:last-child { color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; }
+  .row .hot { color: var(--accent); }
+
+  .daylist { display: flex; flex-direction: column; gap: 7px; margin-top: 10px; }
+
+  .day {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--card);
+    border: 1px solid var(--edge);
+    border-radius: 12px;
+    padding: 12px 13px;
+    font-family: var(--ui);
+    font-size: 14.5px;
+  }
+
+  .day em {
+    font-style: normal;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 18px; }
+
+  .chip {
+    background: var(--card);
+    border: 1px solid var(--edge);
+    color: var(--bright);
+    border-radius: 999px;
+    padding: 9px 14px;
+    font-family: var(--ui);
+    font-size: 13.5px;
+    cursor: pointer;
+  }
+
+  .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #120602; }
+
+  .flag {
+    border-left: 2px solid var(--accent);
+    padding: 2px 0 2px 12px;
+    margin-top: 16px;
+    font-family: var(--ui);
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .bigmark {
+    font-family: var(--mono);
+    font-size: 44px;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+    line-height: 1;
+    margin: 6px 0 2px;
+  }
+
+  /* ---------- notes column ---------- */
+
+  .notes { display: flex; flex-direction: column; gap: 20px; position: sticky; top: 20px; }
+
+  .note-card {
+    background: var(--panel);
+    border: 1px solid var(--edge);
+    border-radius: 16px;
+    padding: 20px;
+  }
+
+  .note-card h3 {
+    font-family: var(--display);
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    margin: 0 0 4px;
+  }
+
+  .note-tier {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--note);
+    margin: 0 0 12px;
+  }
+
+  .note-card p { font-size: 15.5px; line-height: 1.62; margin: 0 0 14px; color: #cdd3dd; }
+  .note-card p:last-child { margin-bottom: 0; }
+
+  .note-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 18px 0 8px;
+  }
+
+  .note-card ul { margin: 0; padding-left: 18px; }
+  .note-card li { font-size: 15px; line-height: 1.55; margin-bottom: 7px; color: #cdd3dd; }
+  .note-card li:last-child { margin-bottom: 0; }
+
+  .cite {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    line-height: 1.6;
+    color: var(--note);
+    border-top: 1px solid var(--edge);
+    padding-top: 13px;
+    margin-top: 16px;
+  }
+
+  .state-card { background: none; border: 1px dashed var(--edge); }
+
+  .state-card .row {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    border-color: rgba(35, 40, 51, 0.7);
+  }
+
+  .state-card .row span:first-child { color: var(--muted); }
+  .state-card .row span:last-child { color: var(--bright); }
+
+  /* ---------- contact sheet ---------- */
+
+  .sheet {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(184px, 1fr));
+    gap: 26px 20px;
+    padding-top: 30px;
+  }
+
+  .tile { display: flex; flex-direction: column; gap: 9px; }
+
+  .tile-frame {
+    width: 100%;
+    aspect-ratio: 360 / 720;
+    border-radius: 16px;
+    border: 1px solid var(--edge);
+    overflow: hidden;
+    position: relative;
+    background: var(--app-ink);
+  }
+
+  .tile-frame:hover { border-color: var(--accent); }
+
+  /* the whole tile is one hit area. the mini screen inside is inert, because a
+     button inside a button is invalid and the parser tears the markup apart. */
+  .tile-hit {
+    position: absolute;
+    inset: 0;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .tile-frame .phone {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: top left;
+    box-shadow: none;
+    border: 0;
+    border-radius: 0;
+    pointer-events: none;
+  }
+
+  .tile-cap { display: flex; align-items: baseline; gap: 8px; }
+  .tile-cap b { font-family: var(--ui); font-size: 13.5px; font-weight: 600; }
+  .tile-cap em { font-style: normal; font-family: var(--mono); font-size: 10px; color: var(--note); }
+
+  .sheet-note {
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: var(--muted);
+    max-width: 68ch;
+    margin: 26px 0 0;
+  }
+
+  a { color: var(--accent); }
+
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+
+  @media (max-width: 1080px) {
+    .bench { grid-template-columns: 1fr; }
+    .rail, .notes { position: static; }
+    .rail { flex-direction: row; flex-wrap: wrap; gap: 6px; }
+    .rail-group { width: 100%; border-top: 0; padding: 12px 0 2px; margin: 0; }
+    .rail button { width: auto; border: 1px solid var(--edge); }
+  }
+
+  @media (max-width: 420px) {
+    .wrap { padding: 22px 14px 60px; }
+    .phone { width: 100%; height: 700px; }
+  }
+</style>
+
+<div class="wrap">
+  <div class="masthead">
+    <div>
+      <p class="eyebrow">Training log · first run</p>
+      <h1>Six Taps to a Plan</h1>
+      <p>A working prototype of onboarding for someone who does not know what they want to do in the gym. Two safety taps, four questions, then a session they can start today. Answer it and the plan at the end really is computed from what you pressed.</p>
+    </div>
+    <div class="modes">
+      <button id="mode-walk" aria-pressed="true">Walk through</button>
+      <button id="mode-sheet" aria-pressed="false">All screens</button>
+    </div>
+  </div>
+
+  <div id="bench" class="bench">
+    <nav class="rail" id="rail" aria-label="Screens"></nav>
+    <div class="stage">
+      <div class="phone" id="phone"></div>
+      <button class="btn ghost" id="reset" style="flex:0 0 auto">Start over</button>
+    </div>
+    <div class="notes">
+      <div class="note-card" id="note"></div>
+      <div class="note-card state-card" id="state"></div>
+    </div>
+  </div>
+
+  <div id="sheet" class="sheet" hidden></div>
+  <p class="sheet-note" id="sheet-note" hidden>Every screen in the flow, in order. Tier 0 and tier 1 are first run. Tier 2 screens appear later, in context, once the user has a reason to care. Tier 3 is never asked, only worked out from what gets logged. Click any screen to open it in the walkthrough.</p>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ------------------------------------------------------------------
+  // state
+  // ------------------------------------------------------------------
+
+  var state = {};
+
+  function reset() {
+    state = {
+      condition: null, symptoms: null,
+      years: null, before: null, days: null, goal: null, access: null,
+      minutes: null, sore: [], redflag: null, barbell: null, other: [], age: null, dislikes: []
+    };
+  }
+  reset();
+
+  // ------------------------------------------------------------------
+  // the logic from docs/onboarding-research.md
+  // ------------------------------------------------------------------
+
+  function score() {
+    var s = 0;
+    s += { never: 0, under6: 1, sixToTwo: 2, overTwo: 3 }[state.years] || 0;
+    s += { no: 0, longAgo: 1, thisYear: 2 }[state.before] || 0;
+    s += { never: 0, rusty: 1, confident: 2 }[state.barbell] || 0;
+    return s;
+  }
+
+  function level() {
+    if (!state.years) return null;
+    var s = score();
+    var green = state.years === 'never' || state.years === 'under6';
+    if (s <= 1) return 'Beginner';
+    if (s <= 3) return green ? 'Returner' : 'Intermediate';
+    if (s <= 4) return 'Intermediate';
+    return 'Advanced';
+  }
+
+  var SPLITS = {
+    Beginner: {
+      2: ['Full Body A', 'Full Body B'],
+      3: ['Full Body A', 'Full Body B', 'Full Body C'],
+      4: ['Upper A', 'Lower A', 'Upper B', 'Lower B'],
+      5: ['Upper A', 'Lower A', 'Upper B', 'Lower B', 'Upper A again']
+    },
+    Returner: {
+      2: ['Full Body A', 'Full Body B'],
+      3: ['Full Body A', 'Full Body B', 'Full Body C'],
+      4: ['Full Body A', 'Full Body B', 'Full Body C', 'Upper A'],
+      5: ['Upper A', 'Lower A', 'Upper B', 'Lower B', 'Full Body C']
+    },
+    Intermediate: {
+      2: ['Upper A', 'Lower A'],
+      3: ['Push', 'Pull', 'Legs'],
+      4: ['Upper A', 'Lower A', 'Upper B', 'Lower B'],
+      5: ['Chest and Triceps', 'Back and Biceps', 'Legs', 'Shoulders and Arms', 'Upper Pump']
+    },
+    Advanced: {
+      2: ['Upper A', 'Lower A'],
+      3: ['Push', 'Pull', 'Legs'],
+      4: ['Push', 'Pull', 'Legs', 'Upper Mix'],
+      5: ['Chest and Triceps', 'Back and Biceps', 'Legs', 'Shoulders and Arms', 'Upper Pump']
+    }
+  };
+
+  var SPLIT_NAMES = {
+    Beginner: { 2: 'Full Body', 3: 'Full Body', 4: 'Upper Lower', 5: 'Upper Lower' },
+    Returner: { 2: 'Full Body', 3: 'Full Body', 4: 'Full Body, building up', 5: 'Upper Lower' },
+    Intermediate: { 2: 'Upper Lower', 3: 'Push Pull Legs', 4: 'Upper Lower', 5: '5 Day' },
+    Advanced: { 2: 'Upper Lower', 3: 'Push Pull Legs', 4: 'Summer 4 Day', 5: '5 Day' }
+  };
+
+  function plan() {
+    var lv = level() || 'Beginner';
+    var days = state.days ? Math.min(state.days, 5) : 3;
+    var capped = state.days === 6;
+    var perMuscle = days <= 2 ? '4 to 5' : days <= 3 ? '3 to 4' : '2 to 3';
+    var exercises = { 30: '4', 45: '5 to 6', 60: '7 to 8', 75: '9 to 10' }[state.minutes] || '7 to 8';
+    var reps = state.goal === 'strength' ? '3 to 6' : state.goal === 'health' ? '8 to 12' : '6 to 12';
+    var showRpe = lv !== 'Beginner' && lv !== 'Returner';
+    return {
+      level: lv,
+      days: days,
+      capped: capped,
+      name: SPLIT_NAMES[lv][days],
+      dayNames: SPLITS[lv][days],
+      perMuscle: perMuscle,
+      exercises: exercises,
+      reps: reps,
+      sets: lv === 'Beginner' || state.age === 'over60' ? '2 to 3' : '3 to 4',
+      showRpe: showRpe,
+      cleared: state.condition === 'yes' || state.symptoms === 'yes',
+      machineFirst: state.barbell === 'never' || state.barbell === 'no' || state.access === 'basic',
+      knee: state.sore.indexOf('Knee') > -1,
+      back: state.sore.indexOf('Low back') > -1,
+      shoulder: state.sore.indexOf('Shoulder') > -1
+    };
+  }
+
+  // ------------------------------------------------------------------
+  // screens
+  // ------------------------------------------------------------------
+
+  var GOAL_LABEL = { muscle: 'Build muscle', strength: 'Get stronger', lean: 'Lean out', health: 'Stay capable' };
+
+  var SCREENS = [
+    {
+      id: 'welcome', tier: 'Tier 0', tag: '00', nav: 'First open', kind: 'welcome',
+      title: 'First open',
+      why: 'No account wall, no value proposition carousel, no permissions dialog. The first thing on screen is the thing the app does, and the way out is visible immediately. Anything heavier here is where the 44 percent go.',
+      changes: ['Sets the tone: this is a log book, not a coach with opinions', 'Skip lands on a working default plan, never a dead end'],
+      cite: 'Baymard: 44% abandon when the first interaction demands heavy data entry.'
+    },
+    {
+      id: 'g1', tier: 'Tier 0', tag: 'G1', nav: 'Health gate', kind: 'choice', key: 'condition',
+      q: 'Has a doctor ever told you to limit exercise, or do you have a heart, lung, kidney or blood sugar condition?',
+      kicker: 'Two questions, then we are done with this',
+      opts: [
+        { v: 'no', label: 'No' },
+        { v: 'yes', label: 'Yes' },
+        { v: 'skip', label: 'Rather not say' }
+      ],
+      why: 'ACSM dropped full risk factor profiling from preparticipation screening on purpose, because the screen itself had become a barrier to starting. What is left keys on three things: known disease, symptoms, and how hard you intend to go. This question is the first of those.',
+      changes: ['Yes softens the intensity defaults and removes any train to failure language', 'Yes never blocks the log. It is a notebook, it prescribes nothing', 'No routes straight through with no interstitial'],
+      cite: 'ACSM preparticipation screening update, Riebe et al. The PAR-Q+ is the real 7 question instrument and gets linked, not reproduced.'
+    },
+    {
+      id: 'g2', tier: 'Tier 0', tag: 'G2', nav: 'Symptoms', kind: 'choice', key: 'symptoms',
+      q: 'When you push yourself, do you get chest pain, dizziness, blackouts or breathlessness out of proportion to the effort?',
+      opts: [{ v: 'no', label: 'No' }, { v: 'yes', label: 'Yes' }],
+      why: 'The signs and symptoms half of the algorithm. Written in what it feels like rather than what it is called, because a person who gets dizzy on the stairs does not think of it as an exertional symptom.',
+      changes: ['Yes shows the get cleared note and holds intensity at the low end', 'Either gate answered yes flags the plan screen with one honest line'],
+      cite: 'ACSM: disease, signs and symptoms, and intended intensity are the three risk modulators worth screening.'
+    },
+    {
+      id: 'gate-note', tier: 'Tier 0', tag: '—', nav: 'Cleared note', kind: 'gatenote',
+      why: 'This is what a yes gets. Not a lockout, not a wall of disclaimers, not a demand for a doctor letter before the app will open. One line, a link to the validated screen, and the door stays open.',
+      changes: ['Only shown when a gate question came back yes', 'The plan it produces starts lighter and says why'],
+      cite: 'The screening literature is explicit that over referral is a cost, not a safe default.'
+    },
+    {
+      id: 'q1', tier: 'Tier 1', tag: 'Q1', nav: 'How long', kind: 'choice', key: 'years',
+      q: 'How long have you been lifting, without a break longer than a month?',
+      kicker: 'Four questions and you are training',
+      opts: [
+        { v: 'never', label: 'Never done it' },
+        { v: 'under6', label: 'Under 6 months' },
+        { v: 'sixToTwo', label: '6 months to 2 years' },
+        { v: 'overTwo', label: 'Over 2 years' }
+      ],
+      why: 'Behavioural, not a self label. Nobody is asked to call themselves a beginner, partly because self ratings are noise and partly because the label itself puts people off. The clause about the break is doing the real work: it is uninterrupted training time, which is the first parameter in the published classification model.',
+      changes: ['The largest single input to the experience score', 'Under 6 months or never opens the returner question below', 'Beginner hides the RPE field everywhere in the app'],
+      cite: 'Santos Junior et al. 2021 classification model. ACSM defines novice as no experience or not trained for several years, intermediate as about 6 months consistent.'
+    },
+    {
+      id: 'q2', tier: 'Tier 1', tag: 'Q2', nav: 'Trained before', kind: 'choice', key: 'before',
+      q: 'Have you trained seriously in the past?',
+      sub: 'Only asked if the last answer was never or under 6 months.',
+      opts: [
+        { v: 'no', label: 'No, this is new' },
+        { v: 'thisYear', label: 'Yes, within the last year' },
+        { v: 'longAgo', label: 'Yes, longer ago than that' }
+      ],
+      why: 'Someone who benched for three years and stopped for two is not a first timer. Detraining and previous experience are separate parameters in the classification model for exactly this reason, and getting it wrong is the fastest way to insult a returning lifter into deleting the app.',
+      changes: ['Turns Beginner into Returner: beginner volume for two to three weeks, then their old split', 'Never shown to anyone with 6 months or more of unbroken training'],
+      cite: 'Same classification model: time detrained and previous experience score separately from current training time.'
+    },
+    {
+      id: 'q3', tier: 'Tier 1', tag: 'Q3', nav: 'Days a week', kind: 'choice', key: 'days',
+      q: 'Realistically, how many days a week will you get there?',
+      opts: [
+        { v: 2, label: '2 days', note: 'Enough to make progress. Genuinely.' },
+        { v: 3, label: '3 days', note: 'The sweet spot for most people' },
+        { v: 4, label: '4 days' },
+        { v: 5, label: '5 days' },
+        { v: 6, label: '6 days', note: 'Only if you have done it before' }
+      ],
+      why: 'The most important question in the flow, which is why the word realistically is in it. In a cohort of app users, distinct workout days in the first 28 days predicted long term adherence better than duration, equipment or exercise choice. Five days from a standing start is the classic burnout, and a beginner picking six gets four back with one line explaining why.',
+      changes: ['Picks the split with the experience level', 'Sets how much volume each session has to carry', 'Becomes the number the app quietly checks against reality at day 28'],
+      cite: 'Frontiers 2026, mobile app cohort: first 28 day consistency is the strongest adherence predictor. 18.1% of beginners still adherent at 6 months.'
+    },
+    {
+      id: 'q4', tier: 'Tier 1', tag: 'Q4', nav: 'What for', kind: 'choice', key: 'goal',
+      q: 'What is this for?',
+      opts: [
+        { v: 'muscle', label: 'Build muscle' },
+        { v: 'strength', label: 'Get stronger' },
+        { v: 'lean', label: 'Lean out' },
+        { v: 'health', label: 'Stay healthy and capable' }
+      ],
+      why: 'Four answers, three rep ranges. Build muscle and lean out land in the same place, because there is no toning program, and the honest line about diet doing the fat loss belongs here rather than in a blog post nobody reads.',
+      changes: ['Sets the rep range: strength 3 to 6, everything else 6 to 12', 'Lean out adds one line, not a different program', 'Stay capable adds a carry or a fast movement per session'],
+      cite: 'ACSM 2026: loads from 30 to 100% of 1RM grow muscle similarly when volume and effort match, so the goal moves the range, not the whole plan.'
+    },
+    {
+      id: 'q5', tier: 'Tier 1', tag: 'Q5', nav: 'Where', kind: 'choice', key: 'access',
+      q: 'Where are you training?',
+      opts: [
+        { v: 'full', label: 'Full gym' },
+        { v: 'basic', label: 'Basic gym', note: 'Dumbbells, benches, a few machines' },
+        { v: 'home', label: 'Home with some kit' },
+        { v: 'body', label: 'Bodyweight only' }
+      ],
+      why: 'A filter over the 223 movement library and nothing else. Worth saying out loud in the interface, because the evidence finds no meaningful gap between machines, free weights, gym and home, and a user who thinks the dumbbell version is the consolation prize trains worse.',
+      changes: ['Filters every suggestion from here on', 'Basic and home default to machine and dumbbell patterns first', 'Never changes the volume target'],
+      cite: 'ACSM 2026 position stand, 137 reviews: equipment type and setting did not consistently change outcomes.'
+    },
+    {
+      id: 'plan', tier: 'Tier 1', tag: '★', nav: 'The plan', kind: 'plan',
+      why: 'The payoff, and the only screen that has to be right. It names the split, shows the days, and says in plain words what happens to the load. Everything on it is computed from the answers on the left, including the parts that were never asked about, which are silently defaulted rather than left blank.',
+      changes: ['Start today opens the first day straight away', 'Every day is swappable, every exercise is swappable', 'Nothing here is presented as fixed, because choice is what keeps people coming back'],
+      cite: 'Self determination work: self selected training produces higher perceived autonomy and enjoyment than prescribed. Every suggestion needs a visible way out.'
+    },
+    {
+      id: 'c1', tier: 'Tier 2', tag: 'C1', nav: 'Time today', kind: 'choice', key: 'minutes',
+      q: 'How long have you got today?',
+      kicker: 'Asked at the first session, remembered after',
+      opts: [
+        { v: 30, label: '30 minutes' },
+        { v: 45, label: '45 minutes' },
+        { v: 60, label: '60 minutes' },
+        { v: 75, label: '75 or more' }
+      ],
+      why: 'Asked when they press start for the first time, not at signup. At that moment it is a useful question about today. At signup it is one more obstacle between a person and the thing they downloaded the app to do.',
+      changes: ['30 minutes gives 4 exercises, 45 gives 5 to 6, 60 gives 7 to 8, 75 plus gives 9 to 10', 'Core circuit counts inside that number', 'Three short sessions in a row and the app offers the shorter version permanently'],
+      cite: 'Progressive disclosure: one question at a time, each reading as a natural follow up, clears 40% completion against under 20% for everything at once.'
+    },
+    {
+      id: 'c2', tier: 'Tier 2', tag: 'C2', nav: 'Anything sore', kind: 'multi', key: 'sore',
+      q: 'Anything giving you trouble?',
+      kicker: 'After the first session',
+      chips: ['Knee', 'Low back', 'Shoulder', 'Hip', 'Elbow', 'Neck', 'Wrist', 'Nothing'],
+      why: 'Every selection swaps the default movement for that pattern rather than deleting the pattern. A knee does not mean no legs, it means leg press, split squats to comfort and leg curls, which is exactly what the summer and five day templates in the app already encode.',
+      changes: ['Knee removes barbell squats and deep lunges from suggestions', 'Low back removes loaded hinges and moves rows to chest supported', 'Shoulder moves overhead pressing to a neutral grip or an incline', 'Anything selected opens the pain rule screen once'],
+      cite: 'The substitution logic already exists in lib/templates.ts, built for a bad knee.'
+    },
+    {
+      id: 'c3', tier: 'Tier 2', tag: 'C3', nav: 'Pain rule', kind: 'painrule',
+      why: 'The single most useful thing an app can tell someone training around a niggle, and it is two numbers. Up to 5 out of 10 while you lift. Back to its usual self the next morning. That is the whole rule, and it comes straight out of the pain monitoring model used in tendon rehab.',
+      changes: ['Shown once, only if something was selected on the previous screen', 'The red flag list is the one place the app says stop and go and see someone', 'A red flag yes stops us suggesting loading for that joint until they clear it'],
+      cite: 'Silbernagel pain monitoring model, and the standard musculoskeletal red flag list: night pain, numbness, giving way, recent trauma, unexplained weight loss.'
+    },
+    {
+      id: 'c4', tier: 'Tier 2', tag: 'C4', nav: 'Barbells', kind: 'choice', key: 'barbell',
+      q: 'How do you feel about barbell lifts?',
+      opts: [
+        { v: 'confident', label: 'Confident with them' },
+        { v: 'rusty', label: 'Done them, a bit rusty' },
+        { v: 'never', label: 'Never tried' },
+        { v: 'no', label: 'Not interested' }
+      ],
+      why: 'Framed as taste, because the outcomes are equivalent. A machine is the lower skill entry to the same result, not the lesser version, and a beginner can get a productive set out of one immediately where a barbell squat takes weeks of practice.',
+      changes: ['Picks machine first or barbell first for the big patterns', 'Feeds the experience score once it is known, which can quietly revise the level', 'Not interested is respected permanently, not nagged'],
+      cite: 'Meta analysis of free weight versus machine training: no difference in strength, hypertrophy or jump performance.'
+    },
+    {
+      id: 'c5', tier: 'Tier 2', tag: 'C5', nav: 'Rest of week', kind: 'multi', key: 'other',
+      q: 'Anything else in your week?',
+      chips: ['Running', 'Cycling', 'Sport', 'Classes', 'Walking', 'Nothing'],
+      why: 'Changes advice, not the program. Interference is minor at recreational volumes, but it is real enough that when legs stall and there are four runs a week, this is the first place to look rather than the twelfth.',
+      changes: ['Lift first when both land on the same day', 'Running flags before cycling does, it interferes more', 'Heavy running plus stalled legs produces one suggestion, not a lecture'],
+      cite: 'Concurrent training reviews: interference is small at moderate volumes, running interferes more than cycling, separate by 6 to 8 hours or lift first.'
+    },
+    {
+      id: 'c6', tier: 'Tier 2', tag: 'C6', nav: 'Age band', kind: 'choice', key: 'age',
+      q: 'Which bracket are you in?',
+      sub: 'Optional, and it only changes one thing.',
+      opts: [
+        { v: 'under40', label: 'Under 40' },
+        { v: '40to59', label: '40 to 59' },
+        { v: 'over60', label: '60 or over' }
+      ],
+      why: 'Buried in settings rather than asked at signup, because it changes exactly one thing and asking it early reads as gatekeeping. Over 60 adds a fast, deliberate movement per session and holds sets at 2 to 3.',
+      changes: ['60 plus adds one power movement per session', '60 plus pins sets at 2 to 3 per exercise', 'Nothing else in the app changes'],
+      cite: 'ACSM 2026 older adult guidance: 2 sessions a week, 2 to 3 sets, 60 to 80% of max, stop 2 to 3 reps short, one power movement per session.'
+    },
+    {
+      id: 'c7', tier: 'Tier 2', tag: 'C7', nav: 'Dislikes', kind: 'multi', key: 'dislikes',
+      q: 'Anything you hate doing?',
+      sub: 'We will stop suggesting it.',
+      chips: ['Burpees', 'Running', 'Barbell squats', 'Deadlifts', 'Lunges', 'Overhead press', 'Planks', 'Nothing'],
+      why: 'The cheapest adherence win in the whole flow. Choice satisfies the autonomy need directly, and an exercise someone quietly dreads is an exercise that eventually takes the whole session down with it.',
+      changes: ['Removed from every suggestion, permanently, no nagging', 'Still searchable if they change their mind', 'Feeds the same swap machinery as the sore joint substitutions'],
+      cite: 'Self determination theory: autonomy is one of three basic needs, and self selected training predicts enjoyment and adherence.'
+    },
+    {
+      id: 'derived', tier: 'Tier 3', tag: '—', nav: 'Never asked', kind: 'derived',
+      why: 'The questions we do not ask, because the log answers them better. Nobody should have to test a one rep max to get a first session, and nobody should be asked how motivated they are out of ten when the app can simply count the days they came.',
+      changes: ['Effort calibration, from how reps decay across sets', 'Current strength, from the first two sessions', 'Volume tolerance, from planned sets against completed sets', 'True frequency, from distinct workout days per 28'],
+      cite: 'Novices underpredict reps in reserve by 4 to 5, experienced lifters by 1 to 2. Which is why the RPE box stays hidden until it means something.'
+    },
+    {
+      id: 'checkin', tier: 'Tier 3', tag: '28', nav: 'Day 28', kind: 'checkin',
+      why: 'The one place the app acts on all of it. Twenty eight days in, it knows what actually happened, so the plan quietly changes to match the person instead of showing them three red misses a week. This is not a question, it is the app admitting the answer to Q3 was optimistic.',
+      changes: ['Under 8 days logged means shorten or drop a day, never add', 'Weeks 6 to 10 are the known dropout window and get the same treatment', 'The change is offered, not imposed, and one tap declines it'],
+      cite: 'Dropout clusters at weeks 6 to 10 and again at 3 months. App guided adherence runs 81% against 52% self guided, so the nudge is the product.'
+    }
+  ];
+
+  var byId = {};
+  SCREENS.forEach(function (s, i) { s.index = i; byId[s.id] = s; });
+
+  var current = 0;
+  var mode = 'walk';
+
+  // ------------------------------------------------------------------
+  // rendering, app side
+  // ------------------------------------------------------------------
+
+  function el(html) {
+    var d = document.createElement('div');
+    d.innerHTML = html.trim();
+    return d.firstChild;
+  }
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  function screenBody(s, live) {
+    var p = plan();
+    var out = '';
+
+    if (s.kicker) out += '<p class="kicker">' + esc(s.kicker) + '</p>';
+
+    if (s.kind === 'welcome') {
+      return '<div class="screen">' +
+        '<div class="spacer"></div>' +
+        '<h2 class="q" style="font-size:30px">Training Log</h2>' +
+        '<p class="sub">Log every set. See what you did last time on the line above the inputs. Know what to do next.</p>' +
+        '<p class="sub" style="margin-top:18px">Six taps and you have a session to start. Skip any of them and we will pick something sensible.</p>' +
+        '<div class="spacer"></div>' +
+        '<div class="footer-actions"><button class="btn primary">Set me up</button><button class="btn ghost">Skip</button></div>' +
+        '<p class="sub" style="text-align:center;font-size:11.5px;margin-top:2px">Already have an account? Sign in</p>' +
+        '</div>';
+    }
+
+    if (s.kind === 'gatenote') {
+      return '<div class="screen">' + out +
+        '<p class="kicker">Before you start</p>' +
+        '<h2 class="q">Worth a word with your doctor first.</h2>' +
+        '<p class="sub">Nothing here stops working. The app is a log book, it does not prescribe anything. What changes is that we start you lighter and we will not push you towards failure.</p>' +
+        '<div class="block"><h4>The proper screen</h4><p>The PAR-Q+ is the validated seven question version of what we just asked. It takes two minutes.</p><p style="color:#e8613c;margin-top:8px">Open PAR-Q+</p></div>' +
+        '<div class="spacer"></div>' +
+        '<div class="footer-actions"><button class="btn primary">Got it, carry on</button></div>' +
+        '</div>';
+    }
+
+    if (s.kind === 'painrule') {
+      var joint = state.sore.length && state.sore[0] !== 'Nothing' ? state.sore[0].toLowerCase() : 'a sore joint';
+      return '<div class="screen">' +
+        '<p class="kicker">Training around ' + esc(joint) + '</p>' +
+        '<h2 class="q">Working around it is normal. Two numbers keep it honest.</h2>' +
+        '<div class="block"><h4>While you lift</h4><p><span style="color:#e8613c;font-family:var(--mono)">5 out of 10</span> or under. Discomfort is allowed. Sharp is not.</p></div>' +
+        '<div class="block"><h4>The next morning</h4><p>Back to its usual self. If it is worse than it was, that set was too heavy, whatever it felt like at the time.</p></div>' +
+        '<div class="flag">Any of these? Pain that wakes you at night, numbness or pins and needles down the limb, the joint giving way, a recent bad fall, weight loss you cannot explain.</div>' +
+        '<div class="chips">' +
+          '<button class="chip"' + (state.redflag === 'yes' ? ' aria-pressed="true"' : '') + ' data-flag="yes">Yes, one of those</button>' +
+          '<button class="chip"' + (state.redflag === 'no' ? ' aria-pressed="true"' : '') + ' data-flag="no">None of those</button>' +
+        '</div>' +
+        (state.redflag === 'yes' ? '<div class="block" style="border-color:#e8613c"><h4>Get it looked at</h4><p>That list is worth a professional eye before you load it. We will leave that joint out of suggestions until you tell us otherwise.</p></div>' : '') +
+        '<div class="spacer"></div>' +
+        '<div class="footer-actions"><button class="btn primary">Understood</button></div>' +
+        '</div>';
+    }
+
+    if (s.kind === 'derived') {
+      return '<div class="screen">' +
+        '<p class="kicker">Never asked</p>' +
+        '<h2 class="q">Things the log already knows.</h2>' +
+        '<div class="block">' +
+          '<div class="row"><span>How hard your sets really are</span><span>rep decay</span></div>' +
+          '<div class="row"><span>What you can lift today</span><span>sessions 1 to 2</span></div>' +
+          '<div class="row"><span>How much volume you tolerate</span><span>planned vs done</span></div>' +
+          '<div class="row"><span>How often you actually come</span><span>days per 28</span></div>' +
+          '<div class="row"><span>What you like doing</span><span>what you repeat</span></div>' +
+          '<div class="row"><span>When to add load</span><span>rep and load trend</span></div>' +
+        '</div>' +
+        '<p class="sub" style="margin-top:16px">None of this is a question. Asking a beginner for a one rep max, or how motivated they are out of ten, gets a worse answer than counting.</p>' +
+        '<div class="spacer"></div>' +
+        '</div>';
+    }
+
+    if (s.kind === 'checkin') {
+      var promised = state.days || 3;
+      return '<div class="screen">' +
+        '<p class="kicker">Four weeks in</p>' +
+        '<p class="bigmark">7 / 28</p>' +
+        '<h2 class="q" style="font-size:20px">You said ' + promised + ' days. You have been managing about 2.</h2>' +
+        '<p class="sub">That is not a telling off. Two days a week done properly beats ' + promised + ' days missed, and the plan should match the life rather than the other way round.</p>' +
+        '<div class="daylist">' +
+          '<div class="day"><span>Move to a 2 day split</span><em>Full Body A, B</em></div>' +
+          '<div class="day"><span>Shorten sessions to 45 min</span><em>5 to 6 lifts</em></div>' +
+        '</div>' +
+        '<div class="spacer"></div>' +
+        '<div class="footer-actions"><button class="btn primary">Do that</button><button class="btn ghost">Leave it</button></div>' +
+        '</div>';
+    }
+
+    if (s.kind === 'plan') {
+      var dayHtml = p.dayNames.map(function (d, i) {
+        return '<div class="day"><span>' + esc(d) + '</span><em>day ' + (i + 1) + '</em></div>';
+      }).join('');
+
+      var notes = [];
+      if (p.capped) notes.push('You said 6 days. We have put 5 in front of you, because the week that goes wrong is the week you miss all six. Add the sixth whenever you want it.');
+      if (p.cleared) notes.push('You flagged something on the health questions, so this starts lighter than it otherwise would and nothing here goes to failure.');
+      if (p.level === 'Returner') notes.push('You have done this before, so this is two to three weeks of rebuilding, not a beginner course. It steps up after that.');
+      if (p.knee) notes.push('Knee flagged: no barbell squats, no deep lunges. Leg press, split squats to comfort and leg curls instead.');
+      if (p.back) notes.push('Low back flagged: hinges come out, rows are chest supported.');
+      if (p.shoulder) notes.push('Shoulder flagged: pressing moves to a neutral grip or an incline.');
+      if (!p.showRpe) notes.push('No RPE box yet. Add a rep or a little load when the last set felt like you had two left. We will turn the effort scale on when it will mean something.');
+      if (state.goal === 'lean') notes.push('Leaning out: this holds and builds the muscle, the kitchen does the rest. We are not going to pretend otherwise.');
+      if (state.dislikes.length && state.dislikes[0] !== 'Nothing') notes.push('Left out for good: ' + state.dislikes.filter(function (d) { return d !== 'Nothing'; }).join(', ') + '.');
+
+      return '<div class="screen">' +
+        '<p class="kicker">Your plan</p>' +
+        '<h2 class="q">' + esc(p.name) + ', ' + p.days + ' days a week</h2>' +
+        '<p class="sub">' + esc(GOAL_LABEL[state.goal] || 'Build muscle') + ' · ' + esc(p.reps) + ' reps · ' + esc(p.sets) + ' sets per exercise</p>' +
+        '<div class="daylist">' + dayHtml + '</div>' +
+        '<div class="block">' +
+          '<div class="row"><span>Sets per muscle, per session</span><span>' + esc(p.perMuscle) + '</span></div>' +
+          '<div class="row"><span>Weekly target per muscle</span><span>10 plus</span></div>' +
+          '<div class="row"><span>Exercises per session</span><span>' + esc(p.exercises) + '</span></div>' +
+          '<div class="row"><span>How hard</span><span>' + (p.cleared ? 'comfortable' : 'stop 2 to 3 short') + '</span></div>' +
+          '<div class="row"><span>Effort scale</span><span class="' + (p.showRpe ? 'hot' : '') + '">' + (p.showRpe ? 'RPE on' : 'hidden for now') + '</span></div>' +
+          '<div class="row"><span>Starting equipment</span><span>' + (p.machineFirst ? 'machines first' : 'barbell first') + '</span></div>' +
+        '</div>' +
+        notes.map(function (n) { return '<div class="flag">' + esc(n) + '</div>'; }).join('') +
+        '<div class="spacer"></div>' +
+        '<div class="footer-actions"><button class="btn primary">Start day 1</button><button class="btn ghost">Change</button></div>' +
+        '</div>';
+    }
+
+    // choice and multi
+    out += '<h2 class="q">' + esc(s.q) + '</h2>';
+    if (s.sub) out += '<p class="sub">' + esc(s.sub) + '</p>';
+
+    if (s.kind === 'choice') {
+      out += '<div class="opts">';
+      s.opts.forEach(function (o) {
+        var on = state[s.key] === o.v;
+        out += '<button class="opt" data-val="' + esc(o.v) + '"' + (on ? ' aria-pressed="true"' : '') + '>' +
+          esc(o.label) + (o.note ? '<small>' + esc(o.note) + '</small>' : '') + '</button>';
+      });
+      out += '</div>';
+    }
+
+    if (s.kind === 'multi') {
+      out += '<div class="chips">';
+      s.chips.forEach(function (c) {
+        var on = state[s.key].indexOf(c) > -1;
+        out += '<button class="chip" data-val="' + esc(c) + '"' + (on ? ' aria-pressed="true"' : '') + '>' + esc(c) + '</button>';
+      });
+      out += '</div>';
+    }
+
+    out += '<div class="spacer"></div>';
+    out += '<div class="footer-actions">' +
+      (s.kind === 'multi' ? '<button class="btn primary" data-next="1">Continue</button>' : '') +
+      '<button class="btn ghost" data-next="1">Skip</button></div>';
+
+    return '<div class="screen">' + out + '</div>';
+  }
+
+  function phoneHtml(s) {
+    return '<div class="statusbar"><span>9:41</span><span>' + esc(s.tier) + '</span></div>' + screenBody(s);
+  }
+
+  // ------------------------------------------------------------------
+  // rendering, page side
+  // ------------------------------------------------------------------
+
+  var phone = document.getElementById('phone');
+  var rail = document.getElementById('rail');
+  var note = document.getElementById('note');
+  var stateCard = document.getElementById('state');
+  var sheet = document.getElementById('sheet');
+  var sheetNote = document.getElementById('sheet-note');
+  var bench = document.getElementById('bench');
+
+  function answered(s) {
+    if (s.key) {
+      var v = state[s.key];
+      return Array.isArray(v) ? v.length > 0 : v !== null;
+    }
+    return false;
+  }
+
+  function drawRail() {
+    var groups = [];
+    SCREENS.forEach(function (s) {
+      if (!groups.length || groups[groups.length - 1].tier !== s.tier) groups.push({ tier: s.tier, items: [] });
+      groups[groups.length - 1].items.push(s);
+    });
+
+    rail.innerHTML = groups.map(function (g) {
+      return '<p class="rail-group">' + esc(g.tier) + '</p>' + g.items.map(function (s) {
+        return '<button data-go="' + s.index + '"' +
+          (s.index === current ? ' aria-current="true"' : '') +
+          (answered(s) ? ' class="done"' : '') +
+          '><span class="tag">' + esc(s.tag) + '</span><span>' + esc(s.nav) + '</span></button>';
+      }).join('');
+    }).join('');
+  }
+
+  function drawNote() {
+    var s = SCREENS[current];
+    note.innerHTML =
+      '<p class="note-tier">' + esc(s.tier) + ' · ' + esc(s.nav) + '</p>' +
+      '<h3>' + esc(s.q || s.title || s.nav) + '</h3>' +
+      '<p>' + esc(s.why) + '</p>' +
+      '<p class="note-label">What the answer changes</p>' +
+      '<ul>' + s.changes.map(function (c) { return '<li>' + esc(c) + '</li>'; }).join('') + '</ul>' +
+      '<p class="cite">' + esc(s.cite) + '</p>';
+  }
+
+  function drawState() {
+    var lv = level();
+    var rows = [
+      ['experience score', state.years ? score() : '—'],
+      ['level', lv || '—'],
+      ['days a week', state.days || '—'],
+      ['goal', state.goal ? GOAL_LABEL[state.goal] : '—'],
+      ['access', state.access || '—'],
+      ['session', state.minutes ? state.minutes + ' min' : '—'],
+      ['flagged', state.sore.filter(function (x) { return x !== 'Nothing'; }).join(', ') || '—'],
+      ['RPE field', lv && lv !== 'Beginner' && lv !== 'Returner' ? 'shown' : 'hidden']
+    ];
+    stateCard.innerHTML = '<p class="note-tier">Live state</p>' +
+      rows.map(function (r) {
+        return '<div class="row"><span>' + esc(r[0]) + '</span><span>' + esc(r[1]) + '</span></div>';
+      }).join('');
+  }
+
+  function draw() {
+    phone.innerHTML = phoneHtml(SCREENS[current]);
+    drawRail();
+    drawNote();
+    drawState();
+  }
+
+  function next() {
+    var i = current + 1;
+    // Q2 only applies to people who answered never or under 6 months
+    if (SCREENS[i] && SCREENS[i].id === 'q2' && state.years !== 'never' && state.years !== 'under6') i++;
+    // the cleared note only appears after a yes
+    if (SCREENS[i] && SCREENS[i].id === 'gate-note' && state.condition !== 'yes' && state.symptoms !== 'yes') i++;
+    if (i < SCREENS.length) { current = i; draw(); }
+  }
+
+  phone.addEventListener('click', function (e) {
+    var s = SCREENS[current];
+
+    var flag = e.target.closest('[data-flag]');
+    if (flag) { state.redflag = flag.getAttribute('data-flag'); draw(); return; }
+
+    var opt = e.target.closest('.opt');
+    if (opt && s.kind === 'choice') {
+      var raw = opt.getAttribute('data-val');
+      state[s.key] = /^\d+$/.test(raw) ? Number(raw) : raw;
+      draw();
+      setTimeout(next, 160);
+      return;
+    }
+
+    var chip = e.target.closest('.chip[data-val]');
+    if (chip && s.kind === 'multi') {
+      var v = chip.getAttribute('data-val');
+      var list = state[s.key];
+      if (v === 'Nothing') state[s.key] = list.indexOf('Nothing') > -1 ? [] : ['Nothing'];
+      else {
+        list = list.filter(function (x) { return x !== 'Nothing'; });
+        state[s.key] = list.indexOf(v) > -1 ? list.filter(function (x) { return x !== v; }) : list.concat([v]);
+      }
+      draw();
+      return;
+    }
+
+    if (e.target.closest('.btn')) { next(); }
+  });
+
+  rail.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-go]');
+    if (!b) return;
+    current = Number(b.getAttribute('data-go'));
+    draw();
+  });
+
+  document.getElementById('reset').addEventListener('click', function () {
+    reset();
+    current = 0;
+    draw();
+    if (mode === 'sheet') drawSheet();
+  });
+
+  // ------------------------------------------------------------------
+  // contact sheet
+  // ------------------------------------------------------------------
+
+  function drawSheet() {
+    sheet.innerHTML = SCREENS.map(function (s) {
+      return '<div class="tile">' +
+        '<div class="tile-frame">' +
+          '<div class="phone" inert>' + phoneHtml(s) + '</div>' +
+          '<button class="tile-hit" data-go="' + s.index + '" aria-label="Open ' + esc(s.nav) + '"></button>' +
+        '</div>' +
+        '<div class="tile-cap"><b>' + esc(s.nav) + '</b><em>' + esc(s.tag) + '</em></div>' +
+        '</div>';
+    }).join('');
+
+    // scale each mini phone to its frame
+    requestAnimationFrame(function () {
+      Array.prototype.forEach.call(sheet.querySelectorAll('.tile-frame'), function (f) {
+        var mini = f.querySelector('.phone');
+        var k = f.clientWidth / 360;
+        mini.style.transform = 'scale(' + k + ')';
+      });
+    });
+  }
+
+  sheet.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-go]');
+    if (!b) return;
+    current = Number(b.getAttribute('data-go'));
+    setMode('walk');
+  });
+
+  window.addEventListener('resize', function () { if (mode === 'sheet') drawSheet(); });
+
+  function setMode(m) {
+    mode = m;
+    document.getElementById('mode-walk').setAttribute('aria-pressed', String(m === 'walk'));
+    document.getElementById('mode-sheet').setAttribute('aria-pressed', String(m === 'sheet'));
+    bench.hidden = m !== 'walk';
+    sheet.hidden = m !== 'sheet';
+    sheetNote.hidden = m !== 'sheet';
+    if (m === 'sheet') drawSheet(); else draw();
+  }
+
+  document.getElementById('mode-walk').addEventListener('click', function () { setMode('walk'); });
+  document.getElementById('mode-sheet').addEventListener('click', function () { setMode('sheet'); });
+
+  draw();
+})();
+</script>
