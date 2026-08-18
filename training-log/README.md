@@ -10,6 +10,13 @@ Artifact storage does not follow the code between threads, so the history was on
 lost thread away from gone. Postgres holds it now, the phone is just a client, and
 everything can leave as CSV.
 
+## Appearance
+
+Light and dark, from one token set. The app follows the device by default, pure
+CSS, and Settings carries a System / Light / Dark choice that beats the device
+and survives reload without a flash. The accent darkens in light mode so small
+accent text keeps its contrast on white.
+
 ## Setup
 
 1. Create a Supabase project.
